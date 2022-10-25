@@ -96,6 +96,10 @@ public class Token {
         return this.sign;
     }
 
+    public int getLine() {
+        return this.line;
+    }
+
     public static String printSign(String sign) {
         return new Token(sign, Token.wordsMap.get(sign), 0).toString();
     }

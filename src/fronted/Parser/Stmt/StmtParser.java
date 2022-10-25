@@ -13,6 +13,8 @@ import fronted.Parser.Expr.Elements.LVal;
 import fronted.Parser.Expr.ExpressionParser;
 import fronted.Parser.Expr.Elements.Cond;
 import fronted.Parser.Stmt.Elements.*;
+import fronted.error.error;
+import fronted.error.errorTable;
 
 public class StmtParser {
     /*
@@ -22,8 +24,8 @@ public class StmtParser {
     <OutputStmt>    := 'printf' '(' FormatString { ',' <Exp> } ')'';'
     <BlockStmt> 	:= <Block>
     <LValStmt>		:= <LVal> '=' <Exp> ';' | <LVal> '=' 'getint' '(' ')' ';'
-    <IfElseStmt>    := 'if' '(' <Cond> ')' <Stmt> [ 'else' <Stmt> ]';'
-    <WhileStmt>     := 'while' '(' <Cond> ')' <Stmt>';'
+    <IfElseStmt>    := 'if' '(' <Cond> ')' <Stmt> [ 'else' <Stmt> ]
+    <WhileStmt>     := 'while' '(' <Cond> ')' <Stmt>
     <ExpStmt> 		:= [<Exp>] ';'
 
     <BlockItem>     := <Decl> | <Stmt>
@@ -49,20 +51,20 @@ public class StmtParser {
         Token leftToken = iterator.next(); // “(”
         //System.out.println("IfelseStmt leftToken = " + leftToken);
         Cond cond = new ExpressionParser(iterator).parseCond();
-        Token rightToken = iterator.next(); // ")"
+        error.checkRightParent(iterator);// ")"
         //System.out.println("IfelseStmt rightToken = " + rightToken);
         Stmt ifStmt = parseStmt();
         Stmt elseStmt = null;
         Token elseToken = null;
         if (iterator.hasNext()) {
             elseToken = iterator.next();
-            System.out.println("IfElseStmt elseToken = " + elseToken);
+            //System.out.println("IfElseStmt elseToken = " + elseToken);
             if (!elseToken.getSign().equals("else")) {
                 iterator.previous();
                 elseToken = null;
             } else {
                 elseStmt = parseStmt();
-                System.out.println("IfElseStmt elseStmt = " + elseStmt);
+                //System.out.println("IfElseStmt elseStmt = " + elseStmt);
             }
         }
         return new IfElseStmt(ifToken, cond, ifStmt, elseToken, elseStmt);
@@ -72,9 +74,13 @@ public class StmtParser {
     public WhileStmt parseWhileStmt(Token whileToken) {
         Token token = iterator.next(); //"("
         Cond cond = new ExpressionParser(iterator).parseCond();
-        token = iterator.next(); //")"
+        error.checkRightParent(iterator); //")"
         Stmt stmt = parseStmt();
         return new WhileStmt(whileToken, cond, stmt);
+    }
+
+    private void checkSemicolon() {
+        error.checkSemicolon(iterator);
     }
 
     // <PrintStmt>    := 'printf' '(' FormatString { ',' <Exp> } ')'';'
@@ -83,11 +89,13 @@ public class StmtParser {
         Token formatString = iterator.next();
         ArrayList<Exp> exps = new ArrayList<>();
         token = iterator.next(); // "," or ")"
-        while (iterator.hasNext() && !token.getSign().equals(")")) {
+        while (iterator.hasNext() && token.getSign().equals(",")) {
             exps.add(new ExpressionParser(iterator).parseExp());
             token = iterator.next(); //解析完成后都需要next才能获得当前表达式的第一项
         }
-        iterator.next(); //";"
+        iterator.previous(); //回退一个检查右小括号
+        error.checkRightParent(iterator);
+        checkSemicolon();
         return new PrintStmt(printToken, formatString, exps);
     }
 
@@ -106,20 +114,20 @@ public class StmtParser {
             iterator.next(); //";"
             return new ReturnStmt(returnToken, exp);
         } else {
-            iterator.next(); //";"
+            checkSemicolon();
             return new ReturnStmt(returnToken, null);
         }
     }
 
     // <BreakStmt>     := 'break'';'
     public BreakStmt parseBreakStmt(Token breakToken) {
-        iterator.next(); //";"
+        checkSemicolon();
         return new BreakStmt(breakToken);
     }
 
     // <ContinueStmt>  := 'continue'';'
     public ContinueStmt parseContinueStmt(Token continueToken) {
-        iterator.next(); //";"
+        checkSemicolon();
         return new ContinueStmt(continueToken);
     }
 
@@ -131,8 +139,8 @@ public class StmtParser {
         Token secondToken = iterator.next();
         if (secondToken.getSign().equals("getint")) {
             iterator.next(); //"("
-            iterator.next(); // ")"
-            iterator.next(); // ";"
+            error.checkRightParent(iterator); // ")"
+            checkSemicolon(); // ";"
             return new LValStmt(lval, null, secondToken);
         } else if (secondToken.getSign().equals(";")) {
             return new LValStmt(lval, null, null);
@@ -144,7 +152,7 @@ public class StmtParser {
                 || secondToken.getType().equals("INTCON")) {
             iterator.previous();
             Exp exp = new ExpressionParser(iterator).parseExp();
-            iterator.next(); //";"
+            checkSemicolon(); // ";"
             return new LValStmt(lval, exp, null);
         } else {
             return null;
@@ -154,14 +162,14 @@ public class StmtParser {
     // <BlockItem>     := <Decl> | <Stmt>
     // FIRST(decl) = {"const", "int"}
     public BlockItem parseBlockItem() {
-        System.out.println("Start parse BlockItem\n");
+        //System.out.println("Start parse BlockItem\n");
         Token token = iterator.next();
-        System.out.println("BlockItem token = " + token);
+        //System.out.println("BlockItem token = " + token);
         iterator.previous();
         //找到decl的FIRST集合
         if (token.getSign().equals("const")
                 || token.getSign().equals("int")) {
-            Decl decl = new DeclParser(iterator,tokens).parseDecl();
+            Decl decl = new DeclParser(iterator, tokens).parseDecl();
             return new BlockItem(decl, null);
         } else {
             Stmt stmt = parseStmt();
@@ -171,7 +179,7 @@ public class StmtParser {
 
     // <Block>         := '{' { <BlockItem> } '}'
     public Block parseBlock() {
-        System.out.println("Start parse Block\n");
+        //System.out.println("Start parse Block\n");
         Token token = iterator.next(); //"{"
         token = iterator.next();
         ArrayList<BlockItem> blockItems = new ArrayList<>();
@@ -221,6 +229,18 @@ public class StmtParser {
             default:
                 break;
         }
+
+        //Follow(Stmt) = {'const','int','}','else'}
+        if (token.getSign().equals("const")
+                || token.getSign().equals("int")
+                || token.getSign().equals("}")
+                || token.getSign().equals("else")) {
+            iterator.previous();
+            Token token3 = iterator.previous();
+            iterator.next();
+            errorTable.getInstance().addError(new error(error.Type.MISSING_SEMICOLON, token3.getLine()));
+        }
+
         if (token.getSign().equals(";")) {
             return new ExpStmt(null);
         }
@@ -238,19 +258,17 @@ public class StmtParser {
             iterator.next(); //";"
             return new ExpStmt(exp);
         } else {
-            //System.out.println("check LVal\n");
             //新建一个临时的用于查看下一元素的迭代器
             //System.out.println(tokens);
             ListIterator<Token> tempIterator = tokens.listIterator(tokens.indexOf(token) + 1);
-            //System.out.println(Integer.toString(tokens.indexOf(token)) + "  " + token);
             //token == ident
             LVal lVal = new ExpressionParser(tempIterator).parseLVal(token);
-            System.out.println("LValStmt Lval = \n" + lVal);
+            //System.out.println("LValStmt Lval = \n" + lVal);
             Token token3 = tempIterator.next();
-            System.out.println("LValStmt token3 = " + token3);
+            //System.out.println("LValStmt token3 = " + token3);
             if (token3.getSign().equals("=")) {
                 //一定是LValStmt，同步iterator并且解析LValStmt
-                System.out.println("Start LValStmt\n");
+                //System.out.println("Start LValStmt\n");
                 lVal = new ExpressionParser(iterator).parseLVal(token);
                 return parseLValStmt(lVal);
             } else {
@@ -261,6 +279,8 @@ public class StmtParser {
                 return new ExpStmt(exp);
             }
         }
+
+
     }
 
 

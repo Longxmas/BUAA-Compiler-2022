@@ -5,20 +5,51 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/compeler1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fronted/error/error.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fronted/error/errorTable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testfile.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compeler1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/compiler1.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Compiler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Lexer/LexicalAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Lexer/LexicalAnalyzer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Lexer/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Lexer/Token.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/CompUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/CompUnit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/CompUnitParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/CompUnitParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/DeclParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/DeclParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Exp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Exp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/FuncRParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/FuncRParams.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/LVal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/LVal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/ExpressionParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/FuncParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/FuncParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/StmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/StmtParser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/fronted/Lexer/LexicalAnalyzer.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Lexer/Token.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/DeclParser.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDecl.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDef.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstInitVal.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/InitVal.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDef.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/AddExp.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Stmt/StmtParser.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -34,12 +65,29 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "extract.method.default.visibility": "private",
+    "last_opened_file_path": "D:/JuniorYear/Compiler/Experiement/compiler1",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)"
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="Compiler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Compiler" />
+      <module name="compiler1" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="应用程序.Compiler" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
@@ -48,7 +96,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1666688050226</updated>
-      <workItem from="1666688051811" duration="454000" />
+      <workItem from="1666688051811" duration="615000" />
+      <workItem from="1666688698530" duration="11810000" />
     </task>
     <servers />
   </component>

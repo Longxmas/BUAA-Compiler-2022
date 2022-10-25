@@ -1,8 +1,8 @@
-package Parser;
+package fronted.Parser;
 
-import Parser.Decl.Elements.Decl;
-import Parser.FuncDef.Elements.FuncDef;
-import Parser.FuncDef.Elements.MainFuncDef;
+import fronted.Parser.Decl.Elements.Decl;
+import fronted.Parser.FuncDef.Elements.FuncDef;
+import fronted.Parser.FuncDef.Elements.MainFuncDef;
 
 import java.util.ArrayList;
 

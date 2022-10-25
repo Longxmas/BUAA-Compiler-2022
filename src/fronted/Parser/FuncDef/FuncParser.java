@@ -6,6 +6,7 @@ import fronted.Parser.Expr.ExpressionParser;
 import fronted.Parser.FuncDef.Elements.*;
 import fronted.Parser.Stmt.Elements.Block;
 import fronted.Parser.Stmt.StmtParser;
+import fronted.error.error;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -45,12 +46,12 @@ public class FuncParser {
             iterator.previous();
             return new FuncFParam(ident, false, new ArrayList<>());
         } else {
-            iterator.next(); //"]"
+            error.checkRightBracket(iterator); //"]"
             token = iterator.next();
             while (token.getSign().equals("[")) {
                 ConstExp constExp = new ExpressionParser(iterator).parseConstExp();
                 constExps.add(constExp);
-                iterator.next(); //"]"
+                error.checkRightBracket(iterator); //"]"
                 token = iterator.next();
             }
             iterator.previous(); //当最后一个字符为可能出现时，需要撤一格
@@ -79,7 +80,7 @@ public class FuncParser {
         Token token = iterator.next(); //"int"
         iterator.next(); //"main"
         iterator.next(); //"("
-        iterator.next(); //")"
+        error.checkRightParent(iterator); //")"
         Block block = new StmtParser(iterator, tokens).parseBlock();
         return new MainFuncDef(block);
     }
@@ -94,11 +95,11 @@ public class FuncParser {
         Token token = iterator.next(); //"("
         token = iterator.next(); // BType or ")"
         //System.out.println("FuncDef token = " + token);
-        if (!token.getSign().equals(")")) {
+        if (token.getSign().equals("int")) {
             iterator.previous();
             funcFParams = parseFuncFParams();
-            iterator.next(); // “)”
         }
+        error.checkRightParent(iterator);
         Block block = new StmtParser(iterator, tokens).parseBlock();
         return new FuncDef(funcType, ident, funcFParams, block);
     }

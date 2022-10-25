@@ -2,6 +2,9 @@ package fronted.Lexer;
 
 import java.util.ArrayList;
 
+import fronted.error.error;
+import fronted.error.errorTable;
+
 public class LexicalAnalyzer {
     private String code;
     private int index = 0;
@@ -18,7 +21,7 @@ public class LexicalAnalyzer {
         getChar();
         while (index < code.length()) {
             while (Token.isBlank(c)) {
-                if(c == '\n') {
+                if (c == '\n') {
                     line++;
                 }
                 getChar();
@@ -69,7 +72,7 @@ public class LexicalAnalyzer {
     }
 
     void parseStringConst() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder().append('"');
         getChar();
         while (c != '"') {
             sb.append(c);
@@ -78,6 +81,10 @@ public class LexicalAnalyzer {
         getChar();
         Token token = new Token('"' + sb.toString() + '"', "STRCON", line);
         ans.add(token);
+
+        if (!error.checkFormatString((sb.append('"')).toString())) {
+            errorTable.getInstance().addError(new error(error.Type.ILLEGAL_CHAR, line));
+        }
     }
 
     void parseSign() {
@@ -140,7 +147,7 @@ public class LexicalAnalyzer {
                 getChar();
                 while (c != '\n') {
                     getChar();
-                    if(c == '\0') break;
+                    if (c == '\0') break;
                 }
                 line++;
             } else if (index < code.length() && code.charAt(index) == '*') {
@@ -155,7 +162,7 @@ public class LexicalAnalyzer {
                 ans.add(new Token("/", Token.wordsMap.get("/"), line));
             }
         }
-        if(index < code.length()) getChar();
+        if (index < code.length()) getChar();
     }
 
     public String toString() {

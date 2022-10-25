@@ -5,6 +5,7 @@ import fronted.Lexer.Token;
 import java.util.ArrayList;
 
 public class LVal {
+    // FIRST(LVal) = { ident }
     private Token ident;
     private ArrayList<Exp> exps;
 

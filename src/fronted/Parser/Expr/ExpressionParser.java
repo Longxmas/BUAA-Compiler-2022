@@ -3,6 +3,7 @@ package fronted.Parser.Expr;
 import fronted.Lexer.Token;
 import fronted.Parser.Expr.Elements.*;
 import fronted.Parser.Expr.Elements.Number;
+import fronted.error.error;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -40,19 +41,14 @@ public class ExpressionParser {
     // 注意：有参数就是指从ident之后开始parse（iterator 此时指向indent后一个token)
     public LVal parseLVal(Token ident) {
         ArrayList<Exp> exps = new ArrayList<>();
-        while (iterator.hasNext()) {
-            Token token1 = iterator.next();
-            if (!token1.getSign().equals("[")) {
-                iterator.previous();
-                break;
-            }
+        Token token = iterator.next();
+        while (token.getSign().equals("[")) {
             Exp exp = parseExp();
             exps.add(exp);
-            if (!iterator.hasNext() ||
-                    !iterator.next().getSign().equals("]")) {
-                return null; //TODO:错误处理
-            }
+            error.checkRightBracket(iterator); //"]"
+            token = iterator.next();
         }
+        iterator.previous();
         return new LVal(ident, exps);
     }
 
@@ -226,9 +222,7 @@ public class ExpressionParser {
         Token token = iterator.next();
         if (token.getSign().equals("(")) {
             Exp exp = parseExp();
-            if (!iterator.next().getSign().equals(")")) {
-                return null; //TODO:错误处理
-            }
+            error.checkRightParent(iterator);
             return new PrimaryExp(exp);
         } else if (token.getType().equals("IDENFR")) {
             LVal lVal = parseLVal(token);
@@ -260,15 +254,13 @@ public class ExpressionParser {
             FuncRParams funcRParams = null;
             secondToken = iterator.next();
             if (token.getType().equals("IDENFR") && secondToken.getSign().equals("(")) {
-                System.out.println("Unary token = " + token + "Unary secondToken = " + secondToken);
+                //System.out.println("Unary token = " + token + "Unary secondToken = " + secondToken);
                 secondToken = iterator.next();
                 iterator.previous(); // 预读之后记得回退iterator
-                if (!secondToken.getSign().equals(")")) {
+                if(FuncRParams.firstTypes.contains(secondToken.getType())) {
                     funcRParams = parseFuncRParams();
                 }
-                if (!iterator.hasNext() || !iterator.next().getSign().equals(")")) {
-                    return null;
-                }
+                error.checkRightParent(iterator);
                 return new UnaryExp(unaryOps, token, funcRParams);
             } else {
                 //TODO:错误处理

@@ -5,6 +5,8 @@ import fronted.Parser.Decl.Elements.*;
 import fronted.Parser.Expr.Elements.ConstExp;
 import fronted.Parser.Expr.Elements.Exp;
 import fronted.Parser.Expr.ExpressionParser;
+import fronted.error.error;
+import fronted.error.errorTable;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -47,6 +49,10 @@ public class DeclParser {
         }
     }
 
+    private void checkSemicolon() {
+        error.checkSemicolon(iterator);
+    }
+
     // <ConstDecl>     := 'const' <BType> <ConstDef> { ',' <ConstDef> } ';'
     public ConstDecl parseConstDecl() {
         Token token = iterator.next(); //"const"
@@ -58,13 +64,18 @@ public class DeclParser {
         } else {
             token = iterator.next(); //"int"
             firstConstDef = parseConstDef();
-            System.out.println("ConstDecl firstConstDef = " + firstConstDef);
             token = iterator.next();
-            while (!token.getSign().equals(";")) {
+            while (token.getSign().equals(",")) {
                 ConstDef constDef = parseConstDef();
                 constDefs.add(constDef);
-                token = iterator.next(); //","
+                token = iterator.next(); //"," or ";"
             }
+            iterator.previous(); //回退一个以检查分号
+            checkSemicolon();
+            /*token = iterator.next();
+            System.out.println("after constDef " + token + iterator.next());
+            iterator.previous(); iterator.previous();*/
+
         }
         return new ConstDecl(firstConstDef, constDefs);
     }
@@ -78,15 +89,15 @@ public class DeclParser {
             return null;
         }
         Token token = iterator.next(); //"[" or "="
-        System.out.println("ConstDef token = " + token);
+        //System.out.println("ConstDef token = " + token);
         while (!token.getSign().equals("=")) {
             ConstExp constExp = new ExpressionParser(iterator).parseConstExp(); // 需要使用ExpressionParser，注意传入参数iterator
             constExps.add(constExp);
-            iterator.next(); //"]"
+            error.checkRightBracket(iterator); //"]"
             token = iterator.next(); //"[",记得更新token
         }
         ConstInitVal constInitVal = parseConstInitVal();
-        System.out.println("ConstDef constInitVal = " + constInitVal);
+        //System.out.println("ConstDef constInitVal = " + constInitVal);
         return new ConstDef(ident, constExps, constInitVal);
     }
 
@@ -119,6 +130,7 @@ public class DeclParser {
     // <VarDecl>       := <BType> <VarDef> { ',' <VarDef> } ';'
     public VarDecl parseVarDecl() {
         Token token = iterator.next(); //"int"
+        //System.out.println("varDecl " + token + iterator.next()); iterator.previous();
         ArrayList<VarDef> varDefs = new ArrayList<>();
         VarDef firstVarDef;
         if (!token.getSign().equals("int")) {
@@ -126,18 +138,17 @@ public class DeclParser {
             return null;
         } else {
             firstVarDef = parseVarDef();
-            //System.out.println("VarDecl firstVarDef = " + firstVarDef);
+            //System.out.println("firstVarDef " + firstVarDef);
             token = iterator.next(); // "," or ";"
-            while (!token.getSign().equals(";")) {
+            while (token.getSign().equals(",")) {
                 VarDef varDef = parseVarDef(); // System.out.println(varDef);
                 varDefs.add(varDef);
                 token = iterator.next(); //","
             }
+            iterator.previous(); //回退一个以检查分号
+            checkSemicolon();
         }
-        //System.out.println("VarDecl Vardefs.size() = " + varDefs.size() + "\n");
-        VarDecl varDecl = new VarDecl(firstVarDef, varDefs);
-        System.out.println(varDecl);
-        return varDecl;
+        return new VarDecl(firstVarDef, varDefs);
     }
 
 
@@ -156,7 +167,7 @@ public class DeclParser {
         while (token.getSign().equals("[")) {
             ConstExp constExp = new ExpressionParser(iterator).parseConstExp();
             constExps.add(constExp);
-            iterator.next(); //"]"
+            error.checkRightBracket(iterator); //"]"
             token = iterator.next(); //"[" or "=" or null
         }
         if (token.getSign().equals("=")) {

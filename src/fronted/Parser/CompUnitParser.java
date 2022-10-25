@@ -1,11 +1,11 @@
-package Parser;
+package fronted.Parser;
 
-import Lexer.Token;
-import Parser.Decl.DeclParser;
-import Parser.Decl.Elements.Decl;
-import Parser.FuncDef.Elements.FuncDef;
-import Parser.FuncDef.Elements.MainFuncDef;
-import Parser.FuncDef.FuncParser;
+import fronted.Lexer.Token;
+import fronted.Parser.Decl.DeclParser;
+import fronted.Parser.Decl.Elements.Decl;
+import fronted.Parser.FuncDef.Elements.FuncDef;
+import fronted.Parser.FuncDef.Elements.MainFuncDef;
+import fronted.Parser.FuncDef.FuncParser;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -35,8 +35,7 @@ public class CompUnitParser {
         while (token1.getSign().equals("const")
                 || (token1.getSign().equals("int") &&
                 token2.getType().equals("IDENFR") &&
-                (token3.getSign().equals("[") || token3.getSign().equals("=") ||
-                        token3.getSign().equals(";") || token3.getSign().equals(","))
+                (!token3.getSign().equals("("))
         )) {
             Decl decl = new DeclParser(iterator, tokens).parseDecl();
             decls.add(decl);

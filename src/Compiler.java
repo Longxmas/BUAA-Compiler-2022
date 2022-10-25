@@ -1,7 +1,8 @@
-import Lexer.LexicalAnalyzer;
-import Lexer.Token;
-import Parser.CompUnit;
-import Parser.CompUnitParser;
+import fronted.Lexer.LexicalAnalyzer;
+import fronted.Lexer.Token;
+import fronted.Parser.CompUnit;
+import fronted.Parser.CompUnitParser;
+import fronted.error.errorTable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,8 +36,8 @@ public class Compiler {
         ArrayList<Token> tokens = lexer.getAns();
         CompUnit compUnit = new CompUnitParser(tokens).parseCompUnit();
         //System.out.println(tokens);
-        System.out.println(compUnit);
-        write(compUnit.toString(), "output.txt");
+        //System.out.println(compUnit);
+        write(errorTable.getInstance().toString(), "error.txt");
     }
 
 }
