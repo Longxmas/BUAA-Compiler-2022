@@ -7,6 +7,18 @@ public class PrimaryExp {
     private LVal lVal = null;
     private Number number = null;
 
+    public Exp getExp() {
+        return exp;
+    }
+
+    public LVal getlVal() {
+        return lVal;
+    }
+
+    public Number getNumber() {
+        return number;
+    }
+
     public PrimaryExp(Exp exp) {
         this.exp = exp;
     }

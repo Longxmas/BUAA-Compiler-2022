@@ -14,6 +14,14 @@ public class WhileStmt extends Stmt {
         this.stmt = stmt;
     }
 
+    public Cond getCond() {
+        return cond;
+    }
+
+    public Stmt getStmt() {
+        return stmt;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(Token.printSign("while"));

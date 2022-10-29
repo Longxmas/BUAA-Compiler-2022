@@ -8,12 +8,20 @@ import java.util.ArrayList;
 public class PrintStmt extends Stmt {
     private Token printToken;
     private Token formatString;
-    private ArrayList<Exp> exps;
+    private ArrayList<Exp> exps = new ArrayList<>();
 
     public PrintStmt(Token printToken,Token formatString,ArrayList<Exp> exps) {
         this.printToken = printToken;
         this.formatString = formatString;
         this.exps = exps;
+    }
+
+    public Token getFormatString() {
+        return formatString;
+    }
+
+    public ArrayList<Exp> getExps() {
+        return exps;
     }
 
     public String toString() {

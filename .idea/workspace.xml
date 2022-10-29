@@ -1,28 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="compiler1:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/src/fronted/error/error.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/fronted/error/errorTable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testfile.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="error a,i,j,k">
+      <change afterPath="$PROJECT_DIR$/src/fronted/visitor/CalExp.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fronted/visitor/visitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/middle/Symbol/FuncTable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/middle/Symbol/Symbol.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/middle/Symbol/SymbolTable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/middle/operand/Immediate.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/middle/operand/Operand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/standard.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compeler1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/compiler1.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/compiler1.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Compiler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Lexer/LexicalAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Lexer/LexicalAnalyzer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fronted/Lexer/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Lexer/Token.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Parser/CompUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/CompUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/CompUnitParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/CompUnitParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/DeclParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/DeclParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDecl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDecl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstInitVal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstInitVal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/InitVal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/InitVal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDecl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDecl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDef.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Exp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Exp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Expression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Expression.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/FuncRParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/FuncRParams.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/LVal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/LVal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/ExpressionParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Number.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Number.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/PrimaryExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/PrimaryExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/UnaryExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/UnaryExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncDef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncFParam.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncFParam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncFParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncFParams.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/MainFuncDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/MainFuncDef.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/FuncParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/FuncParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BlockItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BlockItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BlockStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BlockStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BreakStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BreakStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ContinueStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ContinueStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ExpStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ExpStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/IfElseStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/IfElseStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/LValStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/LValStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/PrintStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/PrintStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ReturnStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ReturnStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/WhileStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/WhileStmt.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/StmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/Parser/Stmt/StmtParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/error/error.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/error/error.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/error/errorTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/error/errorTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/testfile.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,20 +96,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "extract.method.default.visibility": "private",
-    "last_opened_file_path": "D:/JuniorYear/Compiler/Experiement/compiler1",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/JuniorYear/Compiler/notes/SysCompiler&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;项目&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Compiler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Compiler" />
@@ -97,8 +137,30 @@
       <option name="presentableId" value="Default" />
       <updated>1666688050226</updated>
       <workItem from="1666688051811" duration="615000" />
-      <workItem from="1666688698530" duration="11810000" />
+      <workItem from="1666688698530" duration="12172000" />
+      <workItem from="1666710838243" duration="5140000" />
+      <workItem from="1666752935878" duration="11627000" />
+      <workItem from="1666769302916" duration="11333000" />
+      <workItem from="1666794377472" duration="7021000" />
+      <workItem from="1666802990501" duration="1605000" />
+      <workItem from="1666883391647" duration="473000" />
+      <workItem from="1666883881978" duration="383000" />
+      <workItem from="1666884281529" duration="3598000" />
+      <workItem from="1666887928232" duration="5233000" />
+      <workItem from="1666942572525" duration="1084000" />
+      <workItem from="1666943783471" duration="875000" />
+      <workItem from="1666944680889" duration="10305000" />
+      <workItem from="1667009169984" duration="3522000" />
+      <workItem from="1667045843237" duration="296000" />
     </task>
+    <task id="LOCAL-00001" summary="error a,i,j,k">
+      <created>1666708675705</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1666708675705</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,5 +176,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="error a,i,j,k" />
+    <option name="LAST_COMMIT_MESSAGE" value="error a,i,j,k" />
   </component>
 </project>

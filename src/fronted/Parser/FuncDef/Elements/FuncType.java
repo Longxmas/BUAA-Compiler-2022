@@ -9,6 +9,10 @@ public class FuncType {
         this.type = type;
     }
 
+    public Token getType() {
+        return this.type;
+    }
+
     public String toString() {
         return type.toString() + "<FuncType>\n";
     }

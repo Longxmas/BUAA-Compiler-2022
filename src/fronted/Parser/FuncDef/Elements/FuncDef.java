@@ -16,6 +16,22 @@ public class FuncDef {
         this.block = block;
     }
 
+    public Token getIdent() {
+        return this.ident;
+    }
+
+    public FuncType getFuncType() {
+        return funcType;
+    }
+
+    public FuncFParams getFuncFParams() {
+        return funcFParams;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(funcType.toString()).append(ident).append(Token.printSign("("));

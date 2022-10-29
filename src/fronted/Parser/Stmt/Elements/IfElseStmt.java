@@ -19,6 +19,18 @@ public class IfElseStmt extends Stmt {
         this.elseToken = elseToken;
     }
 
+    public Cond getCond() {
+        return cond;
+    }
+
+    public Stmt getIfStmt() {
+        return ifStmt;
+    }
+
+    public Stmt getElseStmt() {
+        return elseStmt;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(ifToken);

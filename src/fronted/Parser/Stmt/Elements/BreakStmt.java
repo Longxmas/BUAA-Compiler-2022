@@ -9,6 +9,10 @@ public class BreakStmt extends Stmt {
         this.breakToken = token;
     }
 
+    public int getLine() {
+        return this.breakToken.getLine();
+    }
+
     public String toString() {
         String sb = breakToken.toString() + Token.printSign(";");
         return sb + "<Stmt>\n";

@@ -26,6 +26,7 @@ public class error {
     }
 
     public static boolean checkFormatString(String s) {
+        System.out.println(s);
         int l = s.length();
         //"{<Char>}"
         if (s.charAt(0) != '"' || s.charAt(l - 1) != '"') {
@@ -33,12 +34,14 @@ public class error {
         }
         // ""
         if (l == 2) return true;
-        // "%d"
-        if (s.charAt(1) == '%') return s.charAt(2) == 'd';
         // "as!d /n testIt"
-        for (int i = 1; i < l - 2; i++) {
+        for (int i = 1; i <= l - 2; i++) {
+            if (s.charAt(i) == '%') {
+                if (s.charAt(i + 1) != 'd') return false;
+                continue;
+            }
             if (!partOfFormatStringCheck(s.charAt(i))) return false;
-            if ((int)s.charAt(i) == 92  && s.charAt(i+1) != 'n') return false;
+            if ((int) s.charAt(i) == 92 && s.charAt(i + 1) != 'n') return false;
         }
         return true;
     }
@@ -47,26 +50,27 @@ public class error {
         return (int) c == 32 || (int) c == 33 || (40 <= (int) c && (int) c <= 126);
     }
 
-    private static void checkSign(ListIterator<Token> iterator, String s,Type type) {
+    private static void checkSign(ListIterator<Token> iterator, String s, Type type) {
         Token token = iterator.previous();
         iterator.next();
         Token token2 = iterator.next(); //";"
         if (!token2.getSign().equals(s)) {
             iterator.previous();
             errorTable.getInstance().addError(new error(type, token.getLine()));
+            System.out.println(errorTable.getInstance().getErrors().get(errorTable.getInstance().getErrors().size() - 1));
         }
     }
 
     public static void checkSemicolon(ListIterator<Token> iterator) {
-        checkSign(iterator,";",error.Type.MISSING_SEMICOLON);
+        checkSign(iterator, ";", error.Type.MISSING_SEMICOLON);
     }
 
     public static void checkRightParent(ListIterator<Token> iterator) {
-        checkSign(iterator,")", Type.MISSING_RIGHT_PARENT);
+        checkSign(iterator, ")", Type.MISSING_RIGHT_PARENT);
     }
 
     public static void checkRightBracket(ListIterator<Token> iterator) {
-        checkSign(iterator,"]", Type.MISSING_RIGHT_BRACKET);
+        checkSign(iterator, "]", Type.MISSING_RIGHT_BRACKET);
     }
 
     public enum Type {

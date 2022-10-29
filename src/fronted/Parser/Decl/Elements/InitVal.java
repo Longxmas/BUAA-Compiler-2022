@@ -7,13 +7,19 @@ import java.util.ArrayList;
 
 public class InitVal {
     private Exp Exp = null;
-    private final InitVal firstInit;
     private ArrayList<InitVal> initVals = new ArrayList<>();
 
-    public InitVal(Exp Exp,InitVal firstInit,ArrayList<InitVal> initVals) {
+    public InitVal(Exp Exp,ArrayList<InitVal> initVals) {
         this.Exp = Exp;
-        this.firstInit = firstInit;
         this.initVals = initVals;
+    }
+
+    public fronted.Parser.Expr.Elements.Exp getExp() {
+        return Exp;
+    }
+
+    public ArrayList<InitVal> getInitVals() {
+        return initVals;
     }
 
     public String toString() {
@@ -22,11 +28,15 @@ public class InitVal {
             return Exp + "<InitVal>\n";
         } else {
             sb.append(Token.printSign("{"));
+            InitVal firstInit = null;
+            if(initVals.size() > 0) {
+                firstInit = initVals.get(0);
+            }
             if (firstInit != null) {
                 sb.append(firstInit);
             }
-            for (InitVal ini : initVals) {
-                sb.append(Token.printSign(",")).append(ini);
+            for (int i = 1;i < initVals.size();i++) {
+                sb.append(Token.printSign(",")).append(initVals.get(i));
             }
             return sb.append(Token.printSign("}")) + "<InitVal>\n";
         }

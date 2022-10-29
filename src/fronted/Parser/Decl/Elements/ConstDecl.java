@@ -5,20 +5,23 @@ import fronted.Lexer.Token;
 import java.util.ArrayList;
 
 public class ConstDecl extends Decl {
-    private final ConstDef firstConstDef;
     private ArrayList<ConstDef> constDefs = new ArrayList<>();
 
-    public ConstDecl(ConstDef firstConstDef, ArrayList<ConstDef> constDefs) {
-        this.firstConstDef = firstConstDef;
+    public ConstDecl(ArrayList<ConstDef> constDefs) {
         this.constDefs = constDefs;
+    }
+
+    public ArrayList<ConstDef> getConstDefs() {
+        return constDefs;
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(Token.printSign("const")).append(Token.printSign("int"));
+        ConstDef firstConstDef = constDefs.get(0);
         sb.append(firstConstDef);
-        for (ConstDef cd : constDefs) {
-            sb.append(Token.printSign(",")).append(cd);
+        for (int i = 1; i < constDefs.size();i ++) {
+            sb.append(Token.printSign(",")).append(constDefs.get(i));
         }
         sb.append(Token.printSign(";"));
         return sb + "<ConstDecl>\n";

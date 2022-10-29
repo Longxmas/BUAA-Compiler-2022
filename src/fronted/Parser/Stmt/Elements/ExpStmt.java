@@ -6,6 +6,10 @@ import fronted.Parser.Expr.Elements.Exp;
 public class ExpStmt extends Stmt {
     private Exp exp = null;
 
+    public Exp getExp() {
+        return exp;
+    }
+
     public ExpStmt(Exp exp) {
         this.exp = exp;
     }

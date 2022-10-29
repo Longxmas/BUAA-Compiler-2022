@@ -16,6 +16,18 @@ public class VarDef {
         this.initVal = initVal;
     }
 
+    public Token getIdent() {
+        return ident;
+    }
+
+    public ArrayList<ConstExp> getConstExps() {
+        return constExps;
+    }
+
+    public InitVal getInitVal() {
+        return initVal;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(ident);

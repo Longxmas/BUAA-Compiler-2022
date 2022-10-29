@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class FuncRParams {
     ArrayList<Exp> exps = null;
     // FIRST(FuncRParams) = {"(", "+", "-", "!", ident, intConst}
-    public static ArrayList<String> firstTypes = new ArrayList<>(){
+    public static ArrayList<String> firstTypes = new ArrayList<String>(){
         {
             add(Token.wordsMap.get("("));
             add(Token.wordsMap.get("+"));
@@ -20,6 +20,10 @@ public class FuncRParams {
 
     public FuncRParams(ArrayList<Exp> exps) {
         this.exps = exps;
+    }
+
+    public ArrayList<Exp> getExps() {
+        return exps;
     }
 
     public String toString() { //无括号

@@ -10,6 +10,10 @@ public class MainFuncDef {
         this.block = block;
     }
 
+    public Block getBlock() {
+        return block;
+    }
+
     public String toString() {
         return Token.printSign("int") + Token.printSign("main")
                 + Token.printSign("(") + Token.printSign(")")

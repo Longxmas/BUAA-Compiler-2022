@@ -64,6 +64,7 @@ public class DeclParser {
         } else {
             token = iterator.next(); //"int"
             firstConstDef = parseConstDef();
+            constDefs.add(firstConstDef);
             token = iterator.next();
             while (token.getSign().equals(",")) {
                 ConstDef constDef = parseConstDef();
@@ -77,7 +78,7 @@ public class DeclParser {
             iterator.previous(); iterator.previous();*/
 
         }
-        return new ConstDecl(firstConstDef, constDefs);
+        return new ConstDecl(constDefs);
     }
 
     // <ConstDef>      := Ident { '[' <ConstExp> ']' } '=' <ConstInitVal>
@@ -105,25 +106,24 @@ public class DeclParser {
     public ConstInitVal parseConstInitVal() {
         Token token = iterator.next();
         ConstExp constExp = null;
-        ConstInitVal firstConstInitval = null;
         ArrayList<ConstInitVal> constInitVals = new ArrayList<>();
         if (!token.getSign().equals("{")) {
             iterator.previous();
             constExp = new ExpressionParser(iterator).parseConstExp();
-            return new ConstInitVal(constExp, null, new ArrayList<>()); //注意： 返回一个新的ArrayList而不是null
+            return new ConstInitVal(constExp, new ArrayList<>()); //注意： 返回一个新的ArrayList而不是null
         } else {
             token = iterator.next();
             if (token.getSign().equals("}")) {
-                return new ConstInitVal(null,null,new ArrayList<>());
+                return new ConstInitVal(null,new ArrayList<>());
             }
             iterator.previous(); // 预读记得回退
-            firstConstInitval = parseConstInitVal();
+            constInitVals.add(parseConstInitVal());
             token = iterator.next(); // "," or "}"
             while (!token.getSign().equals("}")) {
                 constInitVals.add(parseConstInitVal());
                 token = iterator.next();
             }
-            return new ConstInitVal(null, firstConstInitval, constInitVals);
+            return new ConstInitVal(null, constInitVals);
         }
     }
 
@@ -138,6 +138,7 @@ public class DeclParser {
             return null;
         } else {
             firstVarDef = parseVarDef();
+            varDefs.add(firstVarDef);
             //System.out.println("firstVarDef " + firstVarDef);
             token = iterator.next(); // "," or ";"
             while (token.getSign().equals(",")) {
@@ -148,7 +149,7 @@ public class DeclParser {
             iterator.previous(); //回退一个以检查分号
             checkSemicolon();
         }
-        return new VarDecl(firstVarDef, varDefs);
+        return new VarDecl(varDefs);
     }
 
 
@@ -184,28 +185,27 @@ public class DeclParser {
         Token token = iterator.next();
         // System.out.println("initval token = " + token);
         Exp exp = null;
-        InitVal firstInitval = null;
         ArrayList<InitVal> initVals = new ArrayList<>();
 
         if (!token.getSign().equals("{")) {
             iterator.previous();
             exp = new ExpressionParser(iterator).parseExp();
             // System.out.println("exp = " + exp);
-            return new InitVal(exp, null, new ArrayList<>());
+            return new InitVal(exp,  new ArrayList<>());
         } else {
             token = iterator.next();
             if (token.getSign().equals("}")) {
-                return new InitVal(null,null,new ArrayList<>());
+                return new InitVal(null,new ArrayList<>());
             }
             iterator.previous();
-            firstInitval = parseInitVal();
+            initVals.add(parseInitVal());
             token = iterator.next(); // "," or "}"
             while (!token.getSign().equals("}")) {
                 InitVal initVal = parseInitVal();
                 initVals.add(initVal);
                 token = iterator.next(); // "," or "}"
             }
-            return new InitVal(null, firstInitval, initVals);
+            return new InitVal(null, initVals);
         }
     }
 }

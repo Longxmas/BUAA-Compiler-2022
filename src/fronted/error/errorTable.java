@@ -22,6 +22,10 @@ public class errorTable {
         }
     }
 
+    public ArrayList<error> getErrors() {
+        return errors;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         errors.sort(Comparator.comparing(error::getLine));

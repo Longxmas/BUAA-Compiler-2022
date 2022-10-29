@@ -62,8 +62,8 @@ public class FuncParser {
     // <FuncFParams>   := <FuncFParam> { ',' <FuncFParam> }
     public FuncFParams parseFuncFParams() {
         Token token;
-        FuncFParam first = parseFuncFParam();
         ArrayList<FuncFParam> funcFParams = new ArrayList<>();
+        funcFParams.add(parseFuncFParam());
         token = iterator.next();
         while (token.getSign().equals(",")) {
             //System.out.println("FuncFParams token = " + token);
@@ -72,7 +72,7 @@ public class FuncParser {
             token = iterator.next(); // “,” or null
         }
         iterator.previous();
-        return new FuncFParams(first, funcFParams);
+        return new FuncFParams(funcFParams);
     }
 
     // <MainFuncDef>   := 'int' 'main' '(' ')' <Block>
@@ -98,7 +98,7 @@ public class FuncParser {
         if (token.getSign().equals("int")) {
             iterator.previous();
             funcFParams = parseFuncFParams();
-        }
+        } else iterator.previous();
         error.checkRightParent(iterator);
         Block block = new StmtParser(iterator, tokens).parseBlock();
         return new FuncDef(funcType, ident, funcFParams, block);

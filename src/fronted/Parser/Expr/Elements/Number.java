@@ -11,6 +11,10 @@ public class Number {
         this.token = token;
     }
 
+    public int getValue() {
+        return value;
+    }
+
     public String toString() {
         return token.toString() + "<Number>\n";
     }

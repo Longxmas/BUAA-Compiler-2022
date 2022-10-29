@@ -16,6 +16,18 @@ public class FuncFParam {
         this.constExps = constExps;
     }
 
+    public Token getIdent() {
+        return ident;
+    }
+
+    public boolean isArray() {
+        return isArray;
+    }
+
+    public ArrayList<ConstExp> getConstExps() {
+        return constExps;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(Token.printSign("int")).append(ident);

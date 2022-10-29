@@ -15,6 +15,18 @@ public class LValStmt extends Stmt {
         this.getintToken = getintToken;
     }
 
+    public LVal getlVal() {
+        return lVal;
+    }
+
+    public Exp getExp() {
+        return exp;
+    }
+
+    public Token getGetintToken() {
+        return getintToken;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(lVal.toString());

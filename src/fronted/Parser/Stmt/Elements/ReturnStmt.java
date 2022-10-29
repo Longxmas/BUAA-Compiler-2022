@@ -12,6 +12,18 @@ public class ReturnStmt extends Stmt {
         this.exp = exp;
     }
 
+    public Exp getExp() {
+        return exp;
+    }
+
+    public boolean hasValue() {
+        return exp != null ;
+    }
+
+    public int getLine() {
+        return this.returnToken.getLine();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(returnToken.toString());

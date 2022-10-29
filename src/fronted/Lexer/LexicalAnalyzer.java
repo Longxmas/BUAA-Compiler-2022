@@ -79,7 +79,7 @@ public class LexicalAnalyzer {
             getChar();
         }
         getChar();
-        Token token = new Token('"' + sb.toString() + '"', "STRCON", line);
+        Token token = new Token(sb.toString() + '"', "STRCON", line);
         ans.add(token);
 
         if (!error.checkFormatString((sb.append('"')).toString())) {
@@ -88,30 +88,8 @@ public class LexicalAnalyzer {
     }
 
     void parseSign() {
-        if (c == '+') {
-            ans.add(new Token("+", Token.wordsMap.get("+"), line));
-        } else if (c == '-') {
-            ans.add(new Token("-", Token.wordsMap.get("-"), line));
-        } else if (c == '*') {
-            ans.add(new Token("*", Token.wordsMap.get("*"), line));
-        } else if (c == '%') {
-            ans.add(new Token("%", Token.wordsMap.get("%"), line));
-        } else if (c == '{') {
-            ans.add(new Token("{", Token.wordsMap.get("{"), line));
-        } else if (c == '}') {
-            ans.add(new Token("}", Token.wordsMap.get("}"), line));
-        } else if (c == '[') {
-            ans.add(new Token("[", Token.wordsMap.get("["), line));
-        } else if (c == ']') {
-            ans.add(new Token("]", Token.wordsMap.get("]"), line));
-        } else if (c == '(') {
-            ans.add(new Token("(", Token.wordsMap.get("("), line));
-        } else if (c == ')') {
-            ans.add(new Token(")", Token.wordsMap.get(")"), line));
-        } else if (c == ';') {
-            ans.add(new Token(";", Token.wordsMap.get(";"), line));
-        } else if (c == ',') {
-            ans.add(new Token(",", Token.wordsMap.get(","), line));
+        if("+-*%{}[]();,".indexOf(c) != -1) {
+            ans.add(new Token(Character.toString(c), Token.wordsMap.get(Character.toString(c)), line));
         } else if (c == '!') {
             if (index < code.length() && code.charAt(index) == '=') {
                 getChar();

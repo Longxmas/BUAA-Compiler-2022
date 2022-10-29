@@ -111,7 +111,7 @@ public class StmtParser {
                 || token.getType().equals("IDENFR")
                 || token.getType().equals("INTCON")) {
             Exp exp = new ExpressionParser(iterator).parseExp();
-            iterator.next(); //";"
+            checkSemicolon(); //";"
             return new ReturnStmt(returnToken, exp);
         } else {
             checkSemicolon();
@@ -190,7 +190,7 @@ public class StmtParser {
             token = iterator.next();
             //System.out.println("Block token = " + token);
         }
-        return new Block(blockItems);
+        return new Block(blockItems, token);
     }
 
     // <BlockStmt> 	:= <Block>
@@ -203,7 +203,7 @@ public class StmtParser {
             blockItems.add(blockItem);
             token = iterator.next();
         }
-        return new BlockStmt(new Block(blockItems));
+        return new BlockStmt(new Block(blockItems, token));
     }
 
     //
@@ -255,7 +255,7 @@ public class StmtParser {
                 || token.getType().equals("INTCON")) {
             iterator.previous(); //退回到一开始
             Exp exp = new ExpressionParser(iterator).parseExp();
-            iterator.next(); //";"
+            checkSemicolon(); //";"
             return new ExpStmt(exp);
         } else {
             //新建一个临时的用于查看下一元素的迭代器
@@ -275,7 +275,7 @@ public class StmtParser {
                 //否则解析exp
                 iterator.previous(); //退回到一开始
                 Exp exp = new ExpressionParser(iterator).parseExp();
-                iterator.next(); //";"
+                checkSemicolon(); //";"
                 return new ExpStmt(exp);
             }
         }

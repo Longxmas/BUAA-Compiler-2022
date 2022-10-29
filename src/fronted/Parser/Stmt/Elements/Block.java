@@ -6,9 +6,19 @@ import java.util.ArrayList;
 
 public class Block {
     private ArrayList<BlockItem> blockItems;
+    private int line;
 
-    public Block(ArrayList<BlockItem> blockItems) {
+    public Block(ArrayList<BlockItem> blockItems, Token token) {
         this.blockItems = blockItems;
+        this.line = token.getLine();
+    }
+
+    public ArrayList<BlockItem> getBlockItems() {
+        return blockItems;
+    }
+
+    public int getLine() {
+        return line;
     }
 
     public String toString() {

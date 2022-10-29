@@ -17,6 +17,22 @@ public class Expression<V> {
         this.operators = operators;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public V getFirstSon() {
+        return firstSon;
+    }
+
+    public ArrayList<V> getSons() {
+        return sons;
+    }
+
+    public ArrayList<Token> getOperators() {
+        return operators;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(firstSon.toString());

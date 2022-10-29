@@ -11,6 +11,14 @@ public class BlockItem {
         this.stmt = stmt;
     }
 
+    public Decl getDecl() {
+        return decl;
+    }
+
+    public Stmt getStmt() {
+        return stmt;
+    }
+
     public String toString() {
         if (decl != null) {
             return decl.toString();

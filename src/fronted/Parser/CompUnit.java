@@ -17,6 +17,18 @@ public class CompUnit {
         this.mainFuncDef = mainFuncDef;
     }
 
+    public ArrayList<Decl> getDecls() {
+        return decls;
+    }
+
+    public ArrayList<FuncDef> getFuncDefs() {
+        return funcDefs;
+    }
+
+    public MainFuncDef getMainFuncDef() {
+        return mainFuncDef;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for(Decl decl: decls) {

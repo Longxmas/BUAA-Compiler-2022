@@ -29,6 +29,22 @@ public class UnaryExp {
         this.funcRParams = funcRParams;
     }
 
+    public ArrayList<Token> getUnaryOps() {
+        return unaryOps;
+    }
+
+    public PrimaryExp getPrimaryExp() {
+        return primaryExp;
+    }
+
+    public Token getIdent() {
+        return ident;
+    }
+
+    public FuncRParams getFuncRParams() {
+        return funcRParams;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Token op : unaryOps) {

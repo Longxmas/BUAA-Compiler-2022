@@ -3,6 +3,10 @@ package fronted.Parser.Stmt.Elements;
 public class BlockStmt extends Stmt {
     private Block block;
 
+    public Block getBlock() {
+        return block;
+    }
+
     public BlockStmt(Block block) {
         this.block = block;
     }

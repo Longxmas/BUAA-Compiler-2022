@@ -16,6 +16,18 @@ public class ConstDef {
         this.constInitVal = constInitVal;
     }
 
+    public Token getIdent() {
+        return ident;
+    }
+
+    public ArrayList<ConstExp> getConstExps() {
+        return constExps;
+    }
+
+    public ConstInitVal getConstInitVal() {
+        return constInitVal;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(ident);

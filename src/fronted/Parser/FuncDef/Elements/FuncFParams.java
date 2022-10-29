@@ -5,19 +5,21 @@ import fronted.Lexer.Token;
 import java.util.ArrayList;
 
 public class FuncFParams {
-    FuncFParam firstFuncFParam;
     ArrayList<FuncFParam> funcFParams = new ArrayList<>();
 
-    public FuncFParams(FuncFParam firstFuncFParam, ArrayList<FuncFParam> funcFParams) {
-        this.firstFuncFParam = firstFuncFParam;
+    public FuncFParams(ArrayList<FuncFParam> funcFParams) {
         this.funcFParams = funcFParams;
+    }
+
+    public ArrayList<FuncFParam> getFuncFParams() {
+        return funcFParams;
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(firstFuncFParam);
-        for(FuncFParam ffp : funcFParams) {
-            sb.append(Token.printSign(",")).append(ffp);
+        sb.append(funcFParams.get(0));
+        for(int i = 1;i < funcFParams.size();i ++) {
+            sb.append(Token.printSign(",")).append(funcFParams.get(i));
         }
         return sb + "<FuncFParams>\n";
     }

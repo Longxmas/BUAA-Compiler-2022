@@ -3,6 +3,7 @@ import fronted.Lexer.Token;
 import fronted.Parser.CompUnit;
 import fronted.Parser.CompUnitParser;
 import fronted.error.errorTable;
+import fronted.visitor.visitor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,9 +35,12 @@ public class Compiler {
         String source = read("testfile.txt");
         LexicalAnalyzer lexer = new LexicalAnalyzer(source);
         ArrayList<Token> tokens = lexer.getAns();
-        CompUnit compUnit = new CompUnitParser(tokens).parseCompUnit();
         //System.out.println(tokens);
+        CompUnit compUnit = new CompUnitParser(tokens).parseCompUnit();
         //System.out.println(compUnit);
+        visitor buildVisitor = new visitor();
+        buildVisitor.analyseCompUnit(compUnit);
+        write(compUnit.toString(), "output.txt");
         write(errorTable.getInstance().toString(), "error.txt");
     }
 

@@ -14,6 +14,14 @@ public class LVal {
         this.exps = exps;
     }
 
+    public Token getIdent() {
+        return ident;
+    }
+
+    public ArrayList<Exp> getExps() {
+        return exps;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(ident.toString());
