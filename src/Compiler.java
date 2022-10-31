@@ -42,6 +42,7 @@ public class Compiler {
         buildVisitor.analyseCompUnit(compUnit);
         write(compUnit.toString(), "output.txt");
         write(errorTable.getInstance().toString(), "error.txt");
+        write(buildVisitor.getMidCodeList().toString(), "20376208_龙泠锟_优化前中间代码.txt");
     }
 
 }

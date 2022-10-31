@@ -1,8 +1,10 @@
 package middle.Symbol;
 
+import middle.operand.Operand;
+
 import java.util.ArrayList;
 
-public class FuncTable {
+public class FuncTable implements Operand {
     private final String name;
 
     public enum ReturnType {
@@ -58,9 +60,13 @@ public class FuncTable {
         paramTable.addSymbol(symbol);
         updateLocalSize(paramTable.getSize());
     }
+
     public void updateLocalSize(int size) {
         this.localSize = Math.max(size, localSize);
     }
 
+    public String toString() {
+        return this.name;
+    }
 
 }

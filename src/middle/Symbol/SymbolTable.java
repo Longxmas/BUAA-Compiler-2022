@@ -3,7 +3,7 @@ package middle.Symbol;
 import java.util.HashMap;
 
 public class SymbolTable {
-    private int depth; //成熟
+    private int depth; //层数
     private int index; //第几块
     private final HashMap<String, Symbol> symbolMap = new HashMap<>();
     private int size = 0; //存储空间
@@ -11,7 +11,7 @@ public class SymbolTable {
 
     public SymbolTable() {
         this.depth = 0;
-        this.index = 1;
+        this.index = 0;
         this.parent = null;
     }
 
@@ -21,12 +21,8 @@ public class SymbolTable {
         this.parent = parent;
     }
 
-    public int getDepth() {
-        return depth;
-    }
-
-    public int getIndex() {
-        return index;
+    public String getLoc() {
+        return "<" + this.depth + "," + this.index + ">"; //层数，第几块
     }
 
     public SymbolTable getParent() {
@@ -45,7 +41,7 @@ public class SymbolTable {
         return size;
     }
 
-    public HashMap<String , Symbol> getSymbolMap() {
+    public HashMap<String, Symbol> getSymbolMap() {
         return this.symbolMap;
     }
 

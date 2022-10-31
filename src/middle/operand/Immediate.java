@@ -6,4 +6,12 @@ public class Immediate implements Operand{
     public Immediate(int value) {
         this.value = value;
     }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

@@ -5,6 +5,7 @@ import fronted.Parser.Expr.Elements.*;
 import fronted.error.error;
 import fronted.error.errorTable;
 import middle.Symbol.SymbolTable;
+import middle.operand.Immediate;
 
 import java.util.ArrayList;
 
@@ -59,7 +60,7 @@ public class CalExp {
             SymbolTable temp = this.symbolTable;
             while (temp != null) {
                 if (temp.getSymbolMap().containsKey(name)) {
-                    return temp.getSymbolMap().get(name).getVarInit();
+                    return ((Immediate) temp.getSymbolMap().get(name).getVarInit()).getValue();
                 } else temp = temp.getParent();
             }
             errorTable.getInstance().addError(new error(error.Type.UNDEFINED_IDENT, lVal.getIdent().getLine()));
