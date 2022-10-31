@@ -8,6 +8,7 @@ public class LVal {
     // FIRST(LVal) = { ident }
     private Token ident;
     private ArrayList<Exp> exps;
+    private boolean leftAssign = false;
 
     public LVal(Token ident, ArrayList<Exp> exps) {
         this.ident = ident;
@@ -20,6 +21,14 @@ public class LVal {
 
     public ArrayList<Exp> getExps() {
         return exps;
+    }
+
+    public void setLeftAssign(boolean leftAssign) {
+        this.leftAssign = leftAssign;
+    }
+
+    public boolean getLeftAssign() {
+        return leftAssign;
     }
 
     public String toString() {

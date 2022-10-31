@@ -37,7 +37,6 @@ public class visitor {
     private HashMap<String, SymbolTable> depth2Table = new HashMap<>();
     private FuncTable currentFuncTable = null;
     private int inWhile = 0;
-    private int leftAssign = 0;
 
     private MidCodeList midCodeList = new MidCodeList(depths, funcTables);
 
@@ -99,9 +98,8 @@ public class visitor {
 
     public void analyseLValStmt(LValStmt lValStmt) {
         LVal lval = lValStmt.getlVal();
-        leftAssign++;
+        lval.setLeftAssign(true);
         Symbol symbol = (Symbol) analyseLVal(lval);
-        leftAssign--;
         Exp exp = lValStmt.getExp();
         if (symbol != null && symbol.isConst())
             errorTable.getInstance().addError(new error(error.Type.MODIFY_CONST, lval.getIdent().getLine()));
@@ -121,6 +119,7 @@ public class visitor {
     }
 
     public Operand analyseLVal(LVal lVal) {
+        boolean leftAssign = lVal.getLeftAssign();
         Symbol symbol = findLValSymbol(lVal.getIdent().getSign(), lVal.getIdent(), true);
         if (symbol == null) return null;
         ArrayList<Exp> exps = lVal.getExps();
@@ -130,25 +129,15 @@ public class visitor {
                 return symbol;
             } else if (symbol.getDims().size() == 1) {
                 Symbol ans = new Symbol(symbol, analyseExp(exps.get(0)), Symbol.SymbolType.Var);
-                if (leftAssign == 0) {
-                    Symbol temp = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable.getLoc());
-                    midCodeList.add(new MidCode(MidCode.Op.ASSIGN, temp, ans, null));
-                    return temp;
-                }
-                return ans;
+                return checkLeftAssign(ans, leftAssign);
             }
             Operand offset1 = analyseExp(exps.get(0));
             Operand offset2 = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable.getLoc());
             midCodeList.add(new MidCode(MidCode.Op.MUL, offset1, new Immediate(symbol.getDims().get(1)), offset2));
             Operand offset = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable.getLoc());
             midCodeList.add(new MidCode(MidCode.Op.ADD, offset2, analyseExp(exps.get(1)), offset));
-            if (leftAssign == 0) {
-                Symbol temp = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable.getLoc());
-                midCodeList.add(new MidCode(MidCode.Op.ASSIGN, temp, new Symbol(symbol, offset, Symbol.SymbolType.Var), null));
-                return temp;
-            } else {
-                return new Symbol(symbol, offset, Symbol.SymbolType.Var);
-            }
+            Symbol symbol1 = new Symbol(symbol, offset, Symbol.SymbolType.Var);
+            return checkLeftAssign(symbol1, leftAssign);
         } else {
             //如果是数组
             if (symbol.getDims().size() == 1) return symbol;
@@ -156,11 +145,20 @@ public class visitor {
             if (exps.size() > 0) {
                 Operand offset1 = analyseExp(exps.get(0));
                 Operand offset = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable.getLoc());
-                midCodeList.add(new MidCode(MidCode.Op.MUL, offset1, new Immediate(symbol.getDims().get(1)), offset1));
+                midCodeList.add(new MidCode(MidCode.Op.MUL, offset1, new Immediate(symbol.getDims().get(1)), offset));
                 return new Symbol(symbol, offset, Symbol.SymbolType.Array);
             }
         }
         return null;
+    }
+
+    public Symbol checkLeftAssign(Symbol symbol, boolean leftAssign) {
+        if (!leftAssign) {
+            Symbol temp = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable.getLoc());
+            midCodeList.add(new MidCode(MidCode.Op.ASSIGN, temp, symbol, null));
+            return temp;
+        }
+        return symbol;
     }
 
     public void analyseBlockStmt(BlockStmt stmt) {
@@ -194,7 +192,7 @@ public class visitor {
         int left = 0;
         for (int i = 0; i < s.length() - 1; i++) {
             if (s.charAt(i) == '%' && s.charAt(i + 1) == 'd') {
-                midCodeList.addStr(s.substring(left, i));
+                if (i > left) midCodeList.addStr(s.substring(left, i));
                 Operand output = analyseExp(printStmt.getExps().get(number));
                 midCodeList.add(new MidCode(MidCode.Op.PRI, output, null, null));
                 number++;

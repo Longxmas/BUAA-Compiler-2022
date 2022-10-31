@@ -1,4 +1,3 @@
-#str0: ""
 const var b@<0,0>[0] = 1
 const var b@<0,0>[1] = 2
 const var b@<0,0>[2] = 3
@@ -12,46 +11,61 @@ FORM_VAR_DEF b@<1,0> fun
 FORM_VAR_DEF c@<1,0> fun
 NEW_BLOCK [1, 0]
 #T0 = b@<1,0>[6]
-#T1 = 2 MUL 3
-#T2 = #T1 ADD 2
-#T3 = c@<1,0>[#T2]
-#T4 = #T0 ADD #T3
-return #T4
+#T1 = c@<1,0>[2]
+#T2 = #T0 ADD #T1
+return #T2
 END_BLOCK
 <--------------- FUNC main--------------->
 NEW_BLOCK [1, 1]
-#T5 = 4 MUL 9
-#T6 = 1 ADD #T5
-#T7 = b@<0,0>[1]
-#T8 = b@<0,0>[5]
-#T9 = b@<0,0>[6]
-#T10 = #T8 ADD #T9
-#T11 = b@<0,0>[7]
-#T12 = b@<0,0>[6]
-#T13 = b@<0,0>[#T12]
+#T3 = 4 MUL 9
+#T4 = 1 ADD #T3
+#T5 = b@<0,0>[1]
+#T6 = b@<0,0>[5]
+#T7 = b@<0,0>[6]
+#T8 = #T6 ADD #T7
+#T9 = b@<0,0>[7]
+#T10 = b@<0,0>[6]
+#T11 = b@<0,0>[#T10]
 var a@<1,1>[0] = 1
 var a@<1,1>[1] = 3
 var a@<1,1>[2] = 5
-var a@<1,1>[3] = #T6
-var a@<1,1>[4] = #T7
+var a@<1,1>[3] = #T4
+var a@<1,1>[4] = #T5
 var a@<1,1>[5] = 2
-var a@<1,1>[6] = #T10
-var a@<1,1>[7] = #T11
-var a@<1,1>[8] = #T13
-print #str0
-#T14 = 2 MUL 3
-#T16 = 3 MUL 3
-#T17 = #T16 ADD 1
-#T18 = a@<1,1>[#T17]
-#T15 = #T14 ADD #T18
-#T19 = a@<1,1>[#T15]
+var a@<1,1>[6] = #T8
+var a@<1,1>[7] = #T9
+var a@<1,1>[8] = #T11
+#T12 = 2 MUL 3
+#T14 = 3 MUL 3
+#T15 = #T14 ADD 1
+#T16 = a@<1,1>[#T15]
+#T13 = #T12 ADD #T16
+#T17 = a@<1,1>[#T13]
 PRE_CALL fun
 PUSH_PARA_ARR b@<0,0> fun
-PUSH_PARA_ARR null fun
+#T18 = 1 MUL 3
+PUSH_PARA_ARR a@<1,1>[#T18] fun
 FUNC_CALL fun
-#T20 = 0 ADD %RTX
-#T22 = #T19 ADD #T20
-print #T22
+#T19 = 0 ADD %RTX
+#T21 = #T17 ADD #T19
+print #T21
+#T22 = 1 MUL 3
+#T23 = #T22 ADD 2
+#T24 = a@<1,1>[#T23]
+#T25 = #T24 MUL 3
+#T26 = #T25 ADD 0
+#T27 = a@<1,1>[#T26]
+var c@<1,1> = #T27
+#T28 = 1 MUL 3
+#T29 = #T28 ADD 2
+#T30 = a@<1,1>[#T29]
+#T31 = #T30 MUL 3
+#T33 = 2 MUL 3
+#T34 = #T33 ADD 1
+#T35 = a@<1,1>[#T34]
+#T32 = #T31 ADD #T35
+#T36 = 0
+a@<1,1>[#T32] = #T36
 return 0
 END_BLOCK
 <--------------- END_FUNC main--------------->
