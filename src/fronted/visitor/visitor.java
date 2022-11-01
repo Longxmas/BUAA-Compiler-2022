@@ -37,6 +37,7 @@ public class visitor {
     private HashMap<String, SymbolTable> depth2Table = new HashMap<>();
     private FuncTable currentFuncTable = null;
     private int inWhile = 0;
+    private boolean isGlobal = false;
 
     private MidCodeList midCodeList = new MidCodeList(depths, funcTables);
 
@@ -44,7 +45,8 @@ public class visitor {
         currentDepth++;
         currentTable = new SymbolTable(currentDepth, depths.get(currentDepth), currentTable);
         depth2Table.put(currentDepth + " " + depths.get(currentDepth), currentTable);
-        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
+        int index = depths.get(currentDepth);
+        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + index + "]", null, null));
         depths.set(currentDepth, depths.get(currentDepth) + 1);
         for (BlockItem blockItem : block.getBlockItems()) {
             if (blockItem.getDecl() != null) {
@@ -53,7 +55,7 @@ public class visitor {
                 analyseStmt(blockItem.getStmt());
             }
         }
-        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, (Operand) null, null, null));
+        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, "[" + currentDepth + ", " + index + "]", null, null));
         symbolTables.add(currentTable);
         currentTable = currentTable.getParent();
         currentDepth--;
@@ -567,11 +569,22 @@ public class visitor {
             hasError = true;
         }
         InitVal initVal = def.getInitVal();
+        //注意全局变量初始化
         if (initVal == null && !hasError) {
             if (exps.size() == 0) {
-                symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Var, false, null, currentTable.getLoc());
+                symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Var,
+                        false, isGlobal ? new Immediate(0) : null, currentTable.getLoc());
             } else {
-                symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Array, false, dims, new ArrayList<>(), currentTable.getLoc());
+                ArrayList<Operand> arrayInit = new ArrayList<>();
+                int length = 1;
+                for (Integer dim : dims) {
+                    length *= dim;
+                }
+                for (int i = 0; i < length; i++) {
+                    arrayInit.add(new Immediate(0));
+                }
+                symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Array,
+                        false, dims, isGlobal ? arrayInit : null, currentTable.getLoc());
             }
             midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol, null, null));
             currentTable.addSymbol(symbol);
@@ -620,6 +633,7 @@ public class visitor {
             funcTables.put(name, funcTable);
             currentFuncTable = funcTable;
             midCodeList.add(new MidCode(MidCode.Op.FUNC, name, null, null));
+            midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
             for (FuncFParam funcFParam : funcFParamsList) {
                 analyseFuncFParam(funcFParam, funcTable);
             }
@@ -652,7 +666,6 @@ public class visitor {
     }
 
     public void analyseFuncBody(Block block, FuncTable funcTable) {
-        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
         ArrayList<Stmt> stmts = new ArrayList<>();
         for (BlockItem blockItem : block.getBlockItems()) {
             if (blockItem.getDecl() != null) {
@@ -668,7 +681,7 @@ public class visitor {
                         !((ReturnStmt) stmts.get(stmts.size() - 1)).hasValue()))
         )
             errorTable.getInstance().addError(new error(error.Type.MISSING_RETURN, block.getLine()));
-        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, (Operand) null, null, null));
+        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
     }
 
     public void analyseMainFunc(MainFuncDef mainFuncDef) {
@@ -691,9 +704,11 @@ public class visitor {
     }
 
     public void analyseCompUnit(CompUnit compUnit) {
+        isGlobal = true;
         for (Decl decl : compUnit.getDecls()) {
             analyseDecl(decl);
         }
+        isGlobal = false;
         for (FuncDef funcDef : compUnit.getFuncDefs()) {
             analyseFuncDef(funcDef);
         }

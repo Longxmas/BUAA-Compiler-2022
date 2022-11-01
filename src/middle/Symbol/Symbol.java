@@ -34,6 +34,7 @@ public class Symbol implements Operand {
 
     private Operand varInit; //var
     private boolean isConst = false;
+    private boolean isGlobal = false;
     private ArrayList<Operand> arrayInit = new ArrayList<>();
     private Operand offset = null;
     private Symbol parentArray = null;
@@ -96,6 +97,14 @@ public class Symbol implements Operand {
         return address;
     }
 
+    public void setGlobal(boolean global) {
+        isGlobal = global;
+    }
+
+    public boolean isGlobal() {
+        return isGlobal;
+    }
+
     public ArrayList<Operand> getArrayInit() {
         return arrayInit;
     }
@@ -123,9 +132,7 @@ public class Symbol implements Operand {
             sb.append("@").append(loc);
         }
         if (offset != null) {
-            sb.append("[");
-            sb.append(offset);
-            sb.append("]");
+            sb.append("[").append(offset).append("]");
         }
         return sb.toString();
     }
