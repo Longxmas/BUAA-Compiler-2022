@@ -1,71 +1,337 @@
-const var b@<0,0>[0] = 1
-const var b@<0,0>[1] = 2
-const var b@<0,0>[2] = 3
-const var b@<0,0>[3] = 4
-const var b@<0,0>[4] = 5
-const var b@<0,0>[5] = 2
-const var b@<0,0>[6] = 7
-const var b@<0,0>[7] = 8
-<--------------- FUNC fun--------------->
+#str0: "hello world!\n"
+#str1: "20373460\n"
+#str2: "\n"
+#str3: "usii = "
+#str4: "\n"
+#str5: "usee = "
+#str6: "\n"
+#str7: "buf = "
+#str8: "\n"
+#str9: "getsum3 = "
+#str10: "\n"
+#str11: "\n"
+#str12: "\n"
+#str13: "jjj = "
+#str14: "\n"
+#str15: "tt1 = "
+var no1@<0,0>
+var no2@<0,0>
+var ano@<0,0>
+var bno@<0,0>
+var a@<0,0> = 4
+var b@<0,0> = 5
+var a1@<0,0>[0] = 0
+var a1@<0,0>[1] = 1
+var a1@<0,0>[2] = 2
+var x@<0,0> = 7
+var y@<0,0> = 9
+const var zero@<0,0> = 0
+const var changyiwei@<0,0>[0] = 1
+const var changyiwei@<0,0>[1] = 2
+const var changyiwei@<0,0>[2] = 3
+const var changyiwei@<0,0>[3] = 4
+const var changyiwei@<0,0>[4] = 5
+const var changerwei@<0,0>[0] = 1
+const var changerwei@<0,0>[1] = 2
+const var changerwei@<0,0>[2] = 2
+const var changerwei@<0,0>[3] = 3
+const var changerwei@<0,0>[4] = 3
+const var changerwei@<0,0>[5] = 4
+const var dududu@<0,0> = 1
+const var lululu@<0,0> = 2
+const var lalala@<0,0> = 3
+const var ttt@<0,0> = 1
+const var tututu@<0,0> = 2
+var c@<0,0> = 3
+var d@<0,0> = 5
+var e@<0,0> = 2
+var b1@<0,0>[0] = 1
+var b1@<0,0>[1] = 2
+var b1@<0,0>[2] = 2
+var b1@<0,0>[3] = 3
+var b1@<0,0>[4] = 3
+var b1@<0,0>[5] = 4
+<--------------- FUNC sum3--------------->
 NEW_BLOCK [1, 0]
-FORM_VAR_DEF b@<1,0> fun
-FORM_VAR_DEF c@<1,0> fun
-#T0 = b@<1,0>[6]
-#T1 = c@<1,0>[2]
-#T2 = #T0 ADD #T1
-return #T2
+FORM_VAR_DEF a@<1,0> sum3
+FORM_VAR_DEF b@<1,0> sum3
+FORM_VAR_DEF c@<1,0> sum3
+var num@<1,0> = 0
+#T0 = a@<1,0> ADD b@<1,0>
+#T1 = #T0 ADD c@<1,0>
+num@<1,0> = #T1
+return num@<1,0>
 END_BLOCK [1, 0]
-<--------------- FUNC main--------------->
+return 
+<--------------- FUNC mysum--------------->
 NEW_BLOCK [1, 1]
-#T3 = 4 MUL 9
-#T4 = 1 ADD #T3
-#T5 = b@<0,0>[1]
-#T6 = b@<0,0>[5]
-#T7 = b@<0,0>[6]
-#T8 = #T6 ADD #T7
-#T9 = b@<0,0>[7]
-#T10 = b@<0,0>[6]
-#T11 = b@<0,0>[#T10]
-var a@<1,1>[0] = 1
-var a@<1,1>[1] = 3
-var a@<1,1>[2] = 5
-var a@<1,1>[3] = #T4
-var a@<1,1>[4] = #T5
-var a@<1,1>[5] = 2
-var a@<1,1>[6] = #T8
-var a@<1,1>[7] = #T9
-var a@<1,1>[8] = #T11
-#T12 = 2 MUL 3
-#T14 = 3 MUL 3
-#T15 = #T14 ADD 1
-#T16 = a@<1,1>[#T15]
-#T13 = #T12 ADD #T16
-#T17 = a@<1,1>[#T13]
-PRE_CALL fun
-PUSH_PARA_ARR b@<0,0> fun
-#T18 = 1 MUL 3
-PUSH_PARA_ARR a@<1,1>[#T18] fun
-FUNC_CALL fun
-#T19 = 0 ADD %RTX
-#T21 = #T17 ADD #T19
-print #T21
-#T22 = 1 MUL 3
-#T23 = #T22 ADD 2
-#T24 = a@<1,1>[#T23]
-#T25 = #T24 MUL 3
-#T26 = #T25 ADD 0
-#T27 = a@<1,1>[#T26]
-var c@<1,1> = #T27
-#T28 = 1 MUL 3
-#T29 = #T28 ADD 2
-#T30 = a@<1,1>[#T29]
-#T31 = #T30 MUL 3
-#T33 = 2 MUL 3
-#T34 = #T33 ADD 1
-#T35 = a@<1,1>[#T34]
-#T32 = #T31 ADD #T35
-#T36 = 0
-a@<1,1>[#T32] = #T36
-return 0
+FORM_VAR_DEF a@<1,1> mysum
+FORM_VAR_DEF b@<1,1> mysum
+#T2 = a@<1,1> ADD b@<1,1>
+return #T2
 END_BLOCK [1, 1]
+return 
+<--------------- FUNC helloprint--------------->
+NEW_BLOCK [1, 2]
+print #str0
+END_BLOCK [1, 2]
+return 
+<--------------- FUNC noblock--------------->
+NEW_BLOCK [1, 3]
+END_BLOCK [1, 3]
+return 
+<--------------- FUNC sumshuzu--------------->
+NEW_BLOCK [1, 4]
+FORM_VAR_DEF a@<1,4> sumshuzu
+FORM_VAR_DEF num@<1,4> sumshuzu
+var i@<1,4> = 0
+var sum@<1,4> = 0
+NEW_BLOCK [2, 0]
+LOAD #T3 = a@<2,0>[i@<1,4>]
+#T4 = sum@<1,4> ADD #T3
+sum@<1,4> = #T4
+#T5 = i@<1,4> ADD 1
+i@<1,4> = #T5
+END_BLOCK [2, 0]
+return 
+END_BLOCK [1, 4]
+return 
+<--------------- FUNC sumshuzu1--------------->
+NEW_BLOCK [1, 5]
+FORM_VAR_DEF a@<1,5> sumshuzu1
+var i@<1,5> = 0
+var j@<1,5> = 0
+var sum@<1,5> = 0
+NEW_BLOCK [2, 1]
+j@<1,5> = 0
+NEW_BLOCK [3, 0]
+#T6 = i@<1,5> MUL 2
+#T7 = #T6 ADD j@<1,5>
+LOAD #T8 = a@<3,0>[#T7]
+#T9 = sum@<1,5> ADD #T8
+sum@<1,5> = #T9
+#T10 = j@<1,5> ADD 1
+j@<1,5> = #T10
+END_BLOCK [3, 0]
+#T11 = i@<1,5> ADD 1
+i@<1,5> = #T11
+END_BLOCK [2, 1]
+return 
+END_BLOCK [1, 5]
+return 
+<--------------- FUNC get1--------------->
+NEW_BLOCK [1, 6]
+return 1
+END_BLOCK [1, 6]
+return 
+<--------------- FUNC get2--------------->
+NEW_BLOCK [1, 7]
+FORM_VAR_DEF a@<1,7> get2
+FORM_VAR_DEF num@<1,7> get2
+var i@<1,7> = 0
+var sum@<1,7> = 0
+NEW_BLOCK [2, 2]
+LOAD #T12 = a@<2,2>[i@<1,7>]
+#T13 = sum@<1,7> ADD #T12
+sum@<1,7> = #T13
+#T14 = i@<1,7> ADD 1
+i@<1,7> = #T14
+END_BLOCK [2, 2]
+return sum@<1,7>
+END_BLOCK [1, 7]
+return 
+<--------------- FUNC get3--------------->
+NEW_BLOCK [1, 8]
+FORM_VAR_DEF a@<1,8> get3
+var i@<1,8> = 0
+var j@<1,8> = 0
+var sum@<1,8> = 0
+NEW_BLOCK [2, 3]
+j@<1,8> = 0
+NEW_BLOCK [3, 1]
+#T15 = i@<1,8> MUL 2
+#T16 = #T15 ADD j@<1,8>
+LOAD #T17 = a@<3,1>[#T16]
+#T18 = sum@<1,8> ADD #T17
+sum@<1,8> = #T18
+#T19 = j@<1,8> ADD 1
+j@<1,8> = #T19
+END_BLOCK [3, 1]
+#T20 = i@<1,8> ADD 1
+i@<1,8> = #T20
+END_BLOCK [2, 3]
+return sum@<1,8>
+END_BLOCK [1, 8]
+return 
+<--------------- FUNC main--------------->
+NEW_BLOCK [1, 9]
+var buf@<1,9> = 0
+var testArray@<1,9>
+PRE_CALL mysum
+LOAD #T21 = a1@<1,9>[0]
+PUSH_PARA #T21 mysum
+LOAD #T22 = a1@<1,9>[1]
+PUSH_PARA #T22 mysum
+FUNC_CALL mysum
+#T23 = %RTX
+buf@<1,9> = #T23
+const var lalala@<1,9> = 0
+var getsum3@<1,9> = 0
+PRE_CALL sum3
+PUSH_PARA a@<0,0> sum3
+PUSH_PARA b@<0,0> sum3
+PUSH_PARA c@<0,0> sum3
+FUNC_CALL sum3
+#T24 = %RTX
+getsum3@<1,9> = #T24
+#T25 = 3 MUL a@<0,0>
+#T26 = #T25 ADD 4
+var jjj@<1,9> = #T26
+#T27 = a@<0,0> ADD 2
+var tt@<1,9> = #T27
+#T28 = a@<0,0> MOD 2
+#T29 = #T28 ADD b@<0,0>
+#T30 = #T29 DIV 3
+#T31 = #T30 MUL c@<0,0>
+var tt1@<1,9> = #T31
+var input@<1,9> = 0
+input@<1,9> = input()
+var m1@<1,9> = 0
+#T32 = a@<0,0> ADD b@<0,0>
+m1@<1,9> = #T32
+NEW_BLOCK [2, 4]
+#T33 = m1@<1,9> ADD 1
+m1@<1,9> = #T33
+END_BLOCK [2, 4]
+NEW_BLOCK [2, 5]
+#T34 = m1@<1,9> ADD 1
+m1@<1,9> = #T34
+END_BLOCK [2, 5]
+NEW_BLOCK [2, 6]
+#T35 = m1@<1,9> ADD 1
+m1@<1,9> = #T35
+END_BLOCK [2, 6]
+#T36 = m1@<1,9> ADD 3
+#T37 = #T36 MUL 2
+#T38 = #T37 MOD jjj@<1,9>
+#T39 = #T38 DIV 3
+#T40 = tt@<1,9> MUL tt1@<1,9>
+#T41 = 5 DIV tt1@<1,9>
+#T42 = #T40 SUB #T41
+NEW_BLOCK [2, 7]
+#T43 = m1@<1,9> ADD 1
+m1@<1,9> = #T43
+END_BLOCK [2, 7]
+#T44 = 0 SUB jjj@<1,9>
+NEW_BLOCK [2, 8]
+#T45 = m1@<1,9> ADD 1
+m1@<1,9> = #T45
+END_BLOCK [2, 8]
+PRE_CALL get1
+FUNC_CALL get1
+#T46 = %RTX
+PRE_CALL mysum
+PUSH_PARA 1 mysum
+PUSH_PARA 2 mysum
+FUNC_CALL mysum
+#T47 = %RTX
+PRE_CALL get2
+PUSH_PARA_ARR a1@<0,0> get2
+PUSH_PARA 1 get2
+FUNC_CALL get2
+#T48 = %RTX
+PRE_CALL get3
+PUSH_PARA_ARR null get3
+FUNC_CALL get3
+#T49 = %RTX
+NEW_BLOCK [2, 9]
+#T50 = m1@<1,9> ADD 1
+m1@<1,9> = #T50
+END_BLOCK [2, 9]
+var testgantan@<1,9> = 1
+NEW_BLOCK [2, 10]
+#T51 = m1@<1,9> ADD 1
+m1@<1,9> = #T51
+END_BLOCK [2, 10]
+var usee@<1,9> = 0
+var usii@<1,9> = 0
+NEW_BLOCK [2, 11]
+#T52 = usee@<1,9> MOD 2
+NEW_BLOCK [3, 2]
+#T53 = usii@<1,9> ADD 1
+usii@<1,9> = #T53
+END_BLOCK [3, 2]
+NEW_BLOCK [3, 3]
+#T54 = usii@<1,9> ADD 2
+usii@<1,9> = #T54
+END_BLOCK [3, 3]
+NEW_BLOCK [3, 4]
+END_BLOCK [3, 4]
+NEW_BLOCK [3, 5]
+END_BLOCK [3, 5]
+#T55 = usee@<1,9> ADD 1
+usee@<1,9> = #T55
+END_BLOCK [2, 11]
+var i@<1,9> = 0
+var j@<1,9> = 0
+NEW_BLOCK [2, 12]
+LOAD #T56 = a1@<2,12>[i@<1,9>]
+#T57 = #T56 ADD 1
+SAVE a1@<2,12>[i@<1,9>] = #T57
+#T58 = i@<1,9> ADD 1
+i@<1,9> = #T58
+END_BLOCK [2, 12]
+NEW_BLOCK [2, 13]
+j@<1,9> = 0
+NEW_BLOCK [3, 6]
+#T59 = i@<1,9> MUL 2
+#T60 = #T59 ADD j@<1,9>
+#T61 = i@<1,9> MUL 2
+#T62 = #T61 ADD j@<1,9>
+LOAD #T63 = b1@<3,6>[#T62]
+#T64 = #T63 ADD 1
+SAVE b1@<3,6>[#T60] = #T64
+#T65 = j@<1,9> ADD 1
+j@<1,9> = #T65
+END_BLOCK [3, 6]
+#T66 = i@<1,9> ADD 1
+i@<1,9> = #T66
+END_BLOCK [2, 13]
+PRE_CALL sumshuzu
+PUSH_PARA_ARR a1@<0,0> sumshuzu
+PUSH_PARA 2 sumshuzu
+FUNC_CALL sumshuzu
+#T67 = %RTX
+PRE_CALL sumshuzu1
+PUSH_PARA_ARR null sumshuzu1
+FUNC_CALL sumshuzu1
+#T68 = %RTX
+print #str1
+print m1@<1,9>
+print #str2
+print #str3
+print usii@<1,9>
+print #str4
+print #str5
+print usee@<1,9>
+print #str6
+print #str7
+print buf@<1,9>
+print #str8
+print #str9
+print getsum3@<1,9>
+print #str10
+LOAD #T69 = a1@<1,9>[0]
+print #T69
+print #str11
+LOAD #T70 = b1@<1,9>[0]
+print #T70
+print #str12
+print #str13
+print jjj@<1,9>
+print #str14
+print #str15
+print tt1@<1,9>
+return 0
+END_BLOCK [1, 9]
 <--------------- END_FUNC main--------------->

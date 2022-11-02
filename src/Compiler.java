@@ -1,9 +1,10 @@
-import fronted.Lexer.LexicalAnalyzer;
-import fronted.Lexer.Token;
-import fronted.Parser.CompUnit;
-import fronted.Parser.CompUnitParser;
-import fronted.error.errorTable;
-import fronted.visitor.visitor;
+import backend.MipsGenerator;
+import frontend.Lexer.LexicalAnalyzer;
+import frontend.Lexer.Token;
+import frontend.Parser.CompUnit;
+import frontend.Parser.CompUnitParser;
+import frontend.error.errorTable;
+import frontend.visitor.visitor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,6 +44,11 @@ public class Compiler {
         write(compUnit.toString(), "output.txt");
         write(errorTable.getInstance().toString(), "error.txt");
         write(buildVisitor.getMidCodeList().toString(), "20376208_龙泠锟_优化前中间代码.txt");
+
+        MipsGenerator mipsGenerator = new MipsGenerator(buildVisitor);
+        mipsGenerator.calculateAddress();
+        mipsGenerator.generateCode();
+        write(mipsGenerator.getMipsCodes().toString(), "mips.txt");
     }
 
 }

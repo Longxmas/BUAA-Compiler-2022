@@ -10,11 +10,72 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="error a,i,j,k">
-      <change afterPath="$PROJECT_DIR$/src/middle/Code/MidCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/backend/Mips/Instr.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/backend/Mips/MipsCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/backend/Mips/MipsCodes.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/backend/MipsGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/backend/RegAlloc.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fronted/visitor/visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fronted/visitor/visitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" beforeDir="false" afterPath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Compiler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Lexer/LexicalAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Lexer/LexicalAnalyzer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Lexer/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Lexer/Token.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/CompUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/CompUnit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/CompUnitParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/CompUnitParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/DeclParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/DeclParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDecl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/ConstDecl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/ConstDef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstInitVal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/ConstInitVal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/Decl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/Decl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/InitVal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/InitVal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDecl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/VarDecl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/VarDef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/AddExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/AddExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Cond.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/Cond.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/ConstExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/ConstExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/EqExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/EqExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Exp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/Exp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Expression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/Expression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/FuncRParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/FuncRParams.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/LAndExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/LAndExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/LOrExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/LOrExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/LVal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/LVal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/MulExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/MulExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/Number.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/Number.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/PrimaryExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/PrimaryExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/RelExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/RelExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/UnaryExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/UnaryExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Expr/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Expr/ExpressionParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/FuncDef/Elements/FuncDef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncFParam.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/FuncDef/Elements/FuncFParam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncFParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/FuncDef/Elements/FuncFParams.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/FuncType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/FuncDef/Elements/FuncType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/Elements/MainFuncDef.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/FuncDef/Elements/MainFuncDef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/FuncDef/FuncParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/FuncDef/FuncParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BlockItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/BlockItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BlockStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/BlockStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/BreakStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/BreakStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ContinueStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/ContinueStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ExpStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/ExpStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/IfElseStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/IfElseStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/LValStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/LValStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/PrintStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/PrintStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/ReturnStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/ReturnStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/Stmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/Stmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/Elements/WhileStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/WhileStmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/Parser/Stmt/StmtParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/StmtParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/error/error.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/error/error.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/error/errorTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/error/errorTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/visitor/CalExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/visitor/CalExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fronted/visitor/visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/visitor/visitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middle/Code/MidCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Code/MidCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middle/Code/MidCodeList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Code/MidCodeList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middle/Symbol/FuncTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Symbol/FuncTable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/middle/Symbol/Symbol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Symbol/Symbol.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/middle/Symbol/SymbolTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Symbol/SymbolTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/testfile.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,16 +93,16 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/fronted/Lexer/LexicalAnalyzer.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Lexer/Token.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/DeclParser.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDecl.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstDef.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/ConstInitVal.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/InitVal.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Decl/Elements/VarDef.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Expr/Elements/AddExp.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/fronted/Parser/Stmt/StmtParser.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Lexer/LexicalAnalyzer.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Lexer/Token.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Decl/DeclParser.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/ConstDecl.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/ConstDef.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/ConstInitVal.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/InitVal.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Decl/Elements/VarDef.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Expr/Elements/AddExp.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/frontend/Parser/Stmt/StmtParser.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -114,7 +175,8 @@
       <workItem from="1667102823446" duration="773000" />
       <workItem from="1667103643996" duration="31098000" />
       <workItem from="1667233148422" duration="2665000" />
-      <workItem from="1667302866959" duration="3310000" />
+      <workItem from="1667302866959" duration="14045000" />
+      <workItem from="1667376141738" duration="25166000" />
     </task>
     <task id="LOCAL-00001" summary="error a,i,j,k">
       <created>1666708675705</created>

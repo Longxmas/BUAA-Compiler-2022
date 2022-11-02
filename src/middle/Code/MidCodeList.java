@@ -1,12 +1,9 @@
 package middle.Code;
 
-import fronted.Lexer.Token;
 import middle.Symbol.FuncTable;
-import middle.Symbol.Symbol;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Stack;
 
 public class MidCodeList {
     private ArrayList<MidCode> midCodes = new ArrayList<>();
@@ -48,10 +45,10 @@ public class MidCodeList {
     }
 
     public String toString() {
-        System.out.println(midCodes.size());
+        //System.out.println(midCodes.size());
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < strCons.size(); i++) {
-            sb.append("#str" + i + ": " + strCons.get(i)).append("\n");
+            sb.append("#str").append(i).append(": ").append(strCons.get(i)).append("\n");
         }
         for (MidCode midCode : midCodes) {
             sb.append(midCode.toString()).append("\n");
@@ -61,5 +58,9 @@ public class MidCodeList {
 
     public ArrayList<String> getStrCons() {
         return strCons;
+    }
+
+    public ArrayList<MidCode> getMidCodes() {
+        return midCodes;
     }
 }

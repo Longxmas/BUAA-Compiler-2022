@@ -12,20 +12,21 @@ public class FuncTable implements Operand {
     }
 
     private final ReturnType returnType;
-    private SymbolTable paramTable;
+    private ArrayList<SymbolTable> symbolTables = new ArrayList<>();
+    private final ArrayList<String> paramsNames = new ArrayList<>();
     private final ArrayList<Symbol> params = new ArrayList<>();
-    private int localSize = 0;
+    private int stackSize = 0;
     private final boolean isMain;
 
     public FuncTable(String name, ReturnType returnType, SymbolTable symbolTable) {
         this.name = name;
-        this.paramTable = symbolTable;
+        this.symbolTables.add(symbolTable);
         this.isMain = false;
         this.returnType = returnType;
     }
 
     public FuncTable(SymbolTable globalSymbolTable) {
-        this.paramTable = globalSymbolTable;
+        this.symbolTables.add(globalSymbolTable);
         this.name = "main";
         this.isMain = true;
         this.returnType = ReturnType.intFunc;
@@ -47,26 +48,47 @@ public class FuncTable implements Operand {
         return this.params;
     }
 
-    public SymbolTable getParamTable() {
-        return this.paramTable;
-    }
-
-    public int getLocalSize() {
-        return this.localSize;
-    }
-
     public void addParam(Symbol symbol) {
         this.params.add(symbol);
-        paramTable.addSymbol(symbol);
-        updateLocalSize(paramTable.getSize());
+        this.paramsNames.add(symbol.getName());
     }
 
-    public void updateLocalSize(int size) {
-        this.localSize = Math.max(size, localSize);
+    public ArrayList<String> getParamsNames() {
+        return paramsNames;
     }
 
     public String toString() {
         return this.name;
     }
 
+    public void addSymbolTable(SymbolTable symbolTable) {
+        this.symbolTables.add(symbolTable);
+    }
+
+    public ArrayList<SymbolTable> getSymbolTables() {
+        return symbolTables;
+    }
+
+    public void setStackSize() {
+        int size = 0;
+        int ismain = this.isMain ? 1 : 0;
+        for (int i = ismain; i < symbolTables.size(); i++) {
+            SymbolTable symbolTable = symbolTables.get(i);
+            for (Symbol symbol : symbolTable.getSymbols()) {
+                //System.out.println(this.name + " " + symbol.getName());
+                if (symbol.getSymbolType() == Symbol.SymbolType.Var) {
+                    symbol.setAddress(size);
+                    size += 4;
+                } else {
+                    symbol.setAddress(size);
+                    size += 4 * (params.contains(symbol) ? 1 : symbol.getArraySize());
+                }
+            }
+        }
+        this.stackSize = size;
+    }
+
+    public int getStackSize() {
+        return stackSize;
+    }
 }

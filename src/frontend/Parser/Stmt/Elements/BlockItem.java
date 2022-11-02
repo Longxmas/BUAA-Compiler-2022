@@ -1,0 +1,29 @@
+package frontend.Parser.Stmt.Elements;
+
+import frontend.Parser.Decl.Elements.Decl;
+
+public class BlockItem {
+    private Decl decl = null;
+    private Stmt stmt = null;
+
+    public BlockItem(Decl decl, Stmt stmt) {
+        this.decl = decl;
+        this.stmt = stmt;
+    }
+
+    public Decl getDecl() {
+        return decl;
+    }
+
+    public Stmt getStmt() {
+        return stmt;
+    }
+
+    public String toString() {
+        if (decl != null) {
+            return decl.toString();
+        } else {
+            return stmt.toString();
+        }
+    }
+}

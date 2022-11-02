@@ -3,18 +3,20 @@ package middle.Code;
 import middle.operand.Operand;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MidCode {
     public enum Op {
         ASSIGN, GETINT, PRI,
         ADD, SUB, MUL, DIV, MOD, NOT, AND, OR,
         FUNC, END_FUNC, PRE_CALL, FUNC_CALL, PUSH_PARA, PUSH_PARA_ARR, FORM_VAR_DEF,
-        RETURN,VAR_DEF,CONST_DEF,ARR_SAVE,ARR_LOAD,
-        GEN_LABEL,JUMP,JUMP_IF,SET,
-        NEW_BLOCK,END_BLOCK
+        RETURN, VAR_DEF, CONST_DEF, ARR_SAVE, ARR_LOAD,
+        GEN_LABEL, JUMP, JUMP_IF, SET,
+        NEW_BLOCK, END_BLOCK
     }
 
-    public final HashMap<Op, String> toString = new HashMap<Op, String>() {{
+    private final HashMap<Op, String> toString = new HashMap<Op, String>() {{
         put(Op.ADD, "ADD");
         put(Op.SUB, "SUB");
         put(Op.MUL, "MUL");
@@ -49,6 +51,11 @@ public class MidCode {
     private String operand2 = null;
     private String result = null;
 
+
+    public MidCode(Op operator) {
+        this.operator = operator;
+    }
+
     public MidCode(Op operator, Operand operand1, Operand operand2, Operand result) {
         this.operator = operator;
         this.operand1 = (operand1 != null) ? operand1.toString() : null;
@@ -76,14 +83,45 @@ public class MidCode {
         if (operator.equals(Op.FUNC) || operator.equals(Op.END_FUNC)) {
             return "<--------------- " + toString.get(operator) + " " + operand1 + "--------------->";
         }
-        if (operator.equals(Op.ASSIGN) || operator.equals(Op.ARR_SAVE) || operator.equals(Op.ARR_LOAD)) {
+        if (operator.equals(Op.ARR_LOAD)) return "LOAD " + operand1 + " = " + operand2;
+        if (operator.equals(Op.ARR_SAVE)) return "SAVE " + operand1 + " = " + operand2;
+        if (operator.equals(Op.ASSIGN)) {
             return operand1 + " = " + operand2;
         }
-        if (operator.equals(Op.RETURN)) return "return " + operand1;
+        if (operator.equals(Op.RETURN)) return "return " + (operand1 == null ? "" : operand1);
         if (result != null) return result + " = " + operand1 + " " + toString.get(operator) + " " + operand2;
         if (operand1 == null && operand2 == null) return toString.get(operator);
         if (operand2 == null) return toString.get(operator) + " " + operand1;
         return toString.get(operator) + " " + operand1 + " " + operand2;
     }
 
+    public Op getOperator() {
+        return operator;
+    }
+
+    public String getOperand1() {
+        return operand1;
+    }
+
+    public String getOperand1Name() {
+        return operand1.split("@")[0];
+    }
+
+    public Integer getOperand1Index() {
+        String regex = "\\[(.*?)]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(operand1);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        return null;
+    }
+
+    public String getOperand2() {
+        return operand2;
+    }
+
+    public String getResult() {
+        return result;
+    }
 }

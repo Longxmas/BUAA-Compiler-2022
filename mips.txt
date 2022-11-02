@@ -1,0 +1,124 @@
+.data
+array_ano: .space 400
+array_bno: .space 2400
+array_a1: .space 12
+array_changyiwei: .space 20
+array_changerwei: .space 24
+array_b1: .space 24
+str0: .asciiz "hello world!\n"
+str1: .asciiz "20373460\n"
+str2: .asciiz "\n"
+str3: .asciiz "usii = "
+str4: .asciiz "\n"
+str5: .asciiz "usee = "
+str6: .asciiz "\n"
+str7: .asciiz "buf = "
+str8: .asciiz "\n"
+str9: .asciiz "getsum3 = "
+str10: .asciiz "\n"
+str11: .asciiz "\n"
+str12: .asciiz "\n"
+str13: .asciiz "jjj = "
+str14: .asciiz "\n"
+str15: .asciiz "tt1 = "
+.text
+addi $gp, $gp, 2940
+<------- var no1@<0,0> ------->
+<------- var no2@<0,0> ------->
+<------- var ano@<0,0> ------->
+<------- var bno@<0,0> ------->
+<------- var a@<0,0> = 4 ------->
+li $t0, 4
+sw $t0, -132($gp)
+<------- var b@<0,0> = 5 ------->
+li $t0, 5
+sw $t0, -128($gp)
+<------- var a1@<0,0>[0] = 0 ------->
+<------- var a1@<0,0>[1] = 1 ------->
+li $t0, 1
+sw $t0, array_a1+4($zero)
+<------- var a1@<0,0>[2] = 2 ------->
+li $t0, 2
+sw $t0, array_a1+8($zero)
+<------- var x@<0,0> = 7 ------->
+li $t0, 7
+sw $t0, -112($gp)
+<------- var y@<0,0> = 9 ------->
+li $t0, 9
+sw $t0, -108($gp)
+<------- const var zero@<0,0> = 0 ------->
+<------- const var changyiwei@<0,0>[0] = 1 ------->
+li $t0, 1
+sw $t0, array_changyiwei+0($zero)
+<------- const var changyiwei@<0,0>[1] = 2 ------->
+li $t0, 2
+sw $t0, array_changyiwei+4($zero)
+<------- const var changyiwei@<0,0>[2] = 3 ------->
+li $t0, 3
+sw $t0, array_changyiwei+8($zero)
+<------- const var changyiwei@<0,0>[3] = 4 ------->
+li $t0, 4
+sw $t0, array_changyiwei+12($zero)
+<------- const var changyiwei@<0,0>[4] = 5 ------->
+li $t0, 5
+sw $t0, array_changyiwei+16($zero)
+<------- const var changerwei@<0,0>[0] = 1 ------->
+li $t0, 1
+sw $t0, array_changerwei+0($zero)
+<------- const var changerwei@<0,0>[1] = 2 ------->
+li $t0, 2
+sw $t0, array_changerwei+4($zero)
+<------- const var changerwei@<0,0>[2] = 2 ------->
+li $t0, 2
+sw $t0, array_changerwei+8($zero)
+<------- const var changerwei@<0,0>[3] = 3 ------->
+li $t0, 3
+sw $t0, array_changerwei+12($zero)
+<------- const var changerwei@<0,0>[4] = 3 ------->
+li $t0, 3
+sw $t0, array_changerwei+16($zero)
+<------- const var changerwei@<0,0>[5] = 4 ------->
+li $t0, 4
+sw $t0, array_changerwei+20($zero)
+<------- const var dududu@<0,0> = 1 ------->
+li $t0, 1
+sw $t0, -56($gp)
+<------- const var lululu@<0,0> = 2 ------->
+li $t0, 2
+sw $t0, -52($gp)
+<------- const var lalala@<0,0> = 3 ------->
+li $t0, 3
+sw $t0, -48($gp)
+<------- const var ttt@<0,0> = 1 ------->
+li $t0, 1
+sw $t0, -44($gp)
+<------- const var tututu@<0,0> = 2 ------->
+li $t0, 2
+sw $t0, -40($gp)
+<------- var c@<0,0> = 3 ------->
+li $t0, 3
+sw $t0, -36($gp)
+<------- var d@<0,0> = 5 ------->
+li $t0, 5
+sw $t0, -32($gp)
+<------- var e@<0,0> = 2 ------->
+li $t0, 2
+sw $t0, -28($gp)
+<------- var b1@<0,0>[0] = 1 ------->
+li $t0, 1
+sw $t0, array_b1+0($zero)
+<------- var b1@<0,0>[1] = 2 ------->
+li $t0, 2
+sw $t0, array_b1+4($zero)
+<------- var b1@<0,0>[2] = 2 ------->
+li $t0, 2
+sw $t0, array_b1+8($zero)
+<------- var b1@<0,0>[3] = 3 ------->
+li $t0, 3
+sw $t0, array_b1+12($zero)
+<------- var b1@<0,0>[4] = 3 ------->
+li $t0, 3
+sw $t0, array_b1+16($zero)
+<------- var b1@<0,0>[5] = 4 ------->
+li $t0, 4
+sw $t0, array_b1+20($zero)

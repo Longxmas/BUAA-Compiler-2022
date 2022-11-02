@@ -22,7 +22,7 @@ public class Symbol implements Operand {
     private final String name;
     private final BasicType basicType; //int
     private String loc;
-    private int address = 0; // 基地址
+    private int address = 0; // 相对于$gp或者$sp的偏移量
 
     public enum SymbolType {
         Var,
@@ -38,37 +38,41 @@ public class Symbol implements Operand {
     private ArrayList<Operand> arrayInit = new ArrayList<>();
     private Operand offset = null;
     private Symbol parentArray = null;
+    private SymbolTable parentSymbolTable;
 
     //var or const
-    public Symbol(String name, BasicType basicType, SymbolType type, boolean isConst, Operand varInit, String loc) {
+    public Symbol(String name, BasicType basicType, SymbolType type, boolean isConst, Operand varInit, SymbolTable symbolTable) {
         this.name = name;
         this.basicType = basicType;
         this.varInit = varInit;
         this.isConst = isConst;
         this.type = type;
-        this.loc = loc;
+        this.loc = symbolTable.getLoc();
+        this.parentSymbolTable = symbolTable;
     }
 
 
     //array
     public Symbol(String name, BasicType basicType, SymbolType type, boolean isConst, ArrayList<Integer> dims
-            , ArrayList<Operand> arrayInit, String loc) {
+            , ArrayList<Operand> arrayInit, SymbolTable symbolTable) {
         this.name = name;
         this.basicType = basicType;
         this.type = type;
         this.isConst = isConst;
         this.dims = dims;
         this.arrayInit = arrayInit;
-        this.loc = loc;
+        this.loc = symbolTable.getLoc();
+        this.parentSymbolTable = symbolTable;
     }
 
     //highDim array -> lowDim array / var
-    public Symbol(Symbol parentArray, Operand offset, SymbolType type) {
+    public Symbol(Symbol parentArray, Operand offset, SymbolType type, SymbolTable symbolTable) {
         this.name = parentArray.getName();
         this.basicType = parentArray.getBasicType();
         this.type = type;
-        this.isConst = parentArray.isConst();
-        this.loc = parentArray.get_loc();
+        this.isConst = parentArray.isConst(); //TODO::还需要判断offset是否是const
+        this.loc = symbolTable.getLoc();
+        this.parentSymbolTable = symbolTable;
         this.parentArray = parentArray;
         this.offset = offset;
     }
@@ -81,7 +85,7 @@ public class Symbol implements Operand {
         return this.type;
     }
 
-    private BasicType getBasicType() {
+    public BasicType getBasicType() {
         return this.basicType;
     }
 
@@ -95,6 +99,10 @@ public class Symbol implements Operand {
 
     public int getAddress() {
         return address;
+    }
+
+    public void setAddress(int address) {
+        this.address = address;
     }
 
     public void setGlobal(boolean global) {
@@ -125,10 +133,19 @@ public class Symbol implements Operand {
         return offset;
     }
 
+    public int getArraySize() {
+        if (dims.isEmpty()) return 1;
+        int size = 1;
+        for (Integer dim : dims) {
+            size *= dim;
+        }
+        return size;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.name);
-        if (!this.name.contains("#")){
+        if (!this.name.contains("#")) {
             sb.append("@").append(loc);
         }
         if (offset != null) {
@@ -137,8 +154,9 @@ public class Symbol implements Operand {
         return sb.toString();
     }
 
-    public static Symbol tempVar(MidCodeList midCodeList, BasicType basicType, String loc) {
-        Symbol temp = new Symbol("#T" + midCodeList.tmpIndex, basicType, SymbolType.Var, false, null, loc);
+    public static Symbol tempVar(MidCodeList midCodeList, BasicType basicType,SymbolTable symbolTable) {
+        Symbol temp = new Symbol("#T" + midCodeList.tmpIndex, basicType, SymbolType.Var, false, null, symbolTable);
+        symbolTable.addSymbol(temp);
         midCodeList.addTempIndex();
         return temp;
     }

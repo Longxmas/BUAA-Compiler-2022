@@ -1,11 +1,13 @@
 package middle.Symbol;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SymbolTable {
     private int depth; //层数
     private int index; //第几块
     private final HashMap<String, Symbol> symbolMap = new HashMap<>();
+    private ArrayList<Symbol> symbols = new ArrayList<>();
     private int size = 0; //存储空间
     private final SymbolTable parent;
 
@@ -35,10 +37,15 @@ public class SymbolTable {
 
     public void addSymbol(Symbol symbol) {
         this.symbolMap.put(symbol.getName(), symbol);
+        symbols.add(symbol);
     }
 
     public int getSize() {
         return size;
+    }
+
+    public ArrayList<Symbol> getSymbols() {
+        return symbols;
     }
 
     public HashMap<String, Symbol> getSymbolMap() {
