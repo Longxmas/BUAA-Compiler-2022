@@ -12,6 +12,7 @@ public class MidCodeList {
     public int tmpIndex;
     public int label_cnt;
     public ArrayList<String> strCons;
+    public HashMap<String, String> strConMap = new HashMap<>();
 
     //block location description (necessary ?)
     private int depth;
@@ -37,6 +38,7 @@ public class MidCodeList {
 
     public void addStr(String s) {
         this.strCons.add('"' + s + '"');
+        this.strConMap.put("#str" + (strCons.size() - 1), '"' + s + '"');
         this.midCodes.add(new MidCode(MidCode.Op.PRI, "#str" + (strCons.size() - 1), null, null));
     }
 
@@ -62,5 +64,9 @@ public class MidCodeList {
 
     public ArrayList<MidCode> getMidCodes() {
         return midCodes;
+    }
+
+    public HashMap<String, String> getStrConMap() {
+        return strConMap;
     }
 }

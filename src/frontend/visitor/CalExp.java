@@ -44,7 +44,7 @@ public class CalExp {
         return ans;
     }
 
-    private int calculateMulExp(MulExp mulexp, boolean isGlobal) throws Exception {
+    public int calculateMulExp(MulExp mulexp, boolean isGlobal) throws Exception {
         int ans = calculateUnaryExp(mulexp.getFirstSon(), isGlobal);
         ArrayList<Token> operators = mulexp.getOperators();
         for (int i = 0; i < mulexp.getSons().size(); i++) {
@@ -57,7 +57,7 @@ public class CalExp {
         return ans;
     }
 
-    private int calculateUnaryExp(UnaryExp unaryExp, boolean isGlobal) throws Exception {
+    public int calculateUnaryExp(UnaryExp unaryExp, boolean isGlobal) throws Exception {
         int sign = 1;
         for (Token token : unaryExp.getUnaryOps()) {
             if (token.getSign().equals("-")) sign *= -1;
@@ -66,14 +66,14 @@ public class CalExp {
         else return sign * calculatePrimaryExp(unaryExp.getPrimaryExp(), isGlobal);
     }
 
-    private int calculatePrimaryExp(PrimaryExp primaryExp, boolean isGlobal) throws Exception {
+    public int calculatePrimaryExp(PrimaryExp primaryExp, boolean isGlobal) throws Exception {
         if (primaryExp.getNumber() != null) return primaryExp.getNumber().getValue();
         else if (primaryExp.getExp() != null) return calculateAddExp(primaryExp.getExp().getFirstSon(), isGlobal);
         else if (primaryExp.getlVal() != null) return calculateLVal(primaryExp.getlVal(), isGlobal);
         else throw new Exception();
     }
 
-    private int calculateLVal(LVal getlVal, boolean isGlobal) throws Exception {
+    public int calculateLVal(LVal getlVal, boolean isGlobal) throws Exception {
         String name = getlVal.getIdent().getSign();
         SymbolTable temp = this.symbolTable;
         while (temp != null) {

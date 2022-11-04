@@ -1,15 +1,74 @@
 package backend;
 
+import backend.Mips.LoadInstr;
+import backend.Mips.MipsCode;
+import backend.Mips.MipsCodes;
+import backend.Mips.StoreInstr;
 import middle.Symbol.Symbol;
 
 import java.util.*;
 
 public class RegAlloc {
-    // 可用来自由分配的寄存器：从 t0($8) 到 t9($25); v0($2)为函数返回值, v1($3)存储立即数, a0($4)到a3($7)为函数调用参数
+    private MipsCodes mipsCodes;
+    // 可用来自由分配的寄存器：从 t0($8) 到 t9($25); v0($2)为函数返回值, v1($3)存储立即数, a0($4)作为系统调用参数
     // gp($28)为全局指针, sp($29)为栈指针, fp($30)为帧指针, ra($31)为返回地址
-    private static final HashSet<Integer> allocatableRegs =
-            new HashSet<>(Arrays.asList(8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25));
+    public static final HashSet<Integer> allocatableRegs =
+            new HashSet<>(Arrays.asList(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 30));
 
+    public static final HashMap<String, Integer> REG_SAVED_PLACE = new HashMap<String, Integer>() {{
+        put("$ra", 0);
+        put("$t0", 4);
+        put("$t1", 2 * 4);
+        put("$t2", 3 * 4);
+        put("$t3", 4 * 4);
+        put("$t4", 5 * 4);
+        put("$t5", 6 * 4);
+        put("$t6", 7 * 4);
+        put("$t7", 8 * 4);
+        put("$t8", 9 * 4);
+        put("$t9", 10 * 4);
+        put("$s0", 11 * 4);
+        put("$s1", 12 * 4);
+        put("$s2", 13 * 4);
+        put("$s3", 14 * 4);
+        put("$s4", 15 * 4);
+        put("$s5", 16 * 4);
+        put("$s6", 17 * 4);
+        put("$s7", 18 * 4);
+        put("$fp", 19 * 4);
+        put("$a1", 20 * 4);
+        put("$a2", 21 * 4);
+        put("$a3", 22 * 4);
+    }};
+
+    public RegAlloc(MipsCodes mipsCodes) {
+        this.mipsCodes = mipsCodes;
+    }
+
+    public static HashMap<Integer, String> intReg2SymReg = new HashMap<Integer, String>() {{
+        put(5, "$a1");
+        put(6, "$a2");
+        put(7, "$a3");
+        put(8, "$t0");
+        put(9, "$t1");
+        put(10, "$t2");
+        put(11, "$t3");
+        put(12, "$t4");
+        put(13, "$t5");
+        put(14, "$t6");
+        put(15, "$t7");
+        put(16, "$t8");
+        put(17, "$t9");
+        put(18, "$s0");
+        put(19, "$s1");
+        put(20, "$s2");
+        put(21, "$s3");
+        put(22, "$s4");
+        put(23, "$s5");
+        put(24, "$s6");
+        put(25, "$s7");
+        put(30, "$fp");
+    }};
 
     // 当前可自由分配的寄存器
     private final HashSet<Integer> freeRegs = new HashSet<>(allocatableRegs);
@@ -28,13 +87,15 @@ public class RegAlloc {
         return !freeRegs.isEmpty();
     }
 
-    // 在有自由寄存器的前提下, 为变量符号分配寄存器, 返回分配的寄存器号
-    public int allocRegister(Symbol symbol) {
+    // 为变量符号分配寄存器, 返回分配的寄存器号
+    // 如果没有空余的寄存器，则需要将一个已分配的寄存器的值存入内存，然后再分配
+    public int allocRegister(Symbol symbol, boolean needToLoad) {
         if (symbolToReg.containsKey(symbol)) {
             return symbolToReg.get(symbol);
         }
         if (freeRegs.isEmpty()) {
-            throw new RuntimeException("No free register");
+            int reg = regToReplace();
+            cancelAlloc(reg);
         }
         // 获取一个空闲寄存器
         int register = freeRegs.iterator().next();
@@ -45,6 +106,12 @@ public class RegAlloc {
         symbolToReg.put(symbol, register);
         // 将寄存器放入 Cache
         regCache.add(register);
+        //mipsCodes.addCode(new MipsCode("#<---- Alloc " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->"));
+        //System.out.println("#<---- Alloc " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->");
+        if (needToLoad) {
+            mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw,
+                    intReg2SymReg.get(register), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress()))));
+        }
         return register;
     }
 
@@ -53,12 +120,17 @@ public class RegAlloc {
         return symbolToReg.containsKey(symbol);
     }
 
-    // 获取符号当前所在的寄存器
-    public int getRegOfSymbol(Symbol symbol) {
+    // 获取符号当前所在的寄存器，如果尚未被分配，则分配一个寄存器并返回
+    public int getRegOfSymbol(Symbol symbol, boolean needToLoad) {
         if (!symbolToReg.containsKey(symbol)) {
-            throw new AssertionError(String.format("%s hasn't been alloc register!", symbol.toString()));
+            //System.out.println(symbol);
+            return allocRegister(symbol, needToLoad);
         }
         return symbolToReg.get(symbol);
+    }
+
+    public String getRegString(int reg) {
+        return intReg2SymReg.get(reg);
     }
 
     // 获取可被换出的寄存器编号
@@ -73,6 +145,10 @@ public class RegAlloc {
         }
         freeRegs.add(register);
         Symbol symbol = allocatedRegs.remove(register);
+        mipsCodes.addCode(new MipsCode("#<---- Cancel " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->"));
+        //将符号写回内存
+        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
+                intReg2SymReg.get(register), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress()))));
         symbolToReg.remove(symbol);
         regCache.remove(register);
         return symbol;
@@ -83,11 +159,16 @@ public class RegAlloc {
         return allocatedRegs;
     }
 
+
     // 清空分配状态
     public void clear() {
+        /*for (int reg : allocatedRegs.keySet()) {
+            cancelAlloc(reg);
+        }*/
         allocatedRegs.clear();
         symbolToReg.clear();
         regCache.clear();
+
         freeRegs.clear();
         freeRegs.addAll(allocatableRegs);
     }

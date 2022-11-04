@@ -44,8 +44,8 @@ public class visitor {
         currentDepth++;
         currentTable = new SymbolTable(currentDepth, depths.get(currentDepth), currentTable);
         currentFuncTable.addSymbolTable(currentTable);
-        depth2Table.put(currentDepth + " " + depths.get(currentDepth), currentTable);
         int index = depths.get(currentDepth);
+        depth2Table.put("[" + currentDepth + ", " + index + "]", currentTable);
         midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + index + "]", null, null));
         depths.set(currentDepth, depths.get(currentDepth) + 1);
         for (BlockItem blockItem : block.getBlockItems()) {
@@ -120,7 +120,11 @@ public class visitor {
     }
 
     public Operand analyseLVal(LVal lVal) {
-        //这里解析出来的变量（不包括临时变量）都不会添加到符号表中
+        try {
+            return new Immediate(new CalExp(currentTable).calculateLVal(lVal, false));
+        } catch (Exception e) {
+            //   e.printStackTrace();
+        }
         boolean leftAssign = lVal.getLeftAssign();
         Symbol symbol = findLValSymbol(lVal.getIdent().getSign(), lVal.getIdent(), true);
         if (symbol == null) return null;
@@ -148,11 +152,11 @@ public class visitor {
                 return checkLeftAssign(symbol1, leftAssign);
             }
         } else {
-            //如果是数组
-            if (symbol.getDims().size() == 1) return symbol;
-            //二维数组中取一部分，算出偏移量
+            // 如果是二维数组中取一部分，算出偏移量，不需要检查是否在右侧，应为不用加载，返回的应当是地址
+            // 一维数组不可能存在这种情况
             if (exps.size() > 0) {
                 Operand offset1 = analyseExp(exps.get(0));
+                System.out.println("offset = " + offset1);
                 if (offset1 instanceof Immediate) {
                     int offset = ((Immediate) offset1).getValue() * symbol.getDims().get(1);
                     return new Symbol(symbol, new Immediate(offset), Symbol.SymbolType.Array, currentTable);
@@ -161,10 +165,10 @@ public class visitor {
                     midCodeList.add(new MidCode(MidCode.Op.MUL, offset1, new Immediate(symbol.getDims().get(1)), offset));
                     return new Symbol(symbol, offset, Symbol.SymbolType.Array, currentTable);
                 }
-
             }
+            //直接返回数组
+            return symbol;
         }
-        return null;
     }
 
     public Symbol checkLeftAssign(Symbol symbol, boolean leftAssign) {
@@ -290,6 +294,11 @@ public class visitor {
     }
 
     public Operand analyseAddExp(AddExp exp) {
+        try {
+            return new Immediate(new CalExp(currentTable).calculateAddExp(exp, false));
+        } catch (Exception e) {
+            //   e.printStackTrace();
+        }
         Operand operand = analyseMulExp(exp.getFirstSon());
         if (exp.getSons().isEmpty()) {
             return operand;
@@ -310,6 +319,11 @@ public class visitor {
     }
 
     public Operand analyseMulExp(MulExp exp) {
+        try {
+            return new Immediate(new CalExp(currentTable).calculateMulExp(exp, false));
+        } catch (Exception e) {
+            //   e.printStackTrace();
+        }
         Operand operand = analyseUnaryExp(exp.getFirstSon());
         if (exp.getSons().isEmpty()) {
             return operand;
@@ -332,6 +346,11 @@ public class visitor {
     }
 
     public Operand analyseUnaryExp(UnaryExp exp) {
+        try {
+            return new Immediate(new CalExp(currentTable).calculateUnaryExp(exp, false));
+        } catch (Exception e) {
+            //   e.printStackTrace();
+        }
         Symbol unary = null;
         //注意需要处理unaryOp
         int sign = 1;
@@ -398,9 +417,9 @@ public class visitor {
             }
             //  <错误处理的垃圾代码，暂时不想改>
             if (type.equals(Symbol.SymbolType.Var)) {
-                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA, paramOperand, funcTable, null));
+                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA, paramOperand.toString(), funcTable.getName(), arg.getName()));
             } else {
-                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA_ARR, paramOperand, funcTable, null));
+                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA_ARR, paramOperand.toString(), funcTable.getName(), arg.getName()));
             }
         }
         midCodeList.add(new MidCode(MidCode.Op.FUNC_CALL, funcTable, null, null));
@@ -539,6 +558,7 @@ public class visitor {
         int num = initVal == null ? 0 : initVal.getInitVals().size();
         if (initVal != null) {
             for (InitVal init : initVal.getInitVals()) {
+                if (init.getExp() == null) continue;
                 if (isGlobal) initArray.add(new CalExp(currentTable).calculateExp(init.getExp(), true));
                 else initArray.add(analyseExp(init.getExp()));
             }
@@ -584,10 +604,10 @@ public class visitor {
         } else if (initVal != null && !hasError) {
             Exp exp = initVal.getExp();
             if (exp != null) {
+                Operand varInit = isGlobal ? new CalExp(currentTable).calculateExp(exp, true) : analyseExp(exp);
                 symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Var, false,
-                        isGlobal ? new CalExp(currentTable).calculateExp(exp, true) : null, currentTable);
-                midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol,
-                        isGlobal ? new CalExp(currentTable).calculateExp(exp, true) : analyseExp(exp), null));
+                        varInit, currentTable);
+                midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol, varInit, null));
             } else {
                 //Array
                 ArrayList<Operand> initArray = new ArrayList<>();
@@ -599,15 +619,20 @@ public class visitor {
                     //2维数组
                     int dim1 = dims.get(0); //第一个维度
                     int dim2 = dims.get(1); //第二个维度
-                    for (int i = 0; i < Math.min(dim1, initVal.getInitVals().size()); i++) {
-                        partOfAnalyseArrayDef(initVal.getInitVals().get(i), initArray, dim2);
-                    }
-                    for (int i = Math.min(dim1, initVal.getInitVals().size()); i < dim1; i++) {
-                        partOfAnalyseArrayDef(null, initArray, dim2);
+                    if (initVal.getInitVals().get(0).getExp() != null) {
+                        partOfAnalyseArrayDef(initVal, initArray, dim1 * dim2);
+                    } else {
+                        //System.out.println(ident.getSign() + " " + initVal.getInitVals().size());
+                        for (int i = 0; i < Math.min(dim1, initVal.getInitVals().size()); i++) {
+                            partOfAnalyseArrayDef(initVal.getInitVals().get(i), initArray, dim2);
+                        }
+                        for (int i = Math.min(dim1, initVal.getInitVals().size()); i < dim1; i++) {
+                            partOfAnalyseArrayDef(null, initArray, dim2);
+                        }
                     }
                 }
                 symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Array, false, dims,
-                        isGlobal ? initArray : null, currentTable);
+                        initArray, currentTable);
                 for (int i = 0; i < initArray.size(); i++) {
                     midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol + "[" + i + "]", initArray.get(i).toString(), null));
                 }
@@ -629,7 +654,7 @@ public class visitor {
         } else {
             currentDepth++;
             currentTable = new SymbolTable(currentDepth, depths.get(currentDepth), currentTable);
-            depth2Table.put(currentDepth + " " + depths.get(currentDepth), currentTable);
+            depth2Table.put("[" + currentDepth + ", " + depths.get(currentDepth) + "]", currentTable);
 
             FuncTable funcTable = new FuncTable(name, returnType, currentTable);
             funcMap.put(name, funcTable);
@@ -637,12 +662,12 @@ public class visitor {
             currentFuncTable = funcTable; //设置当前函数表
 
             midCodeList.add(new MidCode(MidCode.Op.FUNC, name, null, null));
-            midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
             for (FuncFParam funcFParam : funcFParamsList) {
                 analyseFuncFParam(funcFParam, funcTable);
             }
             analyseFuncBody(funcDef.getBlock(), funcTable);
             midCodeList.add(new MidCode(MidCode.Op.RETURN));
+            midCodeList.add(new MidCode(MidCode.Op.END_FUNC, name, null, null));
 
             depths.set(currentDepth, depths.get(currentDepth) + 1);
             currentTable = currentTable.getParent();
@@ -673,6 +698,7 @@ public class visitor {
     }
 
     public void analyseFuncBody(Block block, FuncTable funcTable) {
+        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
         ArrayList<Stmt> stmts = new ArrayList<>();
         for (BlockItem blockItem : block.getBlockItems()) {
             if (blockItem.getDecl() != null) {

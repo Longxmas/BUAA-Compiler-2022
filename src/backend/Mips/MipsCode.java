@@ -26,12 +26,18 @@ public class MipsCode {
         this.operand3 = operand3;
     }
 
+    public MipsCode(Instr instr) {
+        this.instr = instr;
+        this.instrString = instr.toString();
+    }
+
     public String toString() {
+        if (instr != null) return instr.toString();
         StringBuilder sb = new StringBuilder();
         sb.append(instrString);
-        if (operand1 != null) sb.append(" , ").append(operand1);
-        if (operand2 != null) sb.append(" , ").append(operand2);
-        if (operand3 != null) sb.append(" , ").append(operand3);
+        if (operand1 != null) sb.append(", ").append(operand1);
+        if (operand2 != null) sb.append(", ").append(operand2);
+        if (operand3 != null) sb.append(", ").append(operand3);
         return sb.toString();
     }
 }

@@ -23,6 +23,7 @@ public class Symbol implements Operand {
     private final BasicType basicType; //int
     private String loc;
     private int address = 0; // 相对于$gp或者$sp的偏移量
+    private int arrayAddress = 0;
 
     public enum SymbolType {
         Var,
@@ -70,8 +71,8 @@ public class Symbol implements Operand {
         this.name = parentArray.getName();
         this.basicType = parentArray.getBasicType();
         this.type = type;
-        this.isConst = parentArray.isConst(); //TODO::还需要判断offset是否是const
-        this.loc = symbolTable.getLoc();
+        this.isConst = parentArray.isConst();
+        this.loc = parentArray.get_loc();
         this.parentSymbolTable = symbolTable;
         this.parentArray = parentArray;
         this.offset = offset;
@@ -133,6 +134,14 @@ public class Symbol implements Operand {
         return offset;
     }
 
+    public int getArrayAddress() {
+        return arrayAddress;
+    }
+
+    public void setArrayAddress(int arrayAddress) {
+        this.arrayAddress = arrayAddress;
+    }
+
     public int getArraySize() {
         if (dims.isEmpty()) return 1;
         int size = 1;
@@ -142,6 +151,9 @@ public class Symbol implements Operand {
         return size;
     }
 
+    public boolean isTemp() {
+        return this.name.contains("#T");
+    }
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.name);

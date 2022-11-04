@@ -9,12 +9,24 @@ import java.util.regex.Pattern;
 public class MidCode {
     public enum Op {
         ASSIGN, GETINT, PRI,
-        ADD, SUB, MUL, DIV, MOD, NOT, AND, OR,
+        ADD, SUB, MUL, DIV, MOD, NOT, AND, OR, XOR,
         FUNC, END_FUNC, PRE_CALL, FUNC_CALL, PUSH_PARA, PUSH_PARA_ARR, FORM_VAR_DEF,
         RETURN, VAR_DEF, CONST_DEF, ARR_SAVE, ARR_LOAD,
         GEN_LABEL, JUMP, JUMP_IF, SET,
         NEW_BLOCK, END_BLOCK
     }
+
+    public static HashMap<Op, String> arithOp = new HashMap<Op, String>() {{
+        put(Op.ADD, "ADD");
+        put(Op.SUB, "SUB");
+        put(Op.MUL, "MUL");
+        put(Op.DIV, "DIV");
+        put(Op.MOD, "MOD");
+        put(Op.NOT, "NOT");
+        put(Op.AND, "AND");
+        put(Op.OR, "OR");
+        put(Op.XOR, "XOR");
+    }};
 
     private final HashMap<Op, String> toString = new HashMap<Op, String>() {{
         put(Op.ADD, "ADD");
@@ -24,6 +36,9 @@ public class MidCode {
         put(Op.MOD, "MOD");
         put(Op.PRI, "PRI");
         put(Op.NOT, "NOT");
+        put(Op.AND, "AND");
+        put(Op.OR, "OR");
+        put(Op.XOR, "XOR");
         put(Op.FUNC, "FUNC");
         put(Op.END_FUNC, "END_FUNC");
         put(Op.PRE_CALL, "PRE_CALL");
@@ -73,11 +88,8 @@ public class MidCode {
 
     public String toString() {
         if (operator.equals(Op.GETINT)) return operand1 + " = " + "input()";
-        if (operator.equals(Op.VAR_DEF)) {
+        if (operator.equals(Op.VAR_DEF) || operator.equals(Op.CONST_DEF)) {
             return "var " + operand1 + (operand2 == null ? "" : " = " + operand2);
-        }
-        if (operator.equals(Op.CONST_DEF)) {
-            return "const var " + operand1 + (operand2 == null ? "" : " = " + operand2);
         }
         if (operator.equals(Op.PRI)) return "print " + operand1;
         if (operator.equals(Op.FUNC) || operator.equals(Op.END_FUNC)) {
@@ -86,7 +98,10 @@ public class MidCode {
         if (operator.equals(Op.ARR_LOAD)) return "LOAD " + operand1 + " = " + operand2;
         if (operator.equals(Op.ARR_SAVE)) return "SAVE " + operand1 + " = " + operand2;
         if (operator.equals(Op.ASSIGN)) {
-            return operand1 + " = " + operand2;
+            return "ASSIGN " + operand1 + " = " + operand2;
+        }
+        if (operator.equals(Op.PUSH_PARA) || operator.equals(Op.PUSH_PARA_ARR)) {
+            return "PUSH_PARA " + operand1 + " #function: " + operand2 + " #arg: " + result;
         }
         if (operator.equals(Op.RETURN)) return "return " + (operand1 == null ? "" : operand1);
         if (result != null) return result + " = " + operand1 + " " + toString.get(operator) + " " + operand2;
@@ -103,8 +118,9 @@ public class MidCode {
         return operand1;
     }
 
-    public String getOperand1Name() {
-        return operand1.split("@")[0];
+    public String getOperandName(String operand) {
+        if (operand.contains("@")) return operand.split("@")[0];
+        return operand;
     }
 
     public Integer getOperand1Index() {
@@ -113,6 +129,16 @@ public class MidCode {
         Matcher matcher = pattern.matcher(operand1);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group(1));
+        }
+        return null;
+    }
+
+    public String getLSArrayIndex(String s) {
+        String regex = "\\[(.*?)]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(s);
+        if (matcher.find()) {
+            return matcher.group(1);
         }
         return null;
     }
