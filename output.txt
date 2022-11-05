@@ -1,44 +1,15 @@
 INTTK int
-<FuncType>
-IDENFR add
-LPARENT (
-INTTK int
-IDENFR a
-<FuncFParam>
-COMMA ,
-INTTK int
-IDENFR b
-<FuncFParam>
-<FuncFParams>
-RPARENT )
-LBRACE {
-RETURNTK return
-IDENFR a
-<LVal>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-PLUS +
-IDENFR b
-<LVal>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
+IDENFR test
+<VarDef>
 SEMICN ;
-<Stmt>
-RBRACE }
-<Block>
-<FuncDef>
+<VarDecl>
 INTTK int
 MAINTK main
 LPARENT (
 RPARENT )
 LBRACE {
 INTTK int
-IDENFR a
+IDENFR x
 ASSIGN =
 INTCON 1
 <Number>
@@ -49,12 +20,17 @@ INTCON 1
 <Exp>
 <InitVal>
 <VarDef>
-COMMA ,
-IDENFR b
+SEMICN ;
+<VarDecl>
+INTTK int
+IDENFR y
 ASSIGN =
-INTCON 2
-<Number>
+MINU -
+<UnaryOp>
+IDENFR x
+<LVal>
 <PrimaryExp>
+<UnaryExp>
 <UnaryExp>
 <MulExp>
 <AddExp>
@@ -65,65 +41,17 @@ SEMICN ;
 <VarDecl>
 PRINTFTK printf
 LPARENT (
-STRCON "Hello world! %d"
-COMMA ,
-IDENFR add
-LPARENT (
-IDENFR add
-LPARENT (
-IDENFR a
-<LVal>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-COMMA ,
-IDENFR b
-<LVal>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<FuncRParams>
+STRCON "Hello World\n"
 RPARENT )
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-COMMA ,
-IDENFR add
+SEMICN ;
+<Stmt>
+PRINTFTK printf
 LPARENT (
-IDENFR b
-<LVal>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
+STRCON "%d"
 COMMA ,
-IDENFR a
+IDENFR y
 <LVal>
 <PrimaryExp>
-<UnaryExp>
-<MulExp>
-MULT *
-IDENFR b
-<LVal>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<FuncRParams>
-RPARENT )
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<FuncRParams>
-RPARENT )
 <UnaryExp>
 <MulExp>
 <AddExp>

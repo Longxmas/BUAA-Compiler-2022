@@ -1,35 +1,12 @@
-#str0: "Hello world! "
-<--------------- FUNC add--------------->
-FORM_VAR_DEF a@<1,0> add
-FORM_VAR_DEF b@<1,0> add
-NEW_BLOCK [1, 0]
-#T0 = a@<1,0> ADD b@<1,0>
-return #T0
-END_BLOCK [1, 0]
-return 
-<--------------- END_FUNC add--------------->
+#str0: "Hello World\n"
+var test@<0,0>
 <--------------- FUNC main--------------->
-NEW_BLOCK [1, 1]
-var a@<1,1> = 1
-var b@<1,1> = 2
+NEW_BLOCK [1, 0]
+var x@<1,0> = 1
+#T0 = 0 SUB x@<1,0>
+var y@<1,0> = #T0
 print #str0
-PRE_CALL add
-PRE_CALL add
-PUSH_PARA a@<1,1> #function: add #arg: a
-PUSH_PARA b@<1,1> #function: add #arg: b
-FUNC_CALL add
-ASSIGN #T1 = %RTX
-PUSH_PARA #T1 #function: add #arg: a
-PRE_CALL add
-PUSH_PARA b@<1,1> #function: add #arg: a
-#T2 = a@<1,1> MUL b@<1,1>
-PUSH_PARA #T2 #function: add #arg: b
-FUNC_CALL add
-ASSIGN #T3 = %RTX
-PUSH_PARA #T3 #function: add #arg: b
-FUNC_CALL add
-ASSIGN #T4 = %RTX
-print #T4
+print y@<1,0>
 return 0
-END_BLOCK [1, 1]
+END_BLOCK [1, 0]
 <--------------- END_FUNC main--------------->

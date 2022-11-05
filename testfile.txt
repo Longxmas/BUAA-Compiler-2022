@@ -1,9 +1,8 @@
-int add(int a, int b) {
-    return a+b;
-}
-
-int main() {
-    int a = 1, b = 2
-    printf("Hello world! %d", add(add(a, b), add(b, a * b)));
+int test;
+int main(){
+    int x = 1;
+    int y = -x;
+    printf("Hello World\n");
+    printf("%d",y);
     return 0;
 }
