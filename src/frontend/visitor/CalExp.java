@@ -59,11 +59,16 @@ public class CalExp {
 
     public int calculateUnaryExp(UnaryExp unaryExp, boolean isGlobal) throws Exception {
         int sign = 1;
+        boolean not = false;
         for (Token token : unaryExp.getUnaryOps()) {
             if (token.getSign().equals("-")) sign *= -1;
+            if (token.getSign().equals("!")) not = true;
         }
         if (unaryExp.getPrimaryExp() == null) throw new Exception();
-        else return sign * calculatePrimaryExp(unaryExp.getPrimaryExp(), isGlobal);
+        else {
+            if (!not) return sign * calculatePrimaryExp(unaryExp.getPrimaryExp(), isGlobal);
+            return calculatePrimaryExp(unaryExp.getPrimaryExp(), isGlobal) == 0 ? 1 : 0;
+        }
     }
 
     public int calculatePrimaryExp(PrimaryExp primaryExp, boolean isGlobal) throws Exception {
@@ -99,6 +104,60 @@ public class CalExp {
         }
         errorTable.getInstance().addError(new error(error.Type.UNDEFINED_IDENT, getlVal.getIdent().getLine()));
         return 0;
+    }
+
+    public int calculateRelExp(RelExp relExp) throws Exception {
+        int ans = calculateAddExp(relExp.getFirstSon(), false);
+        ArrayList<Token> operators = relExp.getOperators();
+        for (int i = 0; i < relExp.getSons().size(); i++) {
+            switch (operators.get(i).getSign()) {
+                case "<":
+                    ans = ans < calculateAddExp(relExp.getSons().get(i), false) ? 1 : 0;
+                    break;
+                case ">":
+                    ans = ans > calculateAddExp(relExp.getSons().get(i), false) ? 1 : 0;
+                    break;
+                case "<=":
+                    ans = ans <= calculateAddExp(relExp.getSons().get(i), false) ? 1 : 0;
+                    break;
+                case ">=":
+                    ans = ans >= calculateAddExp(relExp.getSons().get(i), false) ? 1 : 0;
+                    break;
+            }
+        }
+        return ans;
+    }
+
+    public int calculateEqExp(EqExp eqExp) throws Exception {
+        int ans = calculateRelExp(eqExp.getFirstSon());
+        ArrayList<Token> operators = eqExp.getOperators();
+        for (int i = 0; i < eqExp.getSons().size(); i++) {
+            switch (operators.get(i).getSign()) {
+                case "==":
+                    ans = ans == calculateRelExp(eqExp.getSons().get(i)) ? 1 : 0;
+                    break;
+                case "!=":
+                    ans = ans != calculateRelExp(eqExp.getSons().get(i)) ? 1 : 0;
+                    break;
+            }
+        }
+        return ans;
+    }
+
+    public int calculateLAndExp(LAndExp lAndExp) throws Exception {
+        int ans = calculateEqExp(lAndExp.getFirstSon());
+        for (int i = 0; i < lAndExp.getSons().size(); i++) {
+            ans = ans == 1 && calculateEqExp(lAndExp.getSons().get(i)) == 1 ? 1 : 0;
+        }
+        return ans;
+    }
+
+    public int calculateLOrExp(LOrExp lOrExp) throws Exception {
+        int ans = calculateLAndExp(lOrExp.getFirstSon());
+        for (int i = 0; i < lOrExp.getSons().size(); i++) {
+            ans = ans == 1 || calculateLAndExp(lOrExp.getSons().get(i)) == 1 ? 1 : 0;
+        }
+        return ans;
     }
 
 }

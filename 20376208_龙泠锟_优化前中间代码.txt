@@ -1,12 +1,111 @@
-#str0: "Hello World\n"
-var test@<0,0>
-<--------------- FUNC main--------------->
+#str0: "a = "
+#str1: ", c = "
+#str2: "\n"
+var a@<0,0> = 2
+<--------------- FUNC add2--------------->
+FORM_VAR_DEF c@<1,0> add2
+FORM_VAR_DEF b@<1,0> add2
 NEW_BLOCK [1, 0]
-var x@<1,0> = 1
-#T0 = 0 SUB x@<1,0>
-var y@<1,0> = #T0
-print #str0
-print y@<1,0>
-return 0
+#T0 = a@<0,0> ADD 1
+ASSIGN a@<0,0> = #T0
+#T1 = a@<0,0> ADD b@<1,0>
+return #T1
 END_BLOCK [1, 0]
+return 
+<--------------- END_FUNC add2--------------->
+<--------------- FUNC add3--------------->
+FORM_VAR_DEF a@<1,1> add3
+FORM_VAR_DEF b@<1,1> add3
+FORM_VAR_DEF c@<1,1> add3
+NEW_BLOCK [1, 1]
+#T2 = a@<1,1> ADD b@<1,1>
+#T3 = #T2 ADD c@<1,1>
+return #T3
+END_BLOCK [1, 1]
+return 
+<--------------- END_FUNC add3--------------->
+<--------------- FUNC main--------------->
+NEW_BLOCK [1, 2]
+var b@<1,2> = 2
+PRE_CALL add2
+PUSH_PARA a@<0,0> #function: add2 #arg: c
+PUSH_PARA b@<1,2> #function: add2 #arg: b
+FUNC_CALL add2
+ASSIGN #T4 = %RTX
+var c@<1,2> = #T4
+SET #T5 := c@<1,2> == 0
+JUMP_IF #T5 == 0 and_label_0
+#T6 = c@<1,2> ADD 1
+SET #T7 := #T6 < b@<1,2>
+JUMP_IF #T7 != 0 or_label_0
+GEN_LABEL and_label_0:
+JUMP_IF a@<0,0> == 0 and_label_1
+JUMP_IF c@<1,2> != 0 or_label_0
+GEN_LABEL and_label_1:
+JUMP_IF b@<1,2> != 0 or_label_0
+JUMP_IF b@<1,2> == 0 cond_label_0
+GEN_LABEL or_label_0:
+NEW_BLOCK [2, 0]
+#T8 = a@<0,0> ADD 1
+ASSIGN a@<0,0> = #T8
+END_BLOCK [2, 0]
+JUMP ifElse_end_label_0
+GEN_LABEL cond_label_0:
+NEW_BLOCK [2, 1]
+#T9 = a@<0,0> ADD 2
+ASSIGN a@<0,0> = #T9
+SET #T10 := 3 < a@<0,0>
+JUMP_IF #T10 != 0 or_label_1
+JUMP_IF #T10 == 0 cond_label_1
+GEN_LABEL or_label_1:
+NEW_BLOCK [3, 0]
+#T11 = a@<0,0> ADD 1
+ASSIGN a@<0,0> = #T11
+END_BLOCK [3, 0]
+JUMP ifElse_end_label_0
+GEN_LABEL cond_label_1:
+NEW_BLOCK [3, 1]
+SET #T12 := a@<0,0> < 2
+JUMP_IF #T12 != 0 or_label_2
+JUMP_IF #T12 == 0 cond_label_2
+GEN_LABEL or_label_2:
+#T13 = a@<0,0> ADD 2
+ASSIGN a@<0,0> = #T13
+GEN_LABEL cond_label_2:
+END_BLOCK [3, 1]
+GEN_LABEL ifElse_end_label_0:
+GEN_LABEL while_judge_label_0:
+SET #T14 := a@<0,0> < 10
+JUMP_IF #T14 != 0 or_label_3
+JUMP_IF #T14 == 0 cond_label_3
+GEN_LABEL or_label_3:
+GEN_LABEL while_label_0:
+NEW_BLOCK [3, 2]
+#T15 = a@<0,0> ADD 1
+ASSIGN a@<0,0> = #T15
+JUMP while_label_0
+JUMP cond_label_3
+END_BLOCK [3, 2]
+JUMP while_judge_label_0
+GEN_LABEL cond_label_3:
+END_BLOCK [2, 1]
+GEN_LABEL ifElse_end_label_1:
+print #str0
+print a@<0,0>
+print #str1
+print c@<1,2>
+print #str2
+PRE_CALL add2
+PUSH_PARA a@<0,0> #function: add2 #arg: c
+PRE_CALL add2
+PUSH_PARA a@<0,0> #function: add2 #arg: c
+PUSH_PARA b@<1,2> #function: add2 #arg: b
+FUNC_CALL add2
+ASSIGN #T16 = %RTX
+PUSH_PARA #T16 #function: add2 #arg: b
+FUNC_CALL add2
+ASSIGN #T17 = %RTX
+print #T17
+return 0
+END_BLOCK [1, 2]
 <--------------- END_FUNC main--------------->

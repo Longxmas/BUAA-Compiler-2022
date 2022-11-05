@@ -10,7 +10,12 @@ public class MidCodeList {
 
     //indexCount
     public int tmpIndex;
-    public int label_cnt;
+    public int andLabelCnt = 0;
+    public int orLabelCnt = 0;
+    public int condLabelCnt = 0;
+    public int ifElseLabelCnt = 0;
+    public int whileLabelCnt = 0;
+    public int whileJudgeLabelCnt = 0;
     public ArrayList<String> strCons;
     public HashMap<String, String> strConMap = new HashMap<>();
 
@@ -25,7 +30,6 @@ public class MidCodeList {
         this.depths = depths;
         this.depth = 0;
         this.index = 0;
-        this.label_cnt = 0;
         this.tmpIndex = 0;
         this.curFuncTables = funcTables;
         this.midCodes = new ArrayList<>();

@@ -1,8 +1,33 @@
-int test;
-int main(){
-    int x = 1;
-    int y = -x;
-    printf("Hello World\n");
-    printf("%d",y);
+int a = 2;
+
+int add2(int c, int b) {
+    a = a + 1;
+    return a+b;
+}
+
+int add3(int a, int b, int c) {
+    return a+b+c;
+}
+
+int main() {
+    int b = 2;
+    int c = add2(a, b);
+    if (!c && b > c + 1 || a && c || b ) {
+        a = a + 1;
+    } else {
+        a = a + 2;
+        if (a > 3) {
+            a = a + 1;
+        } else {
+            if (a < 2 ) a = a + 2;
+        }
+        while (a < 10) {
+            a = a + 1;
+            continue;
+            break;
+        }
+    }
+    printf("a = %d, c = %d\n", a, c);
+    printf("%d", add2(a, add2(a,b)));
     return 0;
 }

@@ -1,30 +1,254 @@
 .data
-str0: .asciiz "Hello World\n"
+str0: .asciiz "a = "
+str1: .asciiz ", c = "
+str2: .asciiz "\n"
 .text
 addi $gp, $gp, 4
-#<------- var test@<0,0> ------->
-addi $sp, $sp, -12
+#<------- var a@<0,0> = 2 ------->
+li $t0, 2
+sw $t0, -4($gp)
+addi $sp, $sp, -64
 j func_label_main
+#<--------------- FUNC add2--------------->
+func_label_add2:
+#<------- FORM_VAR_DEF c@<1,0> add2 ------->
+lw $a1, 4($sp)
+#<------- FORM_VAR_DEF b@<1,0> add2 ------->
+lw $a2, 8($sp)
+#<---- NEW_BLOCK [1, 0] ---->
+#<---- #T0 = a@<0,0> ADD 1 ---->
+lw $a3, -4($gp)
+addi $t0, $a3, 1
+#<---- ASSIGN a@<0,0> = #T0 ---->
+addi $a3, $t0, 0
+#<---- Cancel $a3 for a ---->
+sw $a3, -4($gp)
+#<---- #T1 = a@<0,0> ADD b@<1,0> ---->
+lw $a3, -4($gp)
+addu $t1, $a3, $a2
+#<---- return #T1 ---->
+move $v0, $t1
+jr $ra
+#<---- END_BLOCK [1, 0] ---->
+jr $ra
+#<--------------- FUNC add3--------------->
+func_label_add3:
+#<------- FORM_VAR_DEF a@<1,1> add3 ------->
+lw $a1, 4($sp)
+#<------- FORM_VAR_DEF b@<1,1> add3 ------->
+lw $a2, 8($sp)
+#<------- FORM_VAR_DEF c@<1,1> add3 ------->
+lw $a3, 12($sp)
+#<---- NEW_BLOCK [1, 1] ---->
+#<---- #T2 = a@<1,1> ADD b@<1,1> ---->
+addu $t0, $a1, $a2
+#<---- #T3 = #T2 ADD c@<1,1> ---->
+addu $t1, $t0, $a3
+#<---- return #T3 ---->
+move $v0, $t1
+jr $ra
+#<---- END_BLOCK [1, 1] ---->
+jr $ra
 #<--------------- FUNC main--------------->
 func_label_main:
-#<---- NEW_BLOCK [1, 0] ---->
-#<---- var x@<1,0> = 1 ---->
-addi $a1, $zero, 1
-#<---- #T0 = 0 SUB x@<1,0> ---->
-li $v1, 0
-sub $a2, $v1, $a1
-#<---- var y@<1,0> = #T0 ---->
+#<---- NEW_BLOCK [1, 2] ---->
+#<---- var b@<1,2> = 2 ---->
+addi $a1, $zero, 2
+#<---- PRE_CALL add2 ---->
+addi $sp, $sp, -108
+#<---- PUSH_PARA a@<0,0> #function: add2 #arg: c ---->
+lw $a2, -4($gp)
+sw $a2, 4($sp)
+#<---- PUSH_PARA b@<1,2> #function: add2 #arg: b ---->
+sw $a1, 8($sp)
+#<---- FUNC_CALL add2 ---->
+sw $a1, 96($sp)
+#<---- Cancel $a2 for a ---->
+sw $a2, -4($gp)
+jal func_label_add2
+lw $a1, 96($sp)
+addi $sp, $sp, 108
+#<---- ASSIGN #T4 = %RTX ---->
+move $a2, $v0
+#<---- var c@<1,2> = #T4 ---->
 addi $a3, $a2, 0
+#<---- SET #T5 := c@<1,2> == 0 ---->
+#<---- JUMP_IF #T5 == 0 and_label_0 ---->
+#<---- #T6 = c@<1,2> ADD 1 ---->
+addi $t0, $a3, 1
+#<---- SET #T7 := #T6 < b@<1,2> ---->
+#<---- JUMP_IF #T7 != 0 or_label_0 ---->
+#<---- GEN_LABEL and_label_0: ---->
+#<---- JUMP_IF a@<0,0> == 0 and_label_1 ---->
+#<---- JUMP_IF c@<1,2> != 0 or_label_0 ---->
+#<---- GEN_LABEL and_label_1: ---->
+#<---- JUMP_IF b@<1,2> != 0 or_label_0 ---->
+#<---- JUMP_IF b@<1,2> == 0 cond_label_0 ---->
+#<---- GEN_LABEL or_label_0: ---->
+#<---- NEW_BLOCK [2, 0] ---->
+#<---- NEW_BLOCK [2, 0] ---->
+#<---- #T8 = a@<0,0> ADD 1 ---->
+lw $t1, -4($gp)
+addi $t2, $t1, 1
+#<---- ASSIGN a@<0,0> = #T8 ---->
+addi $t1, $t2, 0
+#<---- Cancel $t1 for a ---->
+sw $t1, -4($gp)
+#<---- END_BLOCK [2, 0] ---->
+#<---- JUMP ifElse_end_label_0 ---->
+#<---- GEN_LABEL cond_label_0: ---->
+#<---- NEW_BLOCK [2, 1] ---->
+#<---- NEW_BLOCK [2, 1] ---->
+#<---- #T9 = a@<0,0> ADD 2 ---->
+lw $t1, -4($gp)
+addi $t3, $t1, 2
+#<---- ASSIGN a@<0,0> = #T9 ---->
+addi $t1, $t3, 0
+#<---- Cancel $t1 for a ---->
+sw $t1, -4($gp)
+#<---- SET #T10 := 3 < a@<0,0> ---->
+#<---- JUMP_IF #T10 != 0 or_label_1 ---->
+#<---- JUMP_IF #T10 == 0 cond_label_1 ---->
+#<---- GEN_LABEL or_label_1: ---->
+#<---- NEW_BLOCK [3, 0] ---->
+#<---- NEW_BLOCK [3, 0] ---->
+#<---- #T11 = a@<0,0> ADD 1 ---->
+lw $t1, -4($gp)
+addi $t4, $t1, 1
+#<---- ASSIGN a@<0,0> = #T11 ---->
+addi $t1, $t4, 0
+#<---- Cancel $t1 for a ---->
+sw $t1, -4($gp)
+#<---- END_BLOCK [3, 0] ---->
+#<---- JUMP ifElse_end_label_0 ---->
+#<---- GEN_LABEL cond_label_1: ---->
+#<---- NEW_BLOCK [3, 1] ---->
+#<---- NEW_BLOCK [3, 1] ---->
+#<---- SET #T12 := a@<0,0> < 2 ---->
+#<---- JUMP_IF #T12 != 0 or_label_2 ---->
+#<---- JUMP_IF #T12 == 0 cond_label_2 ---->
+#<---- GEN_LABEL or_label_2: ---->
+#<---- #T13 = a@<0,0> ADD 2 ---->
+lw $t1, -4($gp)
+addi $t5, $t1, 2
+#<---- ASSIGN a@<0,0> = #T13 ---->
+addi $t1, $t5, 0
+#<---- Cancel $t1 for a ---->
+sw $t1, -4($gp)
+#<---- GEN_LABEL cond_label_2: ---->
+#<---- END_BLOCK [3, 1] ---->
+#<---- GEN_LABEL ifElse_end_label_0: ---->
+#<---- GEN_LABEL while_judge_label_0: ---->
+#<---- SET #T14 := a@<0,0> < 10 ---->
+#<---- JUMP_IF #T14 != 0 or_label_3 ---->
+#<---- JUMP_IF #T14 == 0 cond_label_3 ---->
+#<---- GEN_LABEL or_label_3: ---->
+#<---- GEN_LABEL while_label_0: ---->
+#<---- NEW_BLOCK [3, 2] ---->
+#<---- NEW_BLOCK [3, 2] ---->
+#<---- #T15 = a@<0,0> ADD 1 ---->
+lw $t1, -4($gp)
+addi $t6, $t1, 1
+#<---- ASSIGN a@<0,0> = #T15 ---->
+addi $t1, $t6, 0
+#<---- Cancel $t1 for a ---->
+sw $t1, -4($gp)
+#<---- JUMP while_label_0 ---->
+#<---- JUMP cond_label_3 ---->
+#<---- END_BLOCK [3, 2] ---->
+#<---- JUMP while_judge_label_0 ---->
+#<---- GEN_LABEL cond_label_3: ---->
+#<---- END_BLOCK [2, 1] ---->
+#<---- GEN_LABEL ifElse_end_label_1: ---->
 #<---- print #str0 ---->
 la $a0, str0
 li $v0, 4
 syscall
-#<---- print y@<1,0> ---->
+#<---- print a@<0,0> ---->
+lw $t1, -4($gp)
+move $a0, $t1
+li $v0, 1
+syscall
+#<---- print #str1 ---->
+la $a0, str1
+li $v0, 4
+syscall
+#<---- print c@<1,2> ---->
 move $a0, $a3
+li $v0, 1
+syscall
+#<---- print #str2 ---->
+la $a0, str2
+li $v0, 4
+syscall
+#<---- PRE_CALL add2 ---->
+addi $sp, $sp, -108
+#<---- PUSH_PARA a@<0,0> #function: add2 #arg: c ---->
+sw $t1, 4($sp)
+#<---- PRE_CALL add2 ---->
+addi $sp, $sp, -108
+#<---- PUSH_PARA a@<0,0> #function: add2 #arg: c ---->
+sw $t1, 4($sp)
+#<---- PUSH_PARA b@<1,2> #function: add2 #arg: b ---->
+sw $a1, 8($sp)
+#<---- FUNC_CALL add2 ---->
+sw $a1, 96($sp)
+sw $a2, 100($sp)
+sw $a3, 104($sp)
+sw $t0, 20($sp)
+#<---- Cancel $t1 for a ---->
+sw $t1, -4($gp)
+sw $t2, 28($sp)
+sw $t3, 32($sp)
+sw $t4, 36($sp)
+sw $t5, 40($sp)
+sw $t6, 44($sp)
+jal func_label_add2
+lw $a1, 96($sp)
+lw $a2, 100($sp)
+lw $a3, 104($sp)
+lw $t0, 20($sp)
+lw $t2, 28($sp)
+lw $t3, 32($sp)
+lw $t4, 36($sp)
+lw $t5, 40($sp)
+lw $t6, 44($sp)
+addi $sp, $sp, 108
+#<---- ASSIGN #T16 = %RTX ---->
+move $t1, $v0
+#<---- PUSH_PARA #T16 #function: add2 #arg: b ---->
+sw $t1, 8($sp)
+#<---- FUNC_CALL add2 ---->
+sw $a1, 96($sp)
+sw $a2, 100($sp)
+sw $a3, 104($sp)
+sw $t0, 20($sp)
+sw $t1, 24($sp)
+sw $t2, 28($sp)
+sw $t3, 32($sp)
+sw $t4, 36($sp)
+sw $t5, 40($sp)
+sw $t6, 44($sp)
+jal func_label_add2
+lw $a1, 96($sp)
+lw $a2, 100($sp)
+lw $a3, 104($sp)
+lw $t0, 20($sp)
+lw $t1, 24($sp)
+lw $t2, 28($sp)
+lw $t3, 32($sp)
+lw $t4, 36($sp)
+lw $t5, 40($sp)
+lw $t6, 44($sp)
+addi $sp, $sp, 108
+#<---- ASSIGN #T17 = %RTX ---->
+move $t7, $v0
+#<---- print #T17 ---->
+move $a0, $t7
 li $v0, 1
 syscall
 #<---- return 0 ---->
 li $v0, 0
 li $v0, 10
 syscall
-#<---- END_BLOCK [1, 0] ---->
+#<---- END_BLOCK [1, 2] ---->

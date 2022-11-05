@@ -65,6 +65,7 @@ public class MidCode {
     private String operand1 = null;
     private String operand2 = null;
     private String result = null;
+    private String compare = null;
 
 
     public MidCode(Op operator) {
@@ -76,6 +77,15 @@ public class MidCode {
         this.operand1 = (operand1 != null) ? operand1.toString() : null;
         this.operand2 = (operand2 != null) ? operand2.toString() : null;
         this.result = (result != null) ? result.toString() : null;
+    }
+
+
+    public MidCode(Op operator, Operand operand1, Operand operand2, Operand result, String compare) {
+        this.operator = operator;
+        this.operand1 = (operand1 != null) ? operand1.toString() : null;
+        this.operand2 = (operand2 != null) ? operand2.toString() : null;
+        this.result = (result != null) ? result.toString() : null;
+        this.compare = compare;
     }
 
     public MidCode(Op operator, String operand1, String operand2, String result) {
@@ -104,6 +114,8 @@ public class MidCode {
             return "PUSH_PARA " + operand1 + " #function: " + operand2 + " #arg: " + result;
         }
         if (operator.equals(Op.RETURN)) return "return " + (operand1 == null ? "" : operand1);
+        if (operator.equals(Op.SET)) return "SET " + result + " := " + operand1 + " " + compare + " " + operand2;
+        if (operator.equals(Op.JUMP_IF)) return "JUMP_IF " + operand1 + " " + operand2 + " " + result;
         if (result != null) return result + " = " + operand1 + " " + toString.get(operator) + " " + operand2;
         if (operand1 == null && operand2 == null) return toString.get(operator);
         if (operand2 == null) return toString.get(operator) + " " + operand1;
