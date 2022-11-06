@@ -89,7 +89,7 @@ public class RegAlloc {
 
     // 为变量符号分配寄存器, 返回分配的寄存器号
     // 如果没有空余的寄存器，则需要将一个已分配的寄存器的值存入内存，然后再分配
-    public int allocRegister(Symbol symbol, boolean needToLoad, int stackSize) {
+    public int allocRegister(Symbol symbol, boolean needToLoad) {
         if (symbolToReg.containsKey(symbol)) {
             return symbolToReg.get(symbol);
         }
@@ -110,7 +110,7 @@ public class RegAlloc {
         //System.out.println("#<---- Alloc " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->");
         if (needToLoad) {
             mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw,
-                    intReg2SymReg.get(register), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress() + stackSize))));
+                    intReg2SymReg.get(register), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress()))));
         }
         return register;
     }
@@ -121,10 +121,10 @@ public class RegAlloc {
     }
 
     // 获取符号当前所在的寄存器，如果尚未被分配，则分配一个寄存器并返回
-    public int getRegOfSymbol(Symbol symbol, boolean needToLoad, int stackSize) {
+    public int getRegOfSymbol(Symbol symbol, boolean needToLoad) {
         if (!symbolToReg.containsKey(symbol)) {
             //System.out.println(symbol);
-            return allocRegister(symbol, needToLoad, stackSize);
+            return allocRegister(symbol, needToLoad);
         }
         return symbolToReg.get(symbol);
     }

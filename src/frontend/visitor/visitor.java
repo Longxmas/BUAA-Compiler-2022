@@ -209,12 +209,14 @@ public class visitor {
         String s = format.getSign().substring(1, format.getSign().length() - 1);
         int number = 0;
         int left = 0;
+        ArrayList<Operand> outputs = new ArrayList<>();
+        for (int i = 0;i < printStmt.getExps().size(); i++) {
+            outputs.add(analyseExp(printStmt.getExps().get(i)));
+        }
         for (int i = 0; i < s.length() - 1; i++) {
             if (s.charAt(i) == '%' && s.charAt(i + 1) == 'd') {
                 if (i > left) midCodeList.addStr(s.substring(left, i));
-                Operand output = analyseExp(printStmt.getExps().get(number));
-                midCodeList.add(new MidCode(MidCode.Op.PRI, output, null, null));
-                number++;
+                midCodeList.add(new MidCode(MidCode.Op.PRI, outputs.get(number++), null, null));
                 left = i + 2;
             }
         }

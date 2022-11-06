@@ -1,5 +1,6 @@
 package middle.Symbol;
 
+import backend.MipsGenerator;
 import middle.operand.Operand;
 
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public class FuncTable implements Operand {
                 }
             }
         }
-        this.stackSize = size;
+        this.stackSize = size + MipsGenerator.SAVED_STACK_SIZE;
     }
 
     public int getStackSize() {

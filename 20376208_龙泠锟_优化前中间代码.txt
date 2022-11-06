@@ -1,116 +1,325 @@
-#str0: "a="
-#str1: ", b="
+#str0: "funcTest: move disk from "
+#str1: " to "
 #str2: "\n"
-#str3: "a>b\n"
-#str4: "a<=b\n"
-#str5: "x="
-#str6: "\n"
-#str7: "input = "
+#str3: "blockTest: 7 == "
+#str4: ", 8 == "
+#str5: "\n"
+#str6: "blockTest: 5 == "
+#str7: ", 12 == "
 #str8: "\n"
-#str9: "Illegal input\n"
-#str10: "cur i="
-#str11: "\n"
-#str12: "20373472\n"
-#str13: "\n"
-<--------------- FUNC compare--------------->
-FORM_VAR_DEF x@<1,0> compare
-FORM_VAR_DEF y@<1,0> compare
+#str9: "Exptest: "
+#str10: " "
+#str11: " "
+#str12: " "
+#str13: " "
+#str14: " "
+#str15: " "
+#str16: " "
+#str17: "\n"
+#str18: "20373569 the mafia~\n"
+#str19: "Exptest: "
+#str20: "\n"
+var Mod@<0,0> = 389
+var N@<0,0> = 100005
+var a_to_the_a@<0,0>
+var cnt@<0,0> = 0
+var n@<0,0>
+<--------------- FUNC move--------------->
+FORM_VAR_DEF a@<1,0> move
+FORM_VAR_DEF b@<1,0> move
 NEW_BLOCK [1, 0]
-print #str0
-print x@<1,0>
-print #str1
-print y@<1,0>
-print #str2
-SET #T0 := y@<1,0> < x@<1,0>
-JUMP_IF #T0 == 1 or_label_0
-JUMP_IF #T0 == 0 Else_start_label_0
+#T0 = cnt@<0,0> ADD 1
+ASSIGN cnt@<0,0> = #T0
+#T1 = cnt@<0,0> MOD 389
+SET #T2 := #T1 == 0
+JUMP_IF #T2 == 1 or_label_0
+JUMP_IF #T2 == 0 ifElse_end_label_0
 GEN_LABEL or_label_0:
-print #str3
-JUMP ifElse_end_label_0
-GEN_LABEL Else_start_label_0:
-print #str4
+NEW_BLOCK [2, 0]
+print #str0
+print a@<1,0>
+print #str1
+print b@<1,0>
+print #str2
+END_BLOCK [2, 0]
 GEN_LABEL ifElse_end_label_0:
 END_BLOCK [1, 0]
 return 
-<--------------- END_FUNC compare--------------->
-<--------------- FUNC test--------------->
-FORM_VAR_DEF x@<1,1> test
+<--------------- END_FUNC move--------------->
+<--------------- FUNC hanoi--------------->
+FORM_VAR_DEF n@<1,1> hanoi
+FORM_VAR_DEF a@<1,1> hanoi
+FORM_VAR_DEF b@<1,1> hanoi
+FORM_VAR_DEF c@<1,1> hanoi
 NEW_BLOCK [1, 1]
-print #str5
-print x@<1,1>
-print #str6
-SET #T1 := x@<1,1> < 0
-JUMP_IF #T1 == 1 or_label_1
-JUMP_IF #T1 == 0 Else_start_label_1
+SET #T3 := n@<1,1> == 1
+JUMP_IF #T3 == 1 or_label_1
+JUMP_IF #T3 == 0 ifElse_end_label_1
 GEN_LABEL or_label_1:
-print #str7
-print x@<1,1>
-print #str8
-JUMP ifElse_end_label_1
-GEN_LABEL Else_start_label_1:
-print #str9
+NEW_BLOCK [2, 1]
+PRE_CALL move
+PUSH_PARA a@<1,1> #function: move #arg: a
+PUSH_PARA c@<1,1> #function: move #arg: b
+FUNC_CALL move
+ASSIGN #T4 = %RTX
+return 
+END_BLOCK [2, 1]
 GEN_LABEL ifElse_end_label_1:
+PRE_CALL hanoi
+#T5 = n@<1,1> SUB 1
+PUSH_PARA #T5 #function: hanoi #arg: n
+PUSH_PARA a@<1,1> #function: hanoi #arg: a
+PUSH_PARA c@<1,1> #function: hanoi #arg: b
+PUSH_PARA b@<1,1> #function: hanoi #arg: c
+FUNC_CALL hanoi
+ASSIGN #T6 = %RTX
+PRE_CALL move
+PUSH_PARA a@<1,1> #function: move #arg: a
+PUSH_PARA c@<1,1> #function: move #arg: b
+FUNC_CALL move
+ASSIGN #T7 = %RTX
+PRE_CALL hanoi
+#T8 = n@<1,1> SUB 1
+PUSH_PARA #T8 #function: hanoi #arg: n
+PUSH_PARA b@<1,1> #function: hanoi #arg: a
+PUSH_PARA a@<1,1> #function: hanoi #arg: b
+PUSH_PARA c@<1,1> #function: hanoi #arg: c
+FUNC_CALL hanoi
+ASSIGN #T9 = %RTX
 END_BLOCK [1, 1]
 return 
-<--------------- END_FUNC test--------------->
-<--------------- FUNC printI--------------->
-FORM_VAR_DEF n@<1,2> printI
+<--------------- END_FUNC hanoi--------------->
+<--------------- FUNC qpow--------------->
+FORM_VAR_DEF a@<1,2> qpow
+FORM_VAR_DEF b@<1,2> qpow
 NEW_BLOCK [1, 2]
-var i@<1,2>
-ASSIGN i@<1,2> = 0
+var ans@<1,2> = 1
 GEN_LABEL while_judge_label_0:
-SET #T2 := i@<1,2> < n@<1,2>
-JUMP_IF #T2 == 1 or_label_2
-JUMP_IF #T2 == 0 while_end_label_0
+JUMP_IF b@<1,2> == 1 or_label_2
+JUMP_IF b@<1,2> == 0 while_end_label_0
 GEN_LABEL or_label_2:
-NEW_BLOCK [2, 0]
-print #str10
-print i@<1,2>
-print #str11
-#T3 = i@<1,2> ADD 1
-ASSIGN i@<1,2> = #T3
-SET #T4 := i@<1,2> == n@<1,2>
-JUMP_IF #T4 == 1 or_label_3
-JUMP_IF #T4 == 0 ifElse_end_label_2
+NEW_BLOCK [2, 2]
+#T10 = b@<1,2> DIV 2
+ASSIGN b@<1,2> = #T10
+#T11 = a@<1,2> MUL a@<1,2>
+#T12 = #T11 MOD 389
+ASSIGN a@<1,2> = #T12
+#T13 = b@<1,2> MOD 2
+JUMP_IF #T13 == 1 or_label_3
+JUMP_IF #T13 == 0 ifElse_end_label_2
 GEN_LABEL or_label_3:
 NEW_BLOCK [3, 0]
-JUMP while_end_label_0
+#T14 = ans@<1,2> MUL a@<1,2>
+#T15 = #T14 MOD 389
+ASSIGN ans@<1,2> = #T15
 END_BLOCK [3, 0]
 GEN_LABEL ifElse_end_label_2:
-END_BLOCK [2, 0]
+END_BLOCK [2, 2]
 JUMP while_judge_label_0
 GEN_LABEL while_end_label_0:
+return ans@<1,2>
 END_BLOCK [1, 2]
 return 
-<--------------- END_FUNC printI--------------->
-<--------------- FUNC main--------------->
+<--------------- END_FUNC qpow--------------->
+<--------------- FUNC gcd--------------->
+FORM_VAR_DEF a@<1,3> gcd
+FORM_VAR_DEF b@<1,3> gcd
 NEW_BLOCK [1, 3]
-var a@<1,3> = 4
-var b@<1,3> = 7
-print #str12
-PRE_CALL compare
-PUSH_PARA a@<1,3> #function: compare #arg: x
-PUSH_PARA b@<1,3> #function: compare #arg: y
-FUNC_CALL compare
-ASSIGN #T5 = %RTX
-PRE_CALL printI
-PUSH_PARA 2 #function: printI #arg: n
-FUNC_CALL printI
-ASSIGN #T6 = %RTX
-#T7 = a@<1,3> SUB b@<1,3>
-print #T7
-print #str13
-#T8 = a@<1,3> ADD b@<1,3>
-SET #T9 := 10 < #T8
-JUMP_IF #T9 == 1 or_label_4
-JUMP_IF #T9 == 0 ifElse_end_label_3
+SET #T16 := b@<1,3> == 0
+JUMP_IF #T16 == 1 or_label_4
+JUMP_IF #T16 == 0 ifElse_end_label_3
 GEN_LABEL or_label_4:
-PRE_CALL test
-#T10 = a@<1,3> SUB b@<1,3>
-PUSH_PARA #T10 #function: test #arg: x
-FUNC_CALL test
-ASSIGN #T11 = %RTX
+NEW_BLOCK [2, 3]
+return a@<1,3>
+END_BLOCK [2, 3]
 GEN_LABEL ifElse_end_label_3:
-return 0
+PRE_CALL gcd
+PUSH_PARA b@<1,3> #function: gcd #arg: a
+#T17 = a@<1,3> MOD b@<1,3>
+PUSH_PARA #T17 #function: gcd #arg: b
+FUNC_CALL gcd
+ASSIGN #T18 = %RTX
+return #T18
 END_BLOCK [1, 3]
+return 
+<--------------- END_FUNC gcd--------------->
+<--------------- FUNC testExp--------------->
+NEW_BLOCK [1, 4]
+#T19 = n@<0,0> MUL n@<0,0>
+ASSIGN a_to_the_a@<0,0> = #T19
+#T20 = 100005 DIV n@<0,0>
+var k@<1,4> = #T20
+#T21 = n@<0,0> MUL n@<0,0>
+#T22 = #T21 DIV n@<0,0>
+#T23 = #T22 ADD n@<0,0>
+#T24 = #T23 SUB n@<0,0>
+#T25 = a_to_the_a@<0,0> ADD 1
+var b@<1,4> = #T25
+var c@<1,4> = 2147483647
+#T26 = -1 SUB c@<1,4>
+var d@<1,4> = #T26
+#T27 = 0 SUB a_to_the_a@<0,0>
+#T28 = 1 SUB #T27
+#T29 = #T28 MUL b@<1,4>
+#T30 = #T29 DIV 3
+#T31 = #T30 SUB 2
+#T32 = #T31 ADD 100005
+#T33 = #T32 MOD 389
+var t@<1,4> = #T33
+PRE_CALL qpow
+PUSH_PARA a_to_the_a@<0,0> #function: qpow #arg: a
+PUSH_PARA b@<1,4> #function: qpow #arg: b
+FUNC_CALL qpow
+ASSIGN #T34 = %RTX
+var e@<1,4> = #T34
+NEW_BLOCK [2, 4]
+ASSIGN b@<1,4> = 10
+ASSIGN c@<1,4> = 0
+NEW_BLOCK [3, 1]
+ASSIGN b@<1,4> = 7
+ASSIGN c@<1,4> = 8
+print #str3
+print b@<1,4>
+print #str4
+print c@<1,4>
+print #str5
+END_BLOCK [3, 1]
+var i@<2,4> = 0
+GEN_LABEL while_judge_label_1:
+NEW_BLOCK [3, 2]
+#T35 = i@<2,4> ADD 1
+ASSIGN i@<2,4> = #T35
+#T36 = i@<2,4> MOD 2
+SET #T37 := #T36 != 0
+JUMP_IF #T37 == 1 or_label_5
+JUMP_IF #T37 == 0 ifElse_end_label_4
+GEN_LABEL or_label_5:
+NEW_BLOCK [4, 0]
+JUMP while_judge_label_1
+END_BLOCK [4, 0]
+GEN_LABEL ifElse_end_label_4:
+SET #T38 := b@<1,4> <= i@<2,4>
+JUMP_IF #T38 == 1 or_label_6
+JUMP_IF #T38 == 0 Else_start_label_0
+GEN_LABEL or_label_6:
+NEW_BLOCK [4, 1]
+JUMP while_end_label_1
+END_BLOCK [4, 1]
+JUMP ifElse_end_label_5
+GEN_LABEL Else_start_label_0:
+NEW_BLOCK [4, 2]
+SET #T39 := c@<1,4> < 10
+JUMP_IF #T39 == 1 or_label_7
+JUMP_IF #T39 == 0 Else_start_label_1
+GEN_LABEL or_label_7:
+NEW_BLOCK [5, 0]
+#T40 = c@<1,4> ADD i@<2,4>
+ASSIGN c@<1,4> = #T40
+END_BLOCK [5, 0]
+JUMP ifElse_end_label_6
+GEN_LABEL Else_start_label_1:
+NEW_BLOCK [5, 1]
+#T41 = c@<1,4> SUB i@<2,4>
+ASSIGN c@<1,4> = #T41
+END_BLOCK [5, 1]
+GEN_LABEL ifElse_end_label_6:
+END_BLOCK [4, 2]
+GEN_LABEL ifElse_end_label_5:
+END_BLOCK [3, 2]
+JUMP while_judge_label_1
+GEN_LABEL while_end_label_1:
+print #str6
+print b@<1,4>
+print #str7
+print c@<1,4>
+print #str8
+END_BLOCK [2, 4]
+var f@<1,4> = n@<0,0>
+var g@<1,4> = 0
+SET #T42 := f@<1,4> < 0
+JUMP_IF #T42 == 1 or_label_8
+JUMP_IF #T42 == 0 Else_start_label_2
+GEN_LABEL or_label_8:
+NEW_BLOCK [2, 5]
+ASSIGN g@<1,4> = 10
+END_BLOCK [2, 5]
+JUMP ifElse_end_label_7
+GEN_LABEL Else_start_label_2:
+NEW_BLOCK [2, 6]
+SET #T43 := 10 < f@<1,4>
+JUMP_IF #T43 == 1 or_label_9
+JUMP_IF #T43 == 0 Else_start_label_3
+GEN_LABEL or_label_9:
+NEW_BLOCK [3, 3]
+ASSIGN g@<1,4> = 20
+END_BLOCK [3, 3]
+JUMP ifElse_end_label_8
+GEN_LABEL Else_start_label_3:
+NEW_BLOCK [3, 4]
+SET #T44 := f@<1,4> == n@<0,0>
+JUMP_IF #T44 == 1 or_label_10
+JUMP_IF #T44 == 0 ifElse_end_label_9
+GEN_LABEL or_label_10:
+NEW_BLOCK [4, 3]
+ASSIGN g@<1,4> = 30
+END_BLOCK [4, 3]
+GEN_LABEL ifElse_end_label_9:
+END_BLOCK [3, 4]
+GEN_LABEL ifElse_end_label_8:
+END_BLOCK [2, 6]
+GEN_LABEL ifElse_end_label_7:
+SET #T45 := f@<1,4> <= 10
+JUMP_IF #T45 == 1 or_label_11
+JUMP_IF #T45 == 0 ifElse_end_label_10
+GEN_LABEL or_label_11:
+NEW_BLOCK [2, 7]
+#T46 = g@<1,4> ADD f@<1,4>
+ASSIGN g@<1,4> = #T46
+END_BLOCK [2, 7]
+GEN_LABEL ifElse_end_label_10:
+print #str9
+print a_to_the_a@<0,0>
+print #str10
+print b@<1,4>
+print #str11
+print c@<1,4>
+print #str12
+print d@<1,4>
+print #str13
+print e@<1,4>
+print #str14
+print f@<1,4>
+print #str15
+print g@<1,4>
+print #str16
+print t@<1,4>
+print #str17
+PRE_CALL gcd
+PUSH_PARA f@<1,4> #function: gcd #arg: a
+PUSH_PARA g@<1,4> #function: gcd #arg: b
+FUNC_CALL gcd
+ASSIGN #T47 = %RTX
+return #T47
+END_BLOCK [1, 4]
+return 
+<--------------- END_FUNC testExp--------------->
+<--------------- FUNC main--------------->
+NEW_BLOCK [1, 5]
+print #str18
+n@<0,0> = input()
+PRE_CALL hanoi
+PUSH_PARA n@<0,0> #function: hanoi #arg: n
+PUSH_PARA 1 #function: hanoi #arg: a
+PUSH_PARA 2 #function: hanoi #arg: b
+PUSH_PARA 3 #function: hanoi #arg: c
+FUNC_CALL hanoi
+ASSIGN #T48 = %RTX
+PRE_CALL testExp
+FUNC_CALL testExp
+ASSIGN #T49 = %RTX
+print #str19
+print #T49
+print #str20
+return 0
+END_BLOCK [1, 5]
 <--------------- END_FUNC main--------------->
