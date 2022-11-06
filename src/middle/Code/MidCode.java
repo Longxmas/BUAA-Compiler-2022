@@ -162,4 +162,8 @@ public class MidCode {
     public String getResult() {
         return result;
     }
+
+    public String getCompare() {
+        return compare;
+    }
 }

@@ -7,6 +7,7 @@ public class WhileStmt extends Stmt {
     private Token whileToken;
     private Cond cond;
     private Stmt stmt;
+    private int label;
 
     public WhileStmt(Token whileToken, Cond cond, Stmt stmt) {
         this.whileToken = whileToken;
@@ -22,13 +23,20 @@ public class WhileStmt extends Stmt {
         return stmt;
     }
 
+    public void setLabel(int label) {
+        this.label = label;
+    }
+
+    public int getLabel() {
+        return this.label;
+    }
+
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Token.printSign("while"));
-        sb.append(Token.printSign("("));
-        sb.append(cond.toString());
-        sb.append(Token.printSign(")"));
-        sb.append(stmt.toString()); //这个Stmt的输出不能替代下面这个的输出
+        String sb = Token.printSign("while") +
+                Token.printSign("(") +
+                cond.toString() +
+                Token.printSign(")") +
+                stmt.toString(); //这个Stmt的输出不能替代下面这个的输出
         return sb + "<Stmt>\n";
     }
 }

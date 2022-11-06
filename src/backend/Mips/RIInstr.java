@@ -2,7 +2,7 @@ package backend.Mips;
 
 public class RIInstr implements Instr {
     public enum RII {
-        addi, addiu, andi, ori, xori, slti, sltiu, lui;
+        addi, addiu, andi, ori, xori, slti, sltiu, lui, slei, seqi, snei, g;
 
         public String toString() {
             return this.name();

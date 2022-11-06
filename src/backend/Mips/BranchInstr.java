@@ -22,7 +22,7 @@ public class BranchInstr implements Instr {
     }
 
     public String toString() {
-        return instr.toString() + " " + rs + ", " + rt + "(" + label + ")";
+        return instr.toString() + " " + rs + ", " + rt + ", " + label;
     }
 
 }

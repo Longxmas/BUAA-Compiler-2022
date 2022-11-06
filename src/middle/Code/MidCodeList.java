@@ -13,9 +13,9 @@ public class MidCodeList {
     public int andLabelCnt = 0;
     public int orLabelCnt = 0;
     public int condLabelCnt = 0;
-    public int ifElseLabelCnt = 0;
+    public int ifElseEndLabelCnt = 0;
+    public int elseStartLabelCnt = 0;
     public int whileLabelCnt = 0;
-    public int whileJudgeLabelCnt = 0;
     public ArrayList<String> strCons;
     public HashMap<String, String> strConMap = new HashMap<>();
 

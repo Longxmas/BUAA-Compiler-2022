@@ -77,18 +77,18 @@ public class FuncTable implements Operand {
     }
 
     public void setStackSize() {
-        int size = 0;
+        int size = 4;
         int ismain = this.isMain ? 1 : 0;
         for (int i = ismain; i < symbolTables.size(); i++) {
             SymbolTable symbolTable = symbolTables.get(i);
             for (Symbol symbol : symbolTable.getSymbols()) {
                 //System.out.println(this.name + " " + symbol.getName());
                 if (symbol.getSymbolType() == Symbol.SymbolType.Var) {
+                    symbol.setAddress(size);
                     size += 4;
-                    symbol.setAddress(size);
                 } else {
-                    size += 4 * (params.contains(symbol) ? 1 : symbol.getArraySize());
                     symbol.setAddress(size);
+                    size += 4 * (params.contains(symbol) ? 1 : symbol.getArraySize());
                 }
             }
         }

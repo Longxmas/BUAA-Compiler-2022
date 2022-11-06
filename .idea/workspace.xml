@@ -14,12 +14,23 @@
       <change beforePath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" beforeDir="false" afterPath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mips.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mips.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/visitor/CalExp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/visitor/CalExp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/backend/Mips/BranchInstr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/Mips/BranchInstr.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/backend/Mips/RIInstr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/Mips/RIInstr.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/backend/Mips/RRInstr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/Mips/RRInstr.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/backend/MipsGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/MipsGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/backend/RegAlloc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/RegAlloc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/Stmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/Stmt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/WhileStmt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/Parser/Stmt/Elements/WhileStmt.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/frontend/visitor/visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/visitor/visitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/middle/Code/MidCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Code/MidCode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/middle/Code/MidCodeList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Code/MidCodeList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middle/Symbol/FuncTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Symbol/FuncTable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_mips/mips1.asm" beforeDir="false" afterPath="$PROJECT_DIR$/test_mips/mips1.asm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/testfile.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/try1.zip" beforeDir="false" afterPath="$PROJECT_DIR$/try1.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/try2.zip" beforeDir="false" afterPath="$PROJECT_DIR$/try2.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/try3.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/try4.zip" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +142,9 @@
       <workItem from="1667565135824" duration="9431000" />
       <workItem from="1667580255087" duration="2199000" />
       <workItem from="1667620247596" duration="16752000" />
-      <workItem from="1667654239992" duration="2958000" />
+      <workItem from="1667654239992" duration="18373000" />
+      <workItem from="1667674236726" duration="1200000" />
+      <workItem from="1667714887569" duration="15447000" />
     </task>
     <task id="LOCAL-00001" summary="error a,i,j,k">
       <created>1666708675705</created>
