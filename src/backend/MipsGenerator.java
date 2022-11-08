@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class MipsGenerator {
     private static final int DATA_BASE_ADDRESS = 0x10010000;
-    public static final int SAVED_STACK_SIZE = RegAlloc.REG_SAVED_PLACE.size() * 4;
+    //public static final int SAVED_STACK_SIZE = RegAlloc.REG_SAVED_PLACE.size() * 4;
     private RegAlloc regAlloc;
     private MipsCodes mipsCodes = new MipsCodes();
     private MidCodeList midCodeList;
@@ -47,7 +47,7 @@ public class MipsGenerator {
     public void calculateAddress() {
         for (FuncTable funcTable : funcTables) {
             funcTable.setStackSize();
-            // System.out.println(funcTable.getName() + "  "+ funcTable.getStackSize());
+            System.out.println(funcTable.getName() + "  " + funcTable.getStackSize());
         }
     }
 
@@ -55,14 +55,14 @@ public class MipsGenerator {
         return mipsCodes;
     }
 
-    public Symbol findSymbol(String name, SymbolTable symbolTable) {
-        SymbolTable temp = symbolTable;
-        while (temp != null) {
-            if (temp.getSymbolMap().containsKey(name)) {
-                return temp.getSymbolMap().get(name);
-            } else temp = temp.getParent();
+    public Symbol findSymbol(String symbol) {
+        if (Immediate.checkImmediate(symbol) || symbol.equals("%RTX")) {
+            return null;
         }
-        return null;
+        String name = MidCode.getOperandName(symbol);
+        String loc = MidCode.getOperandLoc(symbol);
+        SymbolTable symbolTable = depth2SymbolTable.get(loc);
+        return symbolTable.getSymbolMap().get(name);
     }
 
     public void generateCode() {
@@ -108,7 +108,7 @@ public class MipsGenerator {
             midcodeIndex = midCodeList.getMidCodes().indexOf(midCode);
             if (midCode.getOperator().equals(MidCode.Op.VAR_DEF) ||
                     midCode.getOperator().equals(MidCode.Op.CONST_DEF)) {
-                Symbol symbol = globalSymbolMap.get(midCode.getOperandName(midCode.getOperand1()));
+                Symbol symbol = globalSymbolMap.get(MidCode.getOperandName(midCode.getOperand1()));
                 symbol.setAddress(symbol.getAddress() - globalSize);
                 mipsCodes.addCode(new MipsCode("#<------- " + midCode + " ------->"));
                 if (symbol.getSymbolType().equals(Symbol.SymbolType.Array)) {
@@ -137,8 +137,8 @@ public class MipsGenerator {
             regAlloc.clear(false);
             midCode = midCodes.get(midcodeIndex);
             mipsCodes.addCode(new MipsCode("#" + midCode));
-            mipsCodes.addCode(new MipsCode("func_label_" + midCode.getOperandName(midCode.getOperand1()) + ":"));
-            FuncTable funcTable = funcMap.get(midCode.getOperandName(midCode.getOperand1()));
+            mipsCodes.addCode(new MipsCode("func_label_" + MidCode.getOperandName(midCode.getOperand1()) + ":"));
+            FuncTable funcTable = funcMap.get(MidCode.getOperandName(midCode.getOperand1()));
             curFuncTable = funcTable;
             //将函数参数从栈内加载到寄存器中
             midcodeIndex++;
@@ -147,7 +147,7 @@ public class MipsGenerator {
             while (midCode.getOperator().equals(MidCode.Op.FORM_VAR_DEF)) {
                 mipsCodes.addCode(new MipsCode("#<------- " + midCode + " ------->"));
                 //获取参数的符号表项
-                Symbol symbol = funcTable.getParamMap().get(midCode.getOperandName(midCode.getOperand1()));
+                Symbol symbol = funcTable.getParamMap().get(MidCode.getOperandName(midCode.getOperand1()));
                 //获取参数的地址
                 int address = symbol.getAddress();
                 if (symbol.getSymbolType().equals(Symbol.SymbolType.Var)) {
@@ -160,7 +160,7 @@ public class MipsGenerator {
             //进入函数体
             generateBlock();
             //返回
-            if (!funcTable.isMain()) generateReturn(midCodes.get(midcodeIndex), null);
+            if (!funcTable.isMain()) generateReturn(midCodes.get(midcodeIndex));
             midcodeIndex++; //end_func
             midcodeIndex++;
         }
@@ -182,24 +182,24 @@ public class MipsGenerator {
             //如果是变量定义或者赋值(由于符号表已经保存，所以这两步可以统一处理?)
             if (midCode.getOperator().equals(MidCode.Op.VAR_DEF) || midCode.getOperator().equals(MidCode.Op.CONST_DEF)
                     || midCode.getOperator().equals(MidCode.Op.ASSIGN)) {
-                generateVarDefOrAssign(midCode, curSymbolTable);
+                generateVarDefOrAssign(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.GETINT)) {
-                generateGetint(midCode, curSymbolTable);
+                generateGetint(midCode);
             }
 
             //如果是计算型中间指令
             if (MidCode.arithOp.containsKey(midCode.getOperator())) {
-                generateArith(midCode, curSymbolTable);
+                generateArith(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.RETURN)) {
-                generateReturn(midCode, curSymbolTable);
+                generateReturn(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.ARR_SAVE) || midCode.getOperator().equals(MidCode.Op.ARR_LOAD)) {
-                generateArray(midCode, curSymbolTable);
+                generateArray(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.NEW_BLOCK)) {
@@ -208,7 +208,7 @@ public class MipsGenerator {
             }
 
             if (midCode.getOperator().equals(MidCode.Op.PRI)) {
-                generatePrint(midCode, curSymbolTable);
+                generatePrint(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.PRE_CALL)) {
@@ -219,20 +219,20 @@ public class MipsGenerator {
 
             if (midCode.getOperator().equals(MidCode.Op.PUSH_PARA) ||
                     midCode.getOperator().equals(MidCode.Op.PUSH_PARA_ARR)) {
-                generatePushPara(midCode, curSymbolTable);
+                generatePushPara(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.FUNC_CALL)) {
-                generateFuncCall(midCode, curSymbolTable, funcMap.get(midCode.getOperand1()));
+                generateFuncCall(midCode, funcMap.get(midCode.getOperand1().split("@")[0]));
             }
 
             if (midCode.getOperator().equals(MidCode.Op.SET)) {
-                generateSet(midCode, curSymbolTable);
+                generateSet(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.JUMP) || midCode.getOperator().equals(MidCode.Op.JUMP_IF)) {
                 regAlloc.clear(true);
-                generateJump(midCode, curSymbolTable);
+                generateJump(midCode);
             }
 
             if (midCode.getOperator().equals(MidCode.Op.GEN_LABEL)) {
@@ -247,8 +247,8 @@ public class MipsGenerator {
         midcodeIndex++;
     }
 
-    private void generateGetint(MidCode midCode, SymbolTable curSymbolTable) {
-        Symbol symbol = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable);
+    private void generateGetint(MidCode midCode) {
+        Symbol symbol = findSymbol(midCode.getOperand1());
         regAlloc.allocRegister(symbol, true);
         mipsCodes.addCode(new MipsCode("li $v0, 5"));
         mipsCodes.addCode(new MipsCode("syscall"));
@@ -263,13 +263,13 @@ public class MipsGenerator {
         }
     }
 
-    private void generateReturn(MidCode midCode, SymbolTable curSymbolTable) {
+    private void generateReturn(MidCode midCode) {
         if (midCode.getOperand1() != null) {
             //获取返回值
             if (Immediate.checkImmediate(midCode.getOperand1())) {
                 mipsCodes.addCode(new MipsCode("li $v0, " + midCode.getOperand1()));
             } else {
-                Symbol symbol = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable);
+                Symbol symbol = findSymbol(midCode.getOperand1());
                 //获取返回值的寄存器
                 String reg = regAlloc.getRegString(regAlloc.getRegOfSymbol(symbol, true));
                 //将返回值放入$v0中
@@ -287,8 +287,8 @@ public class MipsGenerator {
 
     }
 
-    public void generateVarDefOrAssign(MidCode midCode, SymbolTable curSymbolTable) {
-        Symbol symbol = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable);
+    public void generateVarDefOrAssign(MidCode midCode) {
+        Symbol symbol = findSymbol(midCode.getOperand1());
         //如果是普通变量的赋值
         if (symbol.getSymbolType().equals(Symbol.SymbolType.Var)) {
             //目标寄存器不需要load
@@ -298,9 +298,8 @@ public class MipsGenerator {
             //TODO::注意寄存器分配不能重合！
 
             //System.out.println("assignValue: " + assignValue);
-            if (assignValue != null && findSymbol(midCode.getOperandName(assignValue), curSymbolTable) != null) {
-
-                Symbol assignSymbol = findSymbol(midCode.getOperandName(assignValue), curSymbolTable);
+            if (assignValue != null && findSymbol(assignValue) != null) {
+                Symbol assignSymbol = findSymbol(assignValue);
                 int regAssign = regAlloc.getRegOfSymbol(assignSymbol, true);
                 mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi,
                         regAlloc.getRegString(regSymbol), regAlloc.getRegString(regAssign), 0)));
@@ -327,22 +326,39 @@ public class MipsGenerator {
         if (symbol.getSymbolType().equals(Symbol.SymbolType.Array)) {
             Integer offset = midCode.getOperand1Index();
             String assignValue = midCode.getOperand2();
+            //System.out.println(midCode);
+            //System.out.println("assignValue: " + assignValue);
             if (offset != null && !Objects.equals(midCode.getOperand2(), "0")) {
-                if (Immediate.checkImmediate(assignValue)) {
-                    mipsCodes.addCode(new MipsCode("li $v1, " + assignValue));
-                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1",
-                            "$sp", String.valueOf(symbol.getAddress() + offset * 4))));
+                if (!symbol.isGlobal()) {
+                    if (Immediate.checkImmediate(assignValue)) {
+                        mipsCodes.addCode(new MipsCode("li $v1, " + assignValue));
+                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1",
+                                "$sp", String.valueOf(symbol.getAddress() + offset * 4))));
+                    } else {
+                        String assignReg = regAlloc.getRegString(regAlloc.getRegOfSymbol
+                                (findSymbol(assignValue), true));
+                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, assignReg,
+                                "$sp", String.valueOf(symbol.getAddress() + offset * 4))));
+                    }
                 } else {
-                    String assignReg = regAlloc.getRegString(regAlloc.getRegOfSymbol(findSymbol(assignValue, curSymbolTable), true));
-                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, assignReg,
-                            "$sp", String.valueOf(symbol.getAddress() + offset * 4))));
+                    /*if (Immediate.checkImmediate(assignValue)) {
+                        mipsCodes.addCode(new MipsCode("li $v1, " + assignValue));
+                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1",
+                                "$gp", String.valueOf(symbol.getAddress() + offset * 4))));
+                    } else {
+                        String assignReg = regAlloc.getRegString(regAlloc.getRegOfSymbol
+                                (findSymbol(midCode.getOperandName(assignValue), curSymbolTable), true));
+                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, assignReg,
+                                "$gp", String.valueOf(symbol.getAddress() + offset * 4))));
+                    }*/
                 }
+
 
             }
         }
     }
 
-    private void generatePrint(MidCode midCode, SymbolTable curSymbolTable) {
+    private void generatePrint(MidCode midCode) {
         String printValue = midCode.getOperand1();
         if (Immediate.checkImmediate(printValue)) {
             mipsCodes.addCode(new MipsCode("li $a0, " + printValue));
@@ -351,7 +367,7 @@ public class MipsGenerator {
             mipsCodes.addCode(new MipsCode("la $a0", printValue.substring(1)));
             mipsCodes.addCode(new MipsCode("li $v0, 4"));
         } else {
-            Symbol symbol = findSymbol(midCode.getOperandName(printValue), curSymbolTable);
+            Symbol symbol = findSymbol(printValue);
             int reg = regAlloc.getRegOfSymbol(symbol, true);
             mipsCodes.addCode(new MipsCode("move $a0, " + regAlloc.getRegString(reg)));
             mipsCodes.addCode(new MipsCode("li $v0, 1"));
@@ -360,7 +376,7 @@ public class MipsGenerator {
 
     }
 
-    public void generateArith(MidCode midCode, SymbolTable curSymbolTable) {
+    public void generateArith(MidCode midCode) {
         //两个都是立即数的情况？
         String op1 = midCode.getOperand1();
         Integer immOp1 = Immediate.checkImmediate(op1) ? Integer.parseInt(op1) : null;
@@ -369,18 +385,18 @@ public class MipsGenerator {
         Integer immOp2 = Immediate.checkImmediate(op2) ? Integer.parseInt(op2) : null;
         String regOp2 = null;
         if (!Immediate.checkImmediate(midCode.getOperand2())) {
-            Symbol opSym2 = findSymbol(midCode.getOperandName(midCode.getOperand2()), curSymbolTable);
+            Symbol opSym2 = findSymbol(midCode.getOperand2());
             if (opSym2.getSymbolType().equals(Symbol.SymbolType.Var)) {
                 regOp2 = regAlloc.getRegString(regAlloc.getRegOfSymbol(opSym2, true));
             }
         }
         if (!Immediate.checkImmediate(midCode.getOperand1())) {
-            Symbol opSym1 = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable);
+            Symbol opSym1 = findSymbol(midCode.getOperand1());
             if (opSym1.getSymbolType().equals(Symbol.SymbolType.Var)) {
                 regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(opSym1, true));
             }
         }
-        Symbol result = findSymbol(midCode.getOperandName(midCode.getResult()), curSymbolTable);
+        Symbol result = findSymbol(midCode.getResult());
         String regResult = regAlloc.getRegString(regAlloc.getRegOfSymbol(result, false));
         MidCode.Op operator = midCode.getOperator();
         switch (operator) {
@@ -464,117 +480,197 @@ public class MipsGenerator {
     }
 
     //LOAD OR SAVE ARRAY
-    private void generateArray(MidCode midCode, SymbolTable curSymbolTable) {
+    private void generateArray(MidCode midCode) {
         if (midCode.getOperator().equals(MidCode.Op.ARR_LOAD)) {
-            Symbol op1 = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable);
-            String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
-            Symbol op2 = findSymbol(midCode.getOperandName(midCode.getOperand2()), curSymbolTable); //数组不需要分配寄存器
-            String arrayOffset = midCode.getLSArrayIndex(midCode.getOperand2()).split("@")[0];
-            if (!Immediate.checkImmediate(arrayOffset)) {
-                //如果offset是变量，则需要加载
-                Symbol arrayOffsetSymbol = findSymbol(arrayOffset, curSymbolTable);
-                arrayOffset = regAlloc.getRegString(regAlloc.getRegOfSymbol(arrayOffsetSymbol, true)); //替换为寄存器
-                mipsCodes.addCode(new MipsCode(new ShiftInstr(ShiftInstr.ShiftInstruction.sll, arrayOffset, arrayOffset, "2")));
-            } else {
-                arrayOffset = String.valueOf(Integer.parseInt(arrayOffset) * 4);
-            }
+            Symbol op1 = findSymbol(midCode.getOperand1());
+            String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, false));
+            Symbol op2 = findSymbol(midCode.getOperand2()); //数组不需要分配寄存器
+            String arrayOffset = midCode.getLSArrayIndex(midCode.getOperand2());
+            //System.out.println(midCode + "\n" + "before : arrayOffset: " + arrayOffset);
+            arrayOffset = dealWithOffset(arrayOffset);
+            //System.out.println(midCode + "\n" + "after : arrayOffset: " + arrayOffset + " isGlobal : " + op2.isGlobal());
             //否则，直接作为立即数使用offset
             assert op2 != null;
-            if (op2.isGlobal()) {
+            if (op2.isGlobal() && !Immediate.checkImmediate(arrayOffset)) {
                 mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, arrayOffset, "array_" + op2.getName())));
-            } else {
-                if (Immediate.checkImmediate(arrayOffset)) {
-                    mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, "$sp", String.valueOf(op2.getAddress() + Integer.parseInt(arrayOffset)))));
-                } else {
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$sp", op2.getAddress())));
-                    mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, "$v1", arrayOffset)));
-                }
+            } else if (op2.isGlobal() && Immediate.checkImmediate(arrayOffset)) {
+                mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, null, "array_" + op2.getName() + "+" + arrayOffset)));
+            } else if (!op2.isGlobal() && Immediate.checkImmediate(arrayOffset) && !op2.isParam()) {
+                mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, "$sp", String.valueOf(op2.getAddress() + Integer.parseInt(arrayOffset)))));
+            } else if (!op2.isGlobal() && !Immediate.checkImmediate(arrayOffset) && !op2.isParam()) {
+                mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$sp", op2.getAddress())));
+                mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v1", "$v1", arrayOffset))); // 位置
+                mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, "$v1", "0")));
+            } else if (!op2.isGlobal() && Immediate.checkImmediate(arrayOffset) && op2.isParam()) {
+                String regOp2 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op2, true));
+                mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, regOp2, String.valueOf(Integer.parseInt(arrayOffset)))));
+            } else if (!op2.isGlobal() && !Immediate.checkImmediate(arrayOffset) && op2.isParam()) {
+                String regOp2 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op2, true));
+                mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v1", regOp2, arrayOffset))); // 位置
+                mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, "$v1", "0")));
             }
-        } else if (midCode.getOperator().equals(MidCode.Op.ARR_SAVE)) {
-            Symbol op1 = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable); //数组不需要分配寄存器
-            String arrayOffset = midCode.getLSArrayIndex(midCode.getOperand1()).split("@")[0];
+        }
+        if (midCode.getOperator().equals(MidCode.Op.ARR_SAVE)) {
+            Symbol op1 = findSymbol(midCode.getOperand1()); //局部数组需要分配寄存器
+            String arrayOffset = midCode.getLSArrayIndex(midCode.getOperand1());
+            arrayOffset = dealWithOffset(arrayOffset);
             //如果存入数组的不是立即数，则需要加载
             if (!Immediate.checkImmediate(midCode.getOperand2())) {
-                Symbol op2 = findSymbol(midCode.getOperandName(midCode.getOperand2()), curSymbolTable);
+                Symbol op2 = findSymbol(midCode.getOperand2());
                 String regOp2 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op2, true));
-                if (!Immediate.checkImmediate(arrayOffset)) {
-                    //如果offset是变量，则需要加载
-                    Symbol arrayOffsetSymbol = findSymbol(arrayOffset, curSymbolTable);
-                    arrayOffset = regAlloc.getRegString(regAlloc.getRegOfSymbol(arrayOffsetSymbol, true));
-                    mipsCodes.addCode(new MipsCode(new ShiftInstr(ShiftInstr.ShiftInstruction.sll, arrayOffset, arrayOffset, "2")));
-                } else {
-                    arrayOffset = String.valueOf(Integer.parseInt(arrayOffset) * 4);
-                }
+
                 //否则，直接作为立即数使用offset
                 assert op1 != null;
-                if (op1.isGlobal()) {
+                if (op1.isGlobal() && !Immediate.checkImmediate(arrayOffset)) {
                     mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, regOp2, arrayOffset, "array_" + op1.getName())));
-                } else {
+                } else if (op1.isGlobal() && Immediate.checkImmediate(arrayOffset)) {
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, regOp2, null, "array_" + op1.getName() + "+" + arrayOffset)));
+                } else if (!op1.isGlobal() && Immediate.checkImmediate(arrayOffset) && !op1.isParam()) {
                     mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$sp", op1.getAddress())));
                     mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, regOp2, "$v1", arrayOffset)));
+                } else if (!op1.isGlobal() && !Immediate.checkImmediate(arrayOffset) && !op1.isParam()) {
+                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$sp", op1.getAddress())));
+                    mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v1", "$v1", arrayOffset))); // 位置
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, regOp2, "$v1", "0")));
+                } else if (!op1.isGlobal() && Immediate.checkImmediate(arrayOffset) && op1.isParam()) {
+                    String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, regOp2, regOp1, String.valueOf(Integer.parseInt(arrayOffset)))));
+                } else if (!op1.isGlobal() && !Immediate.checkImmediate(arrayOffset) && op1.isParam()) {
+                    String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
+                    mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v1", regOp1, arrayOffset))); // 位置
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, regOp2, "$v1", "0")));
                 }
             } else {
                 //如果存入数组的是立即数，则直接存入，如果不是全局数组，需要先计算数组地址 $sp + address + arrayOffset
                 mipsCodes.addCode(new MipsCode("li $v1, " + midCode.getOperand2()));
-                if (op1.isGlobal()) {
+                if (op1.isGlobal() && !Immediate.checkImmediate(arrayOffset)) {
                     mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", arrayOffset, "array_" + op1.getName())));
-                } else {
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, arrayOffset, arrayOffset, op1.getAddress())));
-                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", arrayOffset)));
+                } else if (op1.isGlobal() && Immediate.checkImmediate(arrayOffset)) {
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", null, "array_" + op1.getName() + "+" + arrayOffset)));
+                } else if (!op1.isGlobal() && Immediate.checkImmediate(arrayOffset) && !op1.isParam()) {
+                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v0", "$sp", op1.getAddress())));
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$v0", arrayOffset)));
+                } else if (!op1.isGlobal() && !Immediate.checkImmediate(arrayOffset) && !op1.isParam()) {
+                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v0", "$sp", op1.getAddress())));
+                    mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v0", "$v0", arrayOffset))); // 位置
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$v0", "0")));
+                } else if (!op1.isGlobal() && Immediate.checkImmediate(arrayOffset) && op1.isParam()) {
+                    String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", regOp1, String.valueOf(Integer.parseInt(arrayOffset)))));
+                } else if (!op1.isGlobal() && !Immediate.checkImmediate(arrayOffset) && op1.isParam()) {
+                    String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
+                    mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v0", regOp1, arrayOffset))); // 位置
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$v0", "0")));
                 }
             }
         }
     }
 
-    public void generatePushPara(MidCode midCode, SymbolTable curSymbolTable) {
-        FuncTable funcTable = funcMap.get(midCode.getOperand2());
+    private String dealWithOffset(String arrayOffset) {
+        if (!Immediate.checkImmediate(arrayOffset)) {
+            //如果offset是变量，则需要加载
+            Symbol arrayOffsetSymbol = findSymbol(arrayOffset);
+            arrayOffset = regAlloc.getRegString(regAlloc.getRegOfSymbol(arrayOffsetSymbol, true)); //替换为寄存器
+            mipsCodes.addCode(new MipsCode(new ShiftInstr(ShiftInstr.ShiftInstruction.sll, "$a1", arrayOffset, "2")));
+            return "$a1";
+        } else {
+            return String.valueOf(Integer.parseInt(arrayOffset) * 4);
+        }
+    }
+
+    private int getNestedStackSize(MidCode midCode) {
+        int index = midCodes.indexOf(midCode);
+        int stackSize = 0;
+        MidCode midCode1 = midCode;
+
+        while (!midCode1.getOperator().equals(MidCode.Op.FUNC)) {
+            if (midCode1.getOperator().equals(MidCode.Op.PRE_CALL)) {
+                stackSize += funcMap.get(midCode1.getOperand1().split("@")[0]).getStackSize();
+            } else if (midCode1.getOperator().equals(MidCode.Op.FUNC_CALL)) {
+                stackSize -= funcMap.get(midCode1.getOperand1().split("@")[0]).getStackSize();
+            }
+            midCode1 = midCodes.get(--index);
+        }
+        return stackSize;
+    }
+
+    public void generatePushPara(MidCode midCode) {
+        int stackSize = getNestedStackSize(midCode);
+        FuncTable funcTable = funcMap.get(midCode.getOperand2().split("@")[0]);
         Symbol param = funcTable.getParamMap().get(midCode.getResult());
         //如果传入的是立即数
         if (Immediate.checkImmediate(midCode.getOperand1())) {
             mipsCodes.addCode(new MipsCode("li $v1, " + midCode.getOperand1()));
             mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp",
-                    String.valueOf(param.getAddress() - funcTable.getStackSize()))));
+                    String.valueOf(param.getAddress() - stackSize))));
         } else {
             //如果传入的是变量（含数组元素）或者数组
-            Symbol op1 = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable);
+            Symbol op1 = findSymbol(midCode.getOperand1());
             if (op1.getSymbolType().equals(Symbol.SymbolType.Var)) {
                 //如果不是数组元素
                 String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
                 mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, regOp1, "$sp",
-                        String.valueOf(param.getAddress() - funcTable.getStackSize()))));
+                        String.valueOf(param.getAddress() - stackSize))));
                 //如果是数组元素(不存在这种情况)，中间代码会有LOAD这一步骤
-            } else if (op1.getSymbolType().equals(Symbol.SymbolType.Array)) {
+            }
+            if (op1.getSymbolType().equals(Symbol.SymbolType.Array)) {
                 String index = midCode.getLSArrayIndex(midCode.getOperand1());
                 if (index == null) {
                     //如果是二维数组或一维数组
                     if (op1.isGlobal()) {
                         mipsCodes.addCode(new MipsCode("li $v1, " + "0x" + Integer.toHexString(op1.getArrayAddress() + DATA_BASE_ADDRESS)));
-                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress()))));
+                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
+                                "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                    } else if (!op1.isParam()) {
+                        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$sp", op1.getAddress())));
+                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
+                                "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                    } else {
+                        String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
+                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
+                                regOp1, "$sp", String.valueOf(param.getAddress() - stackSize))));
                     }
-
                 } else {
                     //如果是二维数组的一部分
                     //如果是立即数
                     if (Immediate.checkImmediate(index)) {
                         int immIndex = Integer.parseInt(index);
-                        mipsCodes.addCode(new MipsCode("li $v1, " + "0x" + Integer.toHexString(op1.getArrayAddress() + immIndex * 4 + DATA_BASE_ADDRESS)));
-                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress()))));
+                        if (op1.isGlobal()) {
+                            mipsCodes.addCode(new MipsCode("li $v1, " + "0x" + Integer.toHexString(op1.getArrayAddress() + immIndex * 4 + DATA_BASE_ADDRESS)));
+                            mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                        } else if (!op1.isParam()) {
+                            mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$sp", op1.getAddress() + immIndex * 4)));
+                            mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                        } else {
+                            String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
+                            mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", regOp1, immIndex * 4)));
+                            mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                        }
                     } else {
-                        Symbol symIndex = findSymbol(index, curSymbolTable);
-                        String regIndex = regAlloc.getRegString(regAlloc.getRegOfSymbol(symIndex, true));
-                        mipsCodes.addCode(new MipsCode(new ShiftInstr(ShiftInstr.ShiftInstruction.sll, regIndex, regIndex, "2")));
-                        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$v1", op1.getArrayAddress() + DATA_BASE_ADDRESS)));
-                        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress()))));
+                        String regIndex = dealWithOffset(index);
+                        if (op1.isGlobal()) {
+                            mipsCodes.addCode(new MipsCode("li $v1, " + "0x" + Integer.toHexString(op1.getArrayAddress() + DATA_BASE_ADDRESS)));
+                            mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v1", "$v1", regIndex)));
+                            mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                        } else if (!op1.isParam()) {
+                            mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$v1", "$sp", op1.getAddress())));
+                            mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v1", "$v1", regIndex)));
+                            mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                        } else {
+                            String regOp1 = regAlloc.getRegString(regAlloc.getRegOfSymbol(op1, true));
+                            mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.add, "$v1", regOp1, regIndex)));
+                            mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$v1", "$sp", String.valueOf(param.getAddress() - stackSize))));
+                        }
                     }
                 }
             }
         }
     }
 
-    private void generateFuncCall(MidCode midCode, SymbolTable curSymbolTable, FuncTable funcTable) {
+    private void generateFuncCall(MidCode midCode, FuncTable funcTable) {
         //funcTable为被调用函数
-        ArrayList<Integer> allocatedIntReg = new ArrayList<>(regAlloc.getAllocatedRegs().keySet());
-        allocatedIntReg.sort(Integer::compareTo);
+        System.out.println(midCode);
+        int stackSize = getNestedStackSize(midCodes.get(midCodes.indexOf(midCode) - 1));
         if (!curFuncTable.isMain()) {
             mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw, "$ra", "$sp", "0")));
         }
@@ -589,9 +685,9 @@ public class MipsGenerator {
             }
         }*/
         regAlloc.clear(true);
-        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$sp", "$sp", -funcTable.getStackSize())));
+        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$sp", "$sp", -stackSize)));
         mipsCodes.addCode(new MipsCode(new JumpInstr(JumpInstr.JI.jal, "func_label_" + funcTable.getName())));
-        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$sp", "$sp", funcTable.getStackSize())));
+        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addi, "$sp", "$sp", stackSize)));
         /*for (Integer reg : regAlloc.getAllocatedRegs().keySet()) {
             String strReg = regAlloc.getRegString(reg);
             mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, strReg, "$sp", String.valueOf(funcTable.getStackSize() + RegAlloc.REG_SAVED_PLACE.get(strReg)))));
@@ -601,19 +697,19 @@ public class MipsGenerator {
         }
     }
 
-    private void generateSet(MidCode midCode, SymbolTable curSymbolTable) {
+    private void generateSet(MidCode midCode) {
         // SET #T7 := #T6 < b@<1,2>
         // SET #T7 := #T6 <= 3
         // SET #T7 := 3 < #T5
         // SET #T7 := #T3 == 0
         // SET #T7 := #T3 != 0
         // 拓展指令真好用
-        Symbol result = findSymbol(midCode.getResult(), curSymbolTable);
+        Symbol result = findSymbol(midCode.getResult());
         String regResult = regAlloc.getRegString(regAlloc.getRegOfSymbol(result, false));
         String op1 = midCode.getOperand1();
         String op2 = midCode.getOperand2();
-        Symbol symOp1 = findSymbol(midCode.getOperandName(op1), curSymbolTable);
-        Symbol symOp2 = findSymbol(midCode.getOperandName(op2), curSymbolTable);
+        Symbol symOp1 = findSymbol(op1);
+        Symbol symOp2 = findSymbol(op2);
         String regOp1 = symOp1 != null ? regAlloc.getRegString(regAlloc.getRegOfSymbol(symOp1, true)) : null;
         String regOp2 = symOp2 != null ? regAlloc.getRegString(regAlloc.getRegOfSymbol(symOp2, true)) : null;
         String immOp1 = Immediate.checkImmediate(op1) ? String.valueOf(Integer.parseInt(op1)) : "0";
@@ -623,7 +719,12 @@ public class MipsGenerator {
                 if (symOp1 != null && symOp2 != null) {
                     mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.slt, regResult, regOp1, regOp2)));
                 } else if (symOp1 != null) {
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.slti, regResult, regOp1, Integer.parseInt(immOp2))));
+                    if (Integer.parseInt(immOp2) < 65536) {
+                        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.slti, regResult, regOp1, Integer.parseInt(immOp2))));
+                    } else {
+                        mipsCodes.addCode(new MipsCode("li $v1, ", immOp2));
+                        mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.slt, regResult, regOp1, "$v1")));
+                    }
                 } else {
                     mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.sgt, regResult, regOp2, immOp1)));
                 }
@@ -653,7 +754,7 @@ public class MipsGenerator {
         }
     }
 
-    private void generateJump(MidCode midCode, SymbolTable curSymbolTable) {
+    private void generateJump(MidCode midCode) {
         if (midCode.getOperator().equals(MidCode.Op.JUMP)) {
             mipsCodes.addCode(new MipsCode(new JumpInstr(JumpInstr.JI.j, midCode.getOperand1())));
         } else {
@@ -665,7 +766,7 @@ public class MipsGenerator {
                     mipsCodes.addCode(new MipsCode(new JumpInstr(JumpInstr.JI.j, midCode.getResult())));
                 }
             } else {
-                Symbol sym = findSymbol(midCode.getOperandName(midCode.getOperand1()), curSymbolTable);
+                Symbol sym = findSymbol(midCode.getOperand1());
                 String reg = regAlloc.getRegString(regAlloc.getRegOfSymbol(sym, true));
                 if (midCode.getOperand2().equals("== 0")) {
                     mipsCodes.addCode(new MipsCode(new BranchInstr(BranchInstr.BI.beq, "0", reg, midCode.getResult())));

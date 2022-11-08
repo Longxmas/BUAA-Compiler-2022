@@ -10,10 +10,10 @@ import java.util.*;
 
 public class RegAlloc {
     private MipsCodes mipsCodes;
-    // 可用来自由分配的寄存器：从 t0($8) 到 t9($25); v0($2)为函数返回值, v1($3)存储立即数, a0($4)作为系统调用参数
+    // 可用来自由分配的寄存器：从 t0($8) 到 t9($25); v0($2)为函数返回值, v1($3)存储立即数, a0($4)作为系统调用参数, a1($5)用来计算地址
     // gp($28)为全局指针, sp($29)为栈指针, fp($30)为帧指针, ra($31)为返回地址
     public static final HashSet<Integer> allocatableRegs =
-            new HashSet<>(Arrays.asList(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 30));
+            new HashSet<>(Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 30));
 
     public static final HashMap<String, Integer> REG_SAVED_PLACE = new HashMap<String, Integer>() {{
         put("$ra", 0);

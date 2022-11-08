@@ -33,21 +33,23 @@ public class visitor {
     private HashMap<String, FuncTable> funcMap = new HashMap<>();
     private ArrayList<FuncTable> funcTables = new ArrayList<>();
     private ArrayList<SymbolTable> symbolTables = new ArrayList<>();
-    private HashMap<String, SymbolTable> depth2Table = new HashMap<>();
+    private HashMap<String, SymbolTable> depth2Table = new HashMap<String, SymbolTable>() {{
+        put("<0,0>", globalSymbolTable);
+    }};
     private FuncTable currentFuncTable = null;
     private int inWhile = 0;
-
     private boolean isGlobal = false;
 
     private MidCodeList midCodeList = new MidCodeList(depths, funcMap);
+    public int funcCnt = 0;
 
     public void analyseBlock(Block block) {
         currentDepth++;
         currentTable = new SymbolTable(currentDepth, depths.get(currentDepth), currentTable);
         currentFuncTable.addSymbolTable(currentTable);
         int index = depths.get(currentDepth);
-        depth2Table.put("[" + currentDepth + ", " + index + "]", currentTable);
-        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + index + "]", null, null));
+        depth2Table.put("<" + currentDepth + "," + index + ">", currentTable);
+        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "<" + currentDepth + "," + index + ">", null, null));
         depths.set(currentDepth, depths.get(currentDepth) + 1);
         for (BlockItem blockItem : block.getBlockItems()) {
             if (blockItem.getDecl() != null) {
@@ -56,7 +58,7 @@ public class visitor {
                 analyseStmt(blockItem.getStmt());
             }
         }
-        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, "[" + currentDepth + ", " + index + "]", null, null));
+        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, "<" + currentDepth + "," + index + ">", null, null));
         symbolTables.add(currentTable);
         currentTable = currentTable.getParent();
         currentDepth--;
@@ -178,6 +180,7 @@ public class visitor {
 
     public Symbol checkLeftAssign(Symbol symbol, boolean leftAssign) {
         if (!leftAssign) {
+            System.out.println("symbol : " + symbol + " isGlobal: " + symbol.isGlobal());
             Symbol temp = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable);
             midCodeList.add(new MidCode(MidCode.Op.ARR_LOAD, temp, symbol, null));
             return temp;
@@ -210,7 +213,7 @@ public class visitor {
         int number = 0;
         int left = 0;
         ArrayList<Operand> outputs = new ArrayList<>();
-        for (int i = 0;i < printStmt.getExps().size(); i++) {
+        for (int i = 0; i < printStmt.getExps().size(); i++) {
             outputs.add(analyseExp(printStmt.getExps().get(i)));
         }
         for (int i = 0; i < s.length() - 1; i++) {
@@ -228,6 +231,7 @@ public class visitor {
 
 
     public void analyseIfElseStmt(IfElseStmt ifElseStmt) {
+        ifElseStmt.getCond().getFirstSon().setParent(ifElseStmt);
         int startLabel = midCodeList.elseStartLabelCnt;
         int endLabel = midCodeList.ifElseEndLabelCnt++;
         boolean hasElse = ifElseStmt.getElseStmt() != null;
@@ -297,66 +301,90 @@ public class visitor {
         } catch (Exception ignored) {
 
         }
-        Operand operand = analyseLAndExp(exp.getFirstSon());
+        exp.getFirstSon().setParent(exp);
+        exp.getFirstSon().setIndex(0);
+        for (int i = 0; i < exp.getSons().size(); i++) {
+            exp.getSons().get(i).setParent(exp);
+            exp.getSons().get(i).setIndex(i + 1);
+        }
+        Operand operand = analyseLAndExp(exp.getFirstSon(), label);
         if (exp.getSons().size() == 0) {
             midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 0", label));
-            midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "or_label_" + midCodeList.orLabelCnt++ + ":", null, null));
+            //midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "or_label_" + midCodeList.orLabelCnt++ + ":", null, null));
             return operand;
         }
         midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
         Operand ans = null;
         for (int i = 0; i < exp.getSons().size(); i++) {
             Operand land;
-            if (i != exp.getSons().size() - 1) {
-                land = analyseLAndExp(exp.getSons().get(i));
-                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, land.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
-            } else {
-                land = analyseLAndExp(exp.getSons().get(i));
-                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, land.toString(), "== 0", label));
-            }
+            land = analyseLAndExp(exp.getSons().get(i), label);
             ans = land;
         }
+        midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, ans.toString(), "== 0", label));
         midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "or_label_" + midCodeList.orLabelCnt++ + ":", null, null));
         //如果不止一个表达式，就返回空
         return ans;
     }
 
-    public Operand analyseLAndExp(LAndExp exp) {
+    public Operand analyseLAndExp(LAndExp exp, String label) {
+        LOrExp parent = exp.getParent();
+        boolean needToJump = parent.getSons().size() < exp.getIndex() && parent.getSons().size() > 0;
         try {
             Immediate temp = new Immediate(new CalExp(currentTable).calculateLAndExp(exp));
-            if (temp.getValue() == 1) {
+            if (temp.getValue() == 1 && needToJump) {
                 midCodeList.add(new MidCode(MidCode.Op.JUMP, "or_label_" + midCodeList.orLabelCnt, null, null));
             }
             return temp;
         } catch (Exception ignored) {
 
         }
-        Operand operand = analyseEqExp(exp.getFirstSon());
+        exp.getFirstSon().setParent(exp);
+        exp.getFirstSon().setIndex(0);
+        for (int i = 0; i < exp.getSons().size(); i++) {
+            exp.getSons().get(i).setParent(exp);
+            exp.getSons().get(i).setIndex(i + 1);
+        }
+
+        //如果landExp是最后一个
+        String landLabel = exp.getIndex() == parent.getSons().size() ? label : "land_label_" + midCodeList.andLabelCnt;
+        Operand operand = analyseEqExp(exp.getFirstSon(), label);
         if (exp.getSons().size() == 0) {
-            midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
+            if (needToJump)
+                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
             return operand;
         }
-        midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 0", "and_label_" + midCodeList.andLabelCnt));
+
+        midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 0", landLabel));
         Operand ret = null;
         for (int i = 0; i < exp.getSons().size(); i++) {
-            Operand eq = analyseEqExp(exp.getSons().get(i));
+            Operand eq = analyseEqExp(exp.getSons().get(i), label);
             if (i != exp.getSons().size() - 1) {
-                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "== 0", "and_label_" + midCodeList.andLabelCnt));
+                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "== 0", landLabel));
             } else {
-                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
+                if (needToJump)
+                    midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
             }
             ret = eq;
         }
-        midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "and_label_" + midCodeList.andLabelCnt++ + ":", null, null));
+        if (needToJump)
+            midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "and_label_" + midCodeList.andLabelCnt++ + ":", null, null));
         //如果不止一个，就返回最后一个
         return ret;
     }
 
-    public Operand analyseEqExp(EqExp exp) {
+    public Operand analyseEqExp(EqExp exp, String label) {
         try {
             Immediate temp = new Immediate(new CalExp(currentTable).calculateEqExp(exp));
             if (temp.getValue() == 0) {
-                midCodeList.add(new MidCode(MidCode.Op.JUMP, "and_label_" + midCodeList.andLabelCnt, null, null));
+                String eqLabel;
+                LAndExp parent = exp.getParent();
+                LOrExp grand = parent.getParent();
+                if (parent.getIndex() == grand.getSons().size()) {
+                    eqLabel = label;
+                } else {
+                    eqLabel = "and_label_" + midCodeList.andLabelCnt;
+                }
+                midCodeList.add(new MidCode(MidCode.Op.JUMP, eqLabel, null, null));
             }
             return temp;
         } catch (Exception ignored) {
@@ -515,8 +543,9 @@ public class visitor {
             errorTable.getInstance().addError(new error(error.Type.UNDEFINED_IDENT, ident.getLine()));
             return null;
         }
+        int cnt = funcCnt++;
         //Prepare For the Call
-        midCodeList.add(new MidCode(MidCode.Op.PRE_CALL, funcTable, null, null));
+        midCodeList.add(new MidCode(MidCode.Op.PRE_CALL, funcTable + "@" + cnt, null, null));
         //System.out.println(funcTable.getName());
         FuncRParams funcRParams = exp.getFuncRParams();
         ArrayList<Exp> params = new ArrayList<>();
@@ -557,12 +586,12 @@ public class visitor {
             }
             //  <错误处理的垃圾代码，暂时不想改>
             if (type.equals(Symbol.SymbolType.Var)) {
-                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA, paramOperand.toString(), funcTable.getName(), arg.getName()));
+                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA, paramOperand.toString(), funcTable.getName()+ "@" + cnt, arg.getName()));
             } else {
-                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA_ARR, paramOperand.toString(), funcTable.getName(), arg.getName()));
+                midCodeList.add(new MidCode(MidCode.Op.PUSH_PARA_ARR, paramOperand.toString(), funcTable.getName()+ "@" + cnt, arg.getName()));
             }
         }
-        midCodeList.add(new MidCode(MidCode.Op.FUNC_CALL, funcTable, null, null));
+        midCodeList.add(new MidCode(MidCode.Op.FUNC_CALL, funcTable+ "@" + cnt, null, null));
         Symbol returnValue = Symbol.tempVar(midCodeList, Symbol.BasicType.INT, currentTable);
         midCodeList.add(new MidCode(MidCode.Op.ASSIGN, returnValue.toString(), "%RTX", null));
         Symbol ans;
@@ -668,10 +697,7 @@ public class visitor {
             if (isGlobal) symbol.setGlobal(true);
         } else if (initExp == null && !hasError) {
             //ConstArray
-            ArrayList<Integer> dims = new ArrayList<>();
-            for (ConstExp exp : exps) {
-                dims.add(new CalExp(currentTable).CalculateConstExp(exp));
-            }
+            ArrayList<Integer> dims = getDims(exps);
             ArrayList<Operand> initArray = new ArrayList<>();
             int dimCount = exps.size();
             if (dimCount == 1) {
@@ -696,8 +722,8 @@ public class visitor {
     }
 
     public void analyseVarDecl(VarDecl decl) {
-        for (VarDef def : decl.getVarDefs()) {
-            analyseVarDef(def);
+        for (int i = decl.getVarDefs().size() - 1; i >= 0; i--) {
+            analyseVarDef(decl, decl.getVarDefs().get(i));
         }
     }
 
@@ -713,15 +739,12 @@ public class visitor {
         for (int i = num; i < dim; i++) initArray.add(new Immediate(0));
     }
 
-    private void analyseVarDef(VarDef def) {
+    private void analyseVarDef(VarDecl decl, VarDef def) {
         boolean hasError = false;
         Token ident = def.getIdent();
         ArrayList<ConstExp> exps = def.getConstExps();
-        ArrayList<Integer> dims = new ArrayList<>();
+        ArrayList<Integer> dims = getDims(exps);
         Symbol symbol;
-        for (ConstExp exp : exps) {
-            dims.add(new CalExp(currentTable).CalculateConstExp(exp));
-        }
         if (currentTable.contains(ident.getSign())) {
             errorTable.getInstance().addError(new error(error.Type.DUPLICATED_IDENT, ident.getLine()));
             hasError = true;
@@ -730,54 +753,36 @@ public class visitor {
         //注意全局变量初始化
         if (initVal == null && !hasError) {
             if (exps.size() == 0) {
+                Operand initValue = getNextVarInit(decl, def);
                 symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Var,
-                        false, isGlobal ? new Immediate(0) : null, currentTable);
-                midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol, null, null));
+                        false, initValue, currentTable);
+                midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol, initValue, null));
             } else {
-                ArrayList<Operand> arrayInit = new ArrayList<>();
-                int length = 1;
-                for (Integer dim : dims) {
-                    length *= dim;
-                }
-                for (int i = 0; i < length; i++) {
-                    arrayInit.add(new Immediate(0));
-                }
+                ArrayList<Operand> arrayInit = getNextArrayInit(decl, def);
                 symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Array,
-                        false, dims, isGlobal ? arrayInit : null, currentTable);
-                midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol, null, null));
+                        false, dims, arrayInit, currentTable);
+                if (arrayInit == null || isGlobal) {
+                    midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol, null, null));
+                } else {
+                    if (!isGlobal) {
+                        for (int i = 0; i < arrayInit.size(); i++) {
+                            midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol + "[" + i + "]", arrayInit.get(i).toString(), null));
+                        }
+                    }
+                }
             }
             if (isGlobal) symbol.setGlobal(true);
             currentTable.addSymbol(symbol);
         } else if (initVal != null && !hasError) {
             Exp exp = initVal.getExp();
             if (exp != null) {
-                Operand varInit = isGlobal ? new CalExp(currentTable).calculateExp(exp, true) : analyseExp(exp);
+                Operand varInit = analyseVarInit(initVal);
                 symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Var, false,
                         varInit, currentTable);
                 midCodeList.add(new MidCode(MidCode.Op.VAR_DEF, symbol, varInit, null));
             } else {
                 //Array
-                ArrayList<Operand> initArray = new ArrayList<>();
-                int dimCount = exps.size();
-                if (dimCount == 1) {
-                    //1维数组
-                    partOfAnalyseArrayDef(initVal, initArray, dims.get(0));
-                } else if (dimCount == 2) {
-                    //2维数组
-                    int dim1 = dims.get(0); //第一个维度
-                    int dim2 = dims.get(1); //第二个维度
-                    if (initVal.getInitVals().get(0).getExp() != null) {
-                        partOfAnalyseArrayDef(initVal, initArray, dim1 * dim2);
-                    } else {
-                        //System.out.println(ident.getSign() + " " + initVal.getInitVals().size());
-                        for (int i = 0; i < Math.min(dim1, initVal.getInitVals().size()); i++) {
-                            partOfAnalyseArrayDef(initVal.getInitVals().get(i), initArray, dim2);
-                        }
-                        for (int i = Math.min(dim1, initVal.getInitVals().size()); i < dim1; i++) {
-                            partOfAnalyseArrayDef(null, initArray, dim2);
-                        }
-                    }
-                }
+                ArrayList<Operand> initArray = analyseArrayInit(def);
                 symbol = new Symbol(ident.getSign(), Symbol.BasicType.INT, Symbol.SymbolType.Array, false, dims,
                         initArray, currentTable);
                 for (int i = 0; i < initArray.size(); i++) {
@@ -786,6 +791,83 @@ public class visitor {
             }
             if (isGlobal) symbol.setGlobal(true);
             currentTable.addSymbol(symbol);
+        }
+    }
+
+    public Operand analyseVarInit(InitVal initVal) {
+        Exp exp = initVal.getExp();
+        return isGlobal ? new CalExp(currentTable).calculateExp(exp, true) : analyseExp(exp);
+    }
+
+    public Operand getNextVarInit(VarDecl decl, VarDef varDef) {
+        ArrayList<VarDef> varDefs = decl.getVarDefs();
+        int index = varDefs.indexOf(varDef);
+        if (index == varDefs.size() - 1) return isGlobal ? new Immediate(0) : null;
+        else {
+            VarDef nextVarDef = varDefs.get(index + 1);
+            Operand nextInit = currentTable.getSymbolMap().get(nextVarDef.getIdent().getSign()).getVarInit();
+            if (nextInit != null) return nextInit;
+            else return getNextVarInit(decl, nextVarDef);
+        }
+    }
+
+    public ArrayList<Integer> getDims(ArrayList<ConstExp> exps) {
+        ArrayList<Integer> dims = new ArrayList<>();
+        for (ConstExp exp : exps) {
+            dims.add(new CalExp(currentTable).CalculateConstExp(exp));
+        }
+        return dims;
+    }
+
+    public ArrayList<Operand> analyseArrayInit(VarDef varDef) {
+        ArrayList<ConstExp> exps = varDef.getConstExps();
+        InitVal initVal = varDef.getInitVal();
+        ArrayList<Integer> dims = getDims(exps);
+        ArrayList<Operand> initArray = new ArrayList<>();
+        int dimCount = exps.size();
+        if (dimCount == 1) {
+            //1维数组
+            partOfAnalyseArrayDef(initVal, initArray, dims.get(0));
+        } else if (dimCount == 2) {
+            //2维数组
+            int dim1 = dims.get(0); //第一个维度
+            int dim2 = dims.get(1); //第二个维度
+            if (initVal.getInitVals().get(0).getExp() != null) {
+                partOfAnalyseArrayDef(initVal, initArray, dim1 * dim2);
+            } else {
+                //System.out.println(ident.getSign() + " " + initVal.getInitVals().size());
+                for (int i = 0; i < Math.min(dim1, initVal.getInitVals().size()); i++) {
+                    partOfAnalyseArrayDef(initVal.getInitVals().get(i), initArray, dim2);
+                }
+                for (int i = Math.min(dim1, initVal.getInitVals().size()); i < dim1; i++) {
+                    partOfAnalyseArrayDef(null, initArray, dim2);
+                }
+            }
+        }
+        return initArray;
+    }
+
+    public ArrayList<Operand> getNextArrayInit(VarDecl decl, VarDef varDef) {
+        ArrayList<VarDef> varDefs = decl.getVarDefs();
+        ArrayList<Operand> arrayInit = new ArrayList<>();
+        ArrayList<ConstExp> exps = varDef.getConstExps();
+        int length = 1;
+        for (ConstExp exp : exps) {
+            length *= new CalExp(currentTable).CalculateConstExp(exp);
+        }
+        for (int i = 0; i < length; i++) {
+            arrayInit.add(new Immediate(0));
+        }
+        int index = varDefs.indexOf(varDef);
+        if (index == varDefs.size() - 1) return isGlobal ? arrayInit : null;
+        else {
+            VarDef nextVarDef = varDefs.get(index + 1);
+            if (!getDims(exps).equals(getDims(nextVarDef.getConstExps()))) {
+                return arrayInit;
+            }
+            ArrayList<Operand> nextInit = currentTable.getSymbolMap().get(nextVarDef.getIdent().getSign()).getArrayInit();
+            if (nextInit != null) return nextInit;
+            else return getNextArrayInit(decl, nextVarDef);
         }
     }
 
@@ -801,7 +883,7 @@ public class visitor {
         } else {
             currentDepth++;
             currentTable = new SymbolTable(currentDepth, depths.get(currentDepth), currentTable);
-            depth2Table.put("[" + currentDepth + ", " + depths.get(currentDepth) + "]", currentTable);
+            depth2Table.put("<" + currentDepth + "," + depths.get(currentDepth) + ">", currentTable);
 
             FuncTable funcTable = new FuncTable(name, returnType, currentTable);
             funcMap.put(name, funcTable);
@@ -839,13 +921,14 @@ public class visitor {
             }
             arg = new Symbol(name, Symbol.BasicType.INT, Symbol.SymbolType.Array, false, dims, null, currentTable);
         }
+        arg.setParam();
         funcTable.addParam(arg);
         currentTable.addSymbol(arg); //添加参数到当前的符号表
         midCodeList.add(new MidCode(MidCode.Op.FORM_VAR_DEF, arg, funcTable, null));
     }
 
     public void analyseFuncBody(Block block, FuncTable funcTable) {
-        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
+        midCodeList.add(new MidCode(MidCode.Op.NEW_BLOCK, "<" + currentDepth + "," + depths.get(currentDepth) + ">", null, null));
         ArrayList<Stmt> stmts = new ArrayList<>();
         for (BlockItem blockItem : block.getBlockItems()) {
             if (blockItem.getDecl() != null) {
@@ -861,7 +944,7 @@ public class visitor {
                         !((ReturnStmt) stmts.get(stmts.size() - 1)).hasValue()))
         )
             errorTable.getInstance().addError(new error(error.Type.MISSING_RETURN, block.getLine()));
-        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, "[" + currentDepth + ", " + depths.get(currentDepth) + "]", null, null));
+        midCodeList.add(new MidCode(MidCode.Op.END_BLOCK, "<" + currentDepth + "," + depths.get(currentDepth) + ">", null, null));
     }
 
     public void analyseMainFunc(MainFuncDef mainFuncDef) {

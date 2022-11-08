@@ -11,7 +11,7 @@ public class StoreInstr implements Instr {
 
     SI instr;
     String target;
-    String base;
+    String base = null;
     String offset;
 
     public StoreInstr(SI instr, String target, String base, String offset) {
@@ -22,7 +22,12 @@ public class StoreInstr implements Instr {
     }
 
     public String toString() {
-        return instr.toString() + " " + target + ", " + offset + "(" + base + ")";
+        if (base != null) {
+            return instr.toString() + " " + target + ", " + offset + "(" + base + ")";
+        } else {
+            return instr.toString() + " " + target + ", " + offset;
+        }
+
     }
 
 }

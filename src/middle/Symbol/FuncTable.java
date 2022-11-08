@@ -83,7 +83,7 @@ public class FuncTable implements Operand {
         for (int i = ismain; i < symbolTables.size(); i++) {
             SymbolTable symbolTable = symbolTables.get(i);
             for (Symbol symbol : symbolTable.getSymbols()) {
-                //System.out.println(this.name + " " + symbol.getName());
+                //System.out.println(this.name + " " + symbol);
                 if (symbol.getSymbolType() == Symbol.SymbolType.Var) {
                     symbol.setAddress(size);
                     size += 4;
@@ -93,7 +93,7 @@ public class FuncTable implements Operand {
                 }
             }
         }
-        this.stackSize = size + MipsGenerator.SAVED_STACK_SIZE;
+        this.stackSize = size;
     }
 
     public int getStackSize() {

@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MidCode {
+
     public enum Op {
         ASSIGN, GETINT, PRI,
         ADD, SUB, MUL, DIV, MOD, NOT, AND, OR, XOR,
@@ -130,7 +131,7 @@ public class MidCode {
         return operand1;
     }
 
-    public String getOperandName(String operand) {
+    public static String getOperandName(String operand) {
         if (operand.contains("@")) return operand.split("@")[0];
         return operand;
     }
@@ -152,6 +153,12 @@ public class MidCode {
         if (matcher.find()) {
             return matcher.group(1);
         }
+        return null;
+    }
+
+    public static String getOperandLoc(String operand) {
+        if (operand.contains("[")) return operand.split("\\[")[0].split("@")[1];
+        else if (operand.contains("@")) return operand.split("@")[1];
         return null;
     }
 

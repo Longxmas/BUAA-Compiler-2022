@@ -38,6 +38,7 @@ public class Symbol implements Operand {
     private boolean isGlobal = false;
     private ArrayList<Operand> arrayInit = new ArrayList<>();
     private Operand offset = null;
+    private boolean isParam = false;
     private Symbol parentArray = null;
     private SymbolTable parentSymbolTable;
 
@@ -154,22 +155,33 @@ public class Symbol implements Operand {
     public boolean isTemp() {
         return this.name.contains("#T");
     }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.name);
-        if (!this.name.contains("#")) {
-            sb.append("@").append(loc);
-        }
+        sb.append("@").append(loc);
         if (offset != null) {
             sb.append("[").append(offset).append("]");
         }
         return sb.toString();
     }
 
-    public static Symbol tempVar(MidCodeList midCodeList, BasicType basicType,SymbolTable symbolTable) {
+    public static Symbol tempVar(MidCodeList midCodeList, BasicType basicType, SymbolTable symbolTable) {
         Symbol temp = new Symbol("#T" + midCodeList.tmpIndex, basicType, SymbolType.Var, false, null, symbolTable);
         symbolTable.addSymbol(temp);
         midCodeList.addTempIndex();
         return temp;
+    }
+
+    public void setParam() {
+        this.isParam = true;
+    }
+
+    public boolean isParam() {
+        return this.isParam;
+    }
+
+    public String getLoc() {
+        return this.loc;
     }
 }
