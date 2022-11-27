@@ -147,7 +147,7 @@ public class CalExp {
     public int calculateLAndExp(LAndExp lAndExp) throws Exception {
         int ans = calculateEqExp(lAndExp.getFirstSon());
         for (int i = 0; i < lAndExp.getSons().size(); i++) {
-            ans = ans == 1 && calculateEqExp(lAndExp.getSons().get(i)) == 1 ? 1 : 0;
+            ans = ans != 0 && calculateEqExp(lAndExp.getSons().get(i)) != 0 ? 1 : 0;
         }
         return ans;
     }
@@ -155,7 +155,7 @@ public class CalExp {
     public int calculateLOrExp(LOrExp lOrExp) throws Exception {
         int ans = calculateLAndExp(lOrExp.getFirstSon());
         for (int i = 0; i < lOrExp.getSons().size(); i++) {
-            ans = ans == 1 || calculateLAndExp(lOrExp.getSons().get(i)) == 1 ? 1 : 0;
+            ans = ans != 0 || calculateLAndExp(lOrExp.getSons().get(i)) != 0 ? 1 : 0;
         }
         return ans;
     }

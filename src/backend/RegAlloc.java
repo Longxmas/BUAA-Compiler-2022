@@ -106,7 +106,7 @@ public class RegAlloc {
         symbolToReg.put(symbol, register);
         // 将寄存器放入 Cache
         regCache.add(register);
-        //mipsCodes.addCode(new MipsCode("#<---- Alloc " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->"));
+        mipsCodes.addCode(new MipsCode("#<---- Alloc " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->"));
         //System.out.println("#<---- Alloc " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->");
         if (needToLoad) {
             mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw,
