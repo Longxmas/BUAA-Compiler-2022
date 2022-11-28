@@ -1,48 +1,48 @@
 .data
+str0: .asciiz "a[1] == 2\n"
 .text
-addiu $sp, $sp, -16
+addiu $sp, $sp, -28
 j func_label_main
 #<--------------- FUNC main--------------->
 func_label_main:
-#<---- var a@<1,0> = 1 ---->
-#<---- Alloc $a2 for a ---->
-addiu $a2, $zero, 1
-#<---- GEN_LABEL while_judge_label_0: ---->
-#<---- Cancel $a2 for a ---->
-sw $a2, 4($sp)
-while_judge_label_0:
-#<---- SET #T0@<1,0> := a@<1,0> < 3 ---->
+#<---- var a@<1,0>[0] = 0 ---->
+li $v1, 0
+sw $v1, 4($sp)
+#<---- var a@<1,0>[1] = 1 ---->
+li $v1, 1
+sw $v1, 8($sp)
+#<---- LOAD #T0@<1,0> = a@<1,0>[0] ---->
 #<---- Alloc $a2 for #T0 ---->
-#<---- Alloc $a3 for a ---->
-lw $a3, 4($sp)
-slti $a2, $a3, 3
-#<---- JUMP_IF #T0@<1,0> == 0 while_end_label_0 ---->
+lw $a2, 4($sp)
+#<---- #T1@<1,0> = #T0@<1,0> ADD 1 ---->
+#<---- Alloc $a3 for #T1 ---->
+addiu $a3, $a2, 1
+#<---- SAVE a@<1,0>[#T1@<1,0>] = 2 ---->
+sll $a1, $a3, 2
+li $v1, 2
+addiu $v0, $sp, 4
+addu $v0, $v0, $a1
+sw $v1, 0($v0)
+#<---- LOAD #T2@<1,0> = a@<1,0>[1] ---->
+#<---- Alloc $t0 for #T2 ---->
+lw $t0, 8($sp)
+#<---- SET #T3@<1,0> := #T2@<1,0> == 2 ---->
+#<---- Alloc $t1 for #T3 ---->
+seq $t1, $t0, 2
+#<---- JUMP_IF #T3@<1,0> == 0 ifElse_end_label_0 ---->
 #<---- Cancel $a2 for #T0 ---->
-sw $a2, 8($sp)
-#<---- Cancel $a3 for a ---->
-sw $a3, 4($sp)
-#<---- Alloc $a2 for #T0 ---->
-lw $a2, 8($sp)
-beq $a2, 0, while_end_label_0
+#<---- Cancel $a3 for #T1 ---->
+#<---- Cancel $t0 for #T2 ---->
+beq $t1, 0, ifElse_end_label_0
 #<---- NEW_BLOCK <2,0> ---->
-#<---- #T1@<2,0> = a@<1,0> ADD 1 ---->
-#<---- Alloc $a3 for a ---->
-lw $a3, 4($sp)
-#<---- Alloc $t0 for #T1 ---->
-addiu $t0, $a3, 1
-#<---- ASSIGN a@<1,0> = #T1@<2,0> ---->
-addiu $a3, $t0, 0
+#<---- print #str0 ---->
+la $a0, str0
+li $v0, 4
+syscall
 #<---- END_BLOCK <2,0> ---->
-#<---- JUMP while_judge_label_0 ---->
-#<---- Cancel $a2 for #T0 ---->
-sw $a2, 8($sp)
-#<---- Cancel $a3 for a ---->
-sw $a3, 4($sp)
-#<---- Cancel $t0 for #T1 ---->
-sw $t0, 12($sp)
-j while_judge_label_0
-#<---- GEN_LABEL while_end_label_0: ---->
-while_end_label_0:
+#<---- GEN_LABEL ifElse_end_label_0: ---->
+#<---- Cancel $t1 for #T3 ---->
+ifElse_end_label_0:
 #<---- return 0 ---->
 li $v0, 0
 li $v0, 10

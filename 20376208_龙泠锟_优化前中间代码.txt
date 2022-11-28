@@ -1,15 +1,18 @@
+#str0: "a[1] == 2\n"
 <--------------- FUNC main--------------->
 NEW_BLOCK <1,0>
-var a@<1,0> = 1
-GEN_LABEL while_judge_label_0:
-SET #T0@<1,0> := a@<1,0> < 3
-JUMP_IF #T0@<1,0> == 0 while_end_label_0
+var a@<1,0>[0] = 0
+var a@<1,0>[1] = 1
+LOAD #T0@<1,0> = a@<1,0>[0]
+#T1@<1,0> = #T0@<1,0> ADD 1
+SAVE a@<1,0>[#T1@<1,0>] = 2
+LOAD #T2@<1,0> = a@<1,0>[1]
+SET #T3@<1,0> := #T2@<1,0> == 2
+JUMP_IF #T3@<1,0> == 0 ifElse_end_label_0
 NEW_BLOCK <2,0>
-#T1@<2,0> = a@<1,0> ADD 1
-ASSIGN a@<1,0> = #T1@<2,0>
+print #str0
 END_BLOCK <2,0>
-JUMP while_judge_label_0
-GEN_LABEL while_end_label_0:
+GEN_LABEL ifElse_end_label_0:
 return 0
 END_BLOCK <1,0>
 <--------------- END_FUNC main--------------->

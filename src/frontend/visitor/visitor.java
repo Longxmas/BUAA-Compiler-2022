@@ -731,7 +731,7 @@ public class visitor {
     }
 
     public void analyseVarDecl(VarDecl decl) {
-        for (int i = decl.getVarDefs().size() - 1; i >= 0; i--) {
+        for (int i = 0; i < decl.getVarDefs().size(); i++) {
             analyseVarDef(decl, decl.getVarDefs().get(i));
         }
     }

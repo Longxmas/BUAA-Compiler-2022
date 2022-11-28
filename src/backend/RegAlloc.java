@@ -4,11 +4,15 @@ import backend.Mips.LoadInstr;
 import backend.Mips.MipsCode;
 import backend.Mips.MipsCodes;
 import backend.Mips.StoreInstr;
+import middle.Code.MidCode;
+import middle.Code.MidCodeList;
 import middle.Symbol.Symbol;
+import optimizer.tempVarChecker;
 
 import java.util.*;
 
 public class RegAlloc {
+    private MidCodeList midCodeList;
     private MipsCodes mipsCodes;
     // 可用来自由分配的寄存器：从 t0($8) 到 t9($25); v0($2)为函数返回值, v1($3)存储立即数, a0($4)作为系统调用参数, a1($5)用来计算地址
     // gp($28)为全局指针, sp($29)为栈指针, fp($30)为帧指针, ra($31)为返回地址
@@ -41,7 +45,8 @@ public class RegAlloc {
         put("$a3", 22 * 4);
     }};
 
-    public RegAlloc(MipsCodes mipsCodes) {
+    public RegAlloc(MipsCodes mipsCodes, MidCodeList midCodeList) {
+        this.midCodeList = midCodeList;
         this.mipsCodes = mipsCodes;
     }
 
@@ -89,13 +94,13 @@ public class RegAlloc {
 
     // 为变量符号分配寄存器, 返回分配的寄存器号
     // 如果没有空余的寄存器，则需要将一个已分配的寄存器的值存入内存，然后再分配
-    public int allocRegister(Symbol symbol, boolean needToLoad) {
+    public int allocRegister(Symbol symbol, boolean needToLoad, MidCode midCode) {
         if (symbolToReg.containsKey(symbol)) {
             return symbolToReg.get(symbol);
         }
         if (freeRegs.isEmpty()) {
             int reg = regToReplace();
-            cancelAlloc(reg);
+            cancelAlloc(reg, midCode);
         }
         // 获取一个空闲寄存器
         int register = freeRegs.iterator().next();
@@ -121,10 +126,10 @@ public class RegAlloc {
     }
 
     // 获取符号当前所在的寄存器，如果尚未被分配，则分配一个寄存器并返回
-    public int getRegOfSymbol(Symbol symbol, boolean needToLoad) {
+    public int getRegOfSymbol(Symbol symbol, boolean needToLoad, MidCode midCode) {
         if (!symbolToReg.containsKey(symbol)) {
             //System.out.println(symbol);
-            return allocRegister(symbol, needToLoad);
+            return allocRegister(symbol, needToLoad, midCode);
         }
         return symbolToReg.get(symbol);
     }
@@ -139,7 +144,7 @@ public class RegAlloc {
     }
 
     // 取消某个寄存器的分配
-    public Symbol cancelAlloc(int register) {
+    public Symbol cancelAlloc(int register, MidCode midCode) {
         if (!allocatedRegs.containsKey(register)) {
             return null;
         }
@@ -147,8 +152,10 @@ public class RegAlloc {
         Symbol symbol = allocatedRegs.remove(register);
         mipsCodes.addCode(new MipsCode("#<---- Cancel " + intReg2SymReg.get(register) + " for " + symbol.getName() + " ---->"));
         //将符号写回内存
-        mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
-                intReg2SymReg.get(register), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress()))));
+        if (!symbol.isTemp() || tempVarChecker.needToStore(midCodeList, symbol, midCode)) {
+            mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
+                    intReg2SymReg.get(register), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress()))));
+        }
         symbolToReg.remove(symbol);
         regCache.remove(register);
         return symbol;
@@ -161,19 +168,31 @@ public class RegAlloc {
 
 
     // 清空分配状态
-    public void clear(boolean needToStore) {
+    public void clear(boolean needToStore, MidCode midCode, ArrayList<Symbol> excepts) {
         if (needToStore) {
             HashSet<Integer> regSet = new HashSet<>(allocatedRegs.keySet());
             for (int reg : regSet) {
-                cancelAlloc(reg);
+                Symbol symbol = allocatedRegs.get(reg);
+                if (excepts.contains(symbol)) {
+                    System.out.println("except " + symbol);
+                    continue;
+                }
+                cancelAlloc(reg,midCode);
             }
+        } else {
+            allocatedRegs.clear();
+            symbolToReg.clear();
+            freeRegs.clear();
+            freeRegs.addAll(allocatableRegs);
+            regCache.clear();
         }
+        /*
         allocatedRegs.clear();
         symbolToReg.clear();
         regCache.clear();
 
         freeRegs.clear();
-        freeRegs.addAll(allocatableRegs);
+        freeRegs.addAll(allocatableRegs);*/
     }
 
     public void refresh(Symbol symbol) {
