@@ -1,18 +1,250 @@
-#str0: "a[1] == 2\n"
-<--------------- FUNC main--------------->
+#str0: "   !!! ()*+,-./:;<>=@?^_`{}|~[]  called func: ___\n"
+#str1: "//called func: ____, _arg = "
+#str2: "\n"
+#str3: "called func: __, array[0] = "
+#str4: "\n\n\n"
+#str5: "called func: Main, array[0][0] = "
+#str6: ", array[0][1] = "
+#str7: "\n\n"
+#str8: "\n"
+#str9: "\n"
+#str10: "\n"
+#str11: "temp: "
+#str12: "\n"
+#str13: "my_hash = "
+#str14: "\n"
+#str15: "magic = "
+#str16: "\n"
+#str17: "magic_first = "
+#str18: "\n"
+#str19: "magic_second = "
+#str20: "\n"
+var _1@<0,0> = 4
+var _3@<0,0> = 64
+var _____@<0,0> = -49331
+var _2@<0,0> = 24
+var _10@<0,0> = 1040
+var aaa@<0,0>[0] = 10086
+var aaa@<0,0>[1] = 16
+var A@<0,0>[0] = 212132
+var A@<0,0>[1] = 76
+var A@<0,0>[2] = 308
+var A@<0,0>[3] = 26
+var A@<0,0>[4] = 57048
+var A@<0,0>[5] = 3194880
+var A@<0,0>[6] = 8792
+var A@<0,0>[7] = -687331
+var A@<0,0>[8] = 908
+var A@<0,0>[9] = 1040
+var A@<0,0>[10] = 136
+var A@<0,0>[11] = 10104
+var _3cg@<0,0> = 4491858
+var hdc33ec_dyu@<0,0> = -597
+var cdh3yi_23@<0,0> = 0
+var duhih2_23c@<0,0> = 1983
+var _23879@<0,0>[0] = 2323
+var _23879@<0,0>[1] = 9254
+var _23879@<0,0>[2] = 0
+var _23879@<0,0>[3] = -1269906
+var dijhw@<0,0>
+var cdwuh@<0,0>
+var wuei@<0,0> = 0
+var _3u22@<0,0>[0] = 287
+var _3u22@<0,0>[1] = -98662
+var _3u22@<0,0>[2] = 287
+var _3u22@<0,0>[3] = 11505
+var jdfo_@<0,0> = 0
+<--------------- FUNC __my_Ha_s__h--------------->
+FORM_VAR_DEF _@<1,0> __my_Ha_s__h
+FORM_VAR_DEF len@<1,0> __my_Ha_s__h
 NEW_BLOCK <1,0>
-var a@<1,0>[0] = 0
-var a@<1,0>[1] = 1
-LOAD #T0@<1,0> = a@<1,0>[0]
-#T1@<1,0> = #T0@<1,0> ADD 1
-SAVE a@<1,0>[#T1@<1,0>] = 2
-LOAD #T2@<1,0> = a@<1,0>[1]
-SET #T3@<1,0> := #T2@<1,0> == 2
-JUMP_IF #T3@<1,0> == 0 ifElse_end_label_0
+var __@<1,0>
+var I@<1,0>
+ASSIGN __@<1,0> = len@<1,0>
+ASSIGN I@<1,0> = 0
+GEN_LABEL while_judge_label_0:
+SET #T0@<1,0> := I@<1,0> < len@<1,0>
+JUMP_IF #T0@<1,0> == 0 while_end_label_0
 NEW_BLOCK <2,0>
-print #str0
+#T1@<2,0> = __@<1,0> ADD 98326464
+ASSIGN __@<1,0> = #T1@<2,0>
+#T2@<2,0> = __@<1,0> MUL 20373381
+ASSIGN __@<1,0> = #T2@<2,0>
+#T3@<2,0> = __@<1,0> ADD 23667832
+ASSIGN __@<1,0> = #T3@<2,0>
+#T4@<2,0> = __@<1,0> DIV 133
+ASSIGN __@<1,0> = #T4@<2,0>
+#T5@<2,0> = __@<1,0> ADD 1347887899
+ASSIGN __@<1,0> = #T5@<2,0>
+#T6@<2,0> = __@<1,0> MOD 99998099
+ASSIGN __@<1,0> = #T6@<2,0>
+#T7@<2,0> = __@<1,0> MUL 123671861
+#T8@<2,0> = #T7@<2,0> SUB 236234
+#T9@<2,0> = __@<1,0> ADD 135632
+#T10@<2,0> = #T8@<2,0> MUL #T9@<2,0>
+#T11@<2,0> = #T10@<2,0> DIV 7
+ASSIGN __@<1,0> = #T11@<2,0>
+#T12@<2,0> = I@<1,0> ADD 1
+ASSIGN I@<1,0> = #T12@<2,0>
 END_BLOCK <2,0>
-GEN_LABEL ifElse_end_label_0:
-return 0
+JUMP while_judge_label_0
+GEN_LABEL while_end_label_0:
+return __@<1,0>
 END_BLOCK <1,0>
+return 
+<--------------- END_FUNC __my_Ha_s__h--------------->
+<--------------- FUNC ___--------------->
+NEW_BLOCK <1,1>
+print #str0
+END_BLOCK <1,1>
+return 
+<--------------- END_FUNC ___--------------->
+<--------------- FUNC ____--------------->
+FORM_VAR_DEF _arg@<1,2> ____
+NEW_BLOCK <1,2>
+#T13@<1,2> = _arg@<1,2> MUL 2
+#T14@<1,2> = #T13@<1,2> MUL 3
+#T15@<1,2> = #T14@<1,2> DIV 6
+print #str1
+print #T15@<1,2>
+print #str2
+END_BLOCK <1,2>
+return 
+<--------------- END_FUNC ____--------------->
+<--------------- FUNC __--------------->
+FORM_VAR_DEF _arr_Ay@<1,3> __
+FORM_VAR_DEF useless@<1,3> __
+NEW_BLOCK <1,3>
+LOAD #T16@<1,3> = _arr_Ay@<1,3>[0]
+print #str3
+print #T16@<1,3>
+print #str4
+return 
+END_BLOCK <1,3>
+return 
+<--------------- END_FUNC __--------------->
+<--------------- FUNC _Main--------------->
+FORM_VAR_DEF _arr_Ay@<1,4> _Main
+NEW_BLOCK <1,4>
+LOAD #T17@<1,4> = _arr_Ay@<1,4>[0]
+LOAD #T18@<1,4> = _arr_Ay@<1,4>[1]
+print #str5
+print #T17@<1,4>
+print #str6
+print #T18@<1,4>
+print #str7
+END_BLOCK <1,4>
+return 
+<--------------- END_FUNC _Main--------------->
+<--------------- FUNC _add_fake--------------->
+FORM_VAR_DEF a@<1,5> _add_fake
+FORM_VAR_DEF b@<1,5> _add_fake
+NEW_BLOCK <1,5>
+#T19@<1,5> = a@<1,5> ADD b@<1,5>
+SET #T20@<1,5> := 10186 <= #T19@<1,5>
+JUMP_IF #T20@<1,5> == 0 Else_start_label_0
+NEW_BLOCK <2,1>
+#T21@<2,1> = 203 MUL b@<1,5>
+#T22@<2,1> = #T21@<2,1> DIV 201
+#T23@<2,1> = a@<1,5> ADD #T22@<2,1>
+return #T23@<2,1>
+END_BLOCK <2,1>
+JUMP ifElse_end_label_0
+GEN_LABEL Else_start_label_0:
+#T24@<1,5> = a@<1,5> ADD b@<1,5>
+#T25@<1,5> = #T24@<1,5> SUB 10086
+SET #T26@<1,5> := #T25@<1,5> < 12345678
+JUMP_IF #T26@<1,5> == 0 Else_start_label_1
+NEW_BLOCK <2,2>
+#T27@<2,2> = 1003 MUL a@<1,5>
+#T28@<2,2> = #T27@<2,2> DIV 1009
+#T29@<2,2> = 2022 MUL b@<1,5>
+#T30@<2,2> = #T29@<2,2> DIV 2019
+#T31@<2,2> = #T28@<2,2> ADD #T30@<2,2>
+return #T31@<2,2>
+END_BLOCK <2,2>
+JUMP ifElse_end_label_1
+GEN_LABEL Else_start_label_1:
+NEW_BLOCK <2,3>
+#T32@<2,3> = a@<1,5> ADD b@<1,5>
+#T33@<2,3> = #T32@<2,3> SUB 233
+return #T33@<2,3>
+END_BLOCK <2,3>
+GEN_LABEL ifElse_end_label_1:
+GEN_LABEL ifElse_end_label_0:
+return -10086
+END_BLOCK <1,5>
+return 
+<--------------- END_FUNC _add_fake--------------->
+<--------------- FUNC _add--------------->
+FORM_VAR_DEF a@<1,6> _add
+FORM_VAR_DEF b@<1,6> _add
+FORM_VAR_DEF c@<1,6> _add
+NEW_BLOCK <1,6>
+#T34@<1,6> = a@<1,6> ADD b@<1,6>
+#T35@<1,6> = #T34@<1,6> ADD c@<1,6>
+return #T35@<1,6>
+END_BLOCK <1,6>
+return 
+<--------------- END_FUNC _add--------------->
+<--------------- FUNC _get_id--------------->
+NEW_BLOCK <1,7>
+var _2_wj5qhidw_@<1,7>
+ASSIGN _2_wj5qhidw_@<1,7> = 76
+NEW_BLOCK <2,4>
+print _2_wj5qhidw_@<1,7>
+print #str8
+ASSIGN _2_wj5qhidw_@<1,7> = 10086
+print _2_wj5qhidw_@<1,7>
+print #str9
+var _2_wj5qhidw_@<2,4> = -10
+print _2_wj5qhidw_@<2,4>
+print #str10
+END_BLOCK <2,4>
+return 20373381
+END_BLOCK <1,7>
+return 
+<--------------- END_FUNC _get_id--------------->
+<--------------- FUNC _M__a_G_I___c--------------->
+FORM_VAR_DEF num@<1,8> _M__a_G_I___c
+NEW_BLOCK <1,8>
+#T36@<1,8> = num@<1,8> ADD -763835168
+#T37@<1,8> = #T36@<1,8> MOD 1996325548
+#T38@<1,8> = #T37@<1,8> MUL 1881457024
+#T39@<1,8> = #T38@<1,8> DIV 11
+#T40@<1,8> = #T39@<1,8> MUL 540488577
+return #T40@<1,8>
+END_BLOCK <1,8>
+return 
+<--------------- END_FUNC _M__a_G_I___c--------------->
+<--------------- FUNC main--------------->
+NEW_BLOCK <1,9>
+var a@<1,9> = 17
+ASSIGN a@<1,9> = -3
+print #str11
+print 0
+print #str12
+PRE_CALL __my_Ha_s__h@0
+PUSH_PARA 2 #function: __my_Ha_s__h@0 #arg: len
+PUSH_PARA cdwuh@<0,0> #function: __my_Ha_s__h@0 #arg: _
+FUNC_CALL __my_Ha_s__h@0
+ASSIGN #T41@<1,9> = %RTX
+print #str13
+print #T41@<1,9>
+print #str14
+PRE_CALL _M__a_G_I___c@1
+PUSH_PARA 245512106 #function: _M__a_G_I___c@1 #arg: num
+FUNC_CALL _M__a_G_I___c@1
+ASSIGN #T42@<1,9> = %RTX
+print #str15
+print #T42@<1,9>
+print #str16
+print #str17
+print -518323062
+print #str18
+print #str19
+print -518323062
+print #str20
+return 0
+END_BLOCK <1,9>
 <--------------- END_FUNC main--------------->

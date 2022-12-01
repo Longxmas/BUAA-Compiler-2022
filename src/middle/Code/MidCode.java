@@ -10,7 +10,7 @@ public class MidCode {
 
     public enum Op {
         ASSIGN, GETINT, PRI,
-        ADD, SUB, MUL, DIV, MOD, NOT, AND, OR, XOR,
+        ADD, SUB, MUL, DIV, MOD, NOT, AND, OR, XOR, SLL, SRL,
         FUNC, END_FUNC, PRE_CALL, FUNC_CALL, PUSH_PARA, PUSH_PARA_ARR, FORM_VAR_DEF,
         RETURN, VAR_DEF, CONST_DEF, ARR_SAVE, ARR_LOAD,
         GEN_LABEL, JUMP, JUMP_IF, SET,

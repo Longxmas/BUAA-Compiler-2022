@@ -8,6 +8,7 @@ import middle.Symbol.FuncTable;
 import middle.Symbol.Symbol;
 import middle.Symbol.SymbolTable;
 import middle.operand.Immediate;
+import optimizer.MulDivOptimizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class MipsGenerator {
     private static final int DATA_BASE_ADDRESS = 0x10010000;
     //public static final int SAVED_STACK_SIZE = RegAlloc.REG_SAVED_PLACE.size() * 4;
-    private RegAlloc regAlloc;
+    public RegAlloc regAlloc;
     private MipsCodes mipsCodes = new MipsCodes();
     private MidCodeList midCodeList;
     private ArrayList<MidCode> midCodes;
@@ -33,7 +34,7 @@ public class MipsGenerator {
     private int midcodeIndex = 0;
     public HashMap<String, SymbolTable> depth2SymbolTable;
     public static HashMap<MidCode, ArrayList<Symbol>> code2Symbols = new HashMap<>();
-
+    private boolean multDivOptimize = true;
 
     public MipsGenerator(visitor visitor) {
         this.midCodeList = visitor.getMidCodeList();
@@ -69,12 +70,12 @@ public class MipsGenerator {
     }
 
     public void setMidCodeSymbols() {
-        for(MidCode midCode : this.midCodeList.getMidCodes()) {
+        for (MidCode midCode : this.midCodeList.getMidCodes()) {
             ArrayList<Symbol> symbols = new ArrayList<>();
             ArrayList<String> operands = new ArrayList<String>() {{
-               add(midCode.getOperand1());
-               add(midCode.getOperand2());
-               add(midCode.getResult());
+                add(midCode.getOperand1());
+                add(midCode.getOperand2());
+                add(midCode.getResult());
             }};
             for (String op : operands) {
                 if (op == null) {
@@ -88,7 +89,7 @@ public class MipsGenerator {
                     if (findSymbol(arrayOffset) != null) symbols.add(findSymbol(arrayOffset));
                 }
             }
-            System.out.println("symbols = " + symbols);
+            //System.out.println("symbols = " + symbols);
             code2Symbols.put(midCode, symbols);
         }
     }
@@ -465,52 +466,66 @@ public class MipsGenerator {
                 }
                 break;
             case MUL:
+                boolean flag = true;
                 if (regOp1 != null && regOp2 != null) {
                     mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.mult, regOp1, regOp2)));
                 } else if (regOp1 != null && Immediate.checkImmediate(op2)) {
-                    mipsCodes.addCode(new MipsCode("li $v1, " + op2));
-                    mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.mult, regOp1, "$v1")));
+                    flag = generateMulCode(op2, regOp1, regResult);
                 } else if (regOp2 != null && Immediate.checkImmediate(op1)) {
-                    mipsCodes.addCode(new MipsCode("li $v1, " + op1));
-                    mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.mult, "$v1", regOp2)));
+                    flag = generateMulCode(op1, regOp2, regResult);
                 } else if (immOp1 != null && immOp2 != null) {
-                    mipsCodes.addCode(new MipsCode("li $v1, " + immOp1));
-                    mipsCodes.addCode(new MipsCode("li $v0, " + immOp2));
-                    mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.mult, "$v1", "$v0")));
+                    flag = false;
+                    mipsCodes.addCode(new MipsCode("li " + regResult + ", " + (immOp1 * immOp2)));
                 }
-                mipsCodes.addCode(new MipsCode(new MoveInstr(MoveInstr.MI.mflo, regResult))); //不考虑超过32位的情况
+                if (flag)
+                    mipsCodes.addCode(new MipsCode(new MoveInstr(MoveInstr.MI.mflo, regResult))); //不考虑超过32位的情况
                 break;
             case DIV:
+                flag = true;
                 if (regOp1 != null && regOp2 != null) {
                     mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, regOp1, regOp2)));
                 } else if (regOp1 != null && Immediate.checkImmediate(op2)) {
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", Integer.parseInt(op2))));
-                    mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, regOp1, "$v1")));
+                    if (!multDivOptimize) {
+                        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", Integer.parseInt(op2))));
+                        mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, regOp1, "$v1")));
+                    } else {
+                        MulDivOptimizer mulDivOptimizer = new MulDivOptimizer(this);
+                        ArrayList<MipsCode> optimizeCodes = mulDivOptimizer.generateCodeFromDiv(midCode);
+                        mipsCodes.getMipsCodes().addAll(optimizeCodes);
+                        flag = false;
+                    }
                 } else if (regOp2 != null && Immediate.checkImmediate(op1)) {
                     mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", Integer.parseInt(op1))));
                     mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, "$v1", regOp2)));
                 } else if (immOp1 != null && immOp2 != null) {
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", immOp1)));
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v0", "$zero", immOp2)));
-                    mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, "$v1", "$v0")));
+                    flag = false;
+                    mipsCodes.addCode(new MipsCode("li " + regResult + ", " + (immOp1 / immOp2)));
                 }
-                mipsCodes.addCode(new MipsCode(new MoveInstr(MoveInstr.MI.mflo, regResult))); //不考虑超过32位的情况
+                if (flag)
+                    mipsCodes.addCode(new MipsCode(new MoveInstr(MoveInstr.MI.mflo, regResult))); //不考虑超过32位的情况
                 break;
             case MOD:
+                flag = true;
                 if (regOp1 != null && regOp2 != null) {
                     mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, regOp1, regOp2)));
                 } else if (regOp1 != null && Immediate.checkImmediate(op2)) {
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", Integer.parseInt(midCode.getOperand2()))));
-                    mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, regOp1, "$v1")));
+                    if (!multDivOptimize) {
+                        mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", Integer.parseInt(midCode.getOperand2()))));
+                        mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, regOp1, "$v1")));
+                    } else {
+                        MulDivOptimizer mulDivOptimizer = new MulDivOptimizer(this);
+                        ArrayList<MipsCode> optimizeCodes = mulDivOptimizer.generateCodeFromMod(midCode);
+                        mipsCodes.getMipsCodes().addAll(optimizeCodes);
+                        flag = false;
+                    }
                 } else if (regOp2 != null && Immediate.checkImmediate(op1)) {
                     mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", Integer.parseInt(midCode.getOperand1()))));
                     mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, "$v1", regOp2)));
                 } else if (immOp1 != null && immOp2 != null) {
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v1", "$zero", immOp1)));
-                    mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.addiu, "$v0", "$zero", immOp2)));
-                    mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, "$v1", "$v0")));
+                    flag = false;
+                    mipsCodes.addCode(new MipsCode("li " + regResult + ", " + (immOp1 % immOp2)));
                 }
-                mipsCodes.addCode(new MipsCode(new MoveInstr(MoveInstr.MI.mfhi, regResult))); //不考虑超过32位的情况
+                if (flag) mipsCodes.addCode(new MipsCode(new MoveInstr(MoveInstr.MI.mfhi, regResult))); //不考虑超过32位的情况
                 break;
 
             //TODO::其他的算术运算
@@ -518,6 +533,24 @@ public class MipsGenerator {
                 break;
         }
 
+    }
+
+    private boolean generateMulCode(String op1, String regOp2, String regResult) {
+        int i = Integer.parseInt(op1);
+        if (MulDivOptimizer.isPowerOfTwo(i)) {
+            if(i == 0) {
+                mipsCodes.addCode(new MipsCode("li " + regResult + ", 0"));
+            } else if (i == 1) {
+                mipsCodes.addCode(new MipsCode(new MoveInstr(MoveInstr.MI.move, regResult, regOp2)));
+            } else {
+                mipsCodes.addCode(new MipsCode(new RIInstr(RIInstr.RII.sll, regResult, regOp2, MulDivOptimizer.getPowerOfTwo(i))));
+            }
+            return false;
+        } else {
+            mipsCodes.addCode(new MipsCode("li $v1, " + op1));
+            mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.mult, regOp2, "$v1")));
+            return true;
+        }
     }
 
     //LOAD OR SAVE ARRAY

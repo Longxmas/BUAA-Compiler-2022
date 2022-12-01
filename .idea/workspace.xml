@@ -9,23 +9,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="FINISH SECOND HOMEWORK">
-      <change afterPath="$PROJECT_DIR$/src/optimizer/tempVarChecker.java" afterDir="false" />
+    <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="初步完成 临时变量的取消回写">
+      <change afterPath="$PROJECT_DIR$/src/optimizer/MulDivOptimizer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" beforeDir="false" afterPath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/22级/full/A/output17.txt" beforeDir="false" afterPath="$PROJECT_DIR$/22级/full/A/output17.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/error.txt" beforeDir="false" afterPath="$PROJECT_DIR$/error.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mips.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mips.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mips2.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Compiler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/backend/Mips/RIInstr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/Mips/RIInstr.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/backend/MipsGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/MipsGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/backend/RegAlloc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/RegAlloc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/visitor/visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/visitor/visitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/middle/Symbol/Symbol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Symbol/Symbol.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middle/Code/MidCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Code/MidCode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/standard.txt" beforeDir="false" afterPath="$PROJECT_DIR$/standard.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_mips/mips1.asm" beforeDir="false" afterPath="$PROJECT_DIR$/test_mips/mips1.asm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/testfile.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/try1.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/try2.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/try3.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/try4.zip" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +150,11 @@
       <workItem from="1669486723135" duration="400000" />
       <workItem from="1669489416073" duration="117000" />
       <workItem from="1669559762825" duration="9040000" />
-      <workItem from="1669648112057" duration="6025000" />
+      <workItem from="1669648112057" duration="7104000" />
+      <workItem from="1669782313249" duration="1370000" />
+      <workItem from="1669798942996" duration="12989000" />
+      <workItem from="1669874355350" duration="7918000" />
+      <workItem from="1669889475875" duration="3991000" />
     </task>
     <task id="LOCAL-00001" summary="error a,i,j,k">
       <created>1666708675705</created>
@@ -167,7 +170,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669560477952</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="初步完成 临时变量的取消回写">
+      <created>1669654484890</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1669654484890</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,7 +197,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="error a,i,j,k" />
     <MESSAGE value="FINISH SECOND HOMEWORK" />
-    <option name="LAST_COMMIT_MESSAGE" value="FINISH SECOND HOMEWORK" />
+    <MESSAGE value="初步完成 临时变量的取消回写" />
+    <option name="LAST_COMMIT_MESSAGE" value="初步完成 临时变量的取消回写" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

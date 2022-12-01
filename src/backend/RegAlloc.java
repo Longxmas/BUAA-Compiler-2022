@@ -19,32 +19,6 @@ public class RegAlloc {
     public static final HashSet<Integer> allocatableRegs =
             new HashSet<>(Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 30));
 
-    public static final HashMap<String, Integer> REG_SAVED_PLACE = new HashMap<String, Integer>() {{
-        put("$ra", 0);
-        put("$t0", 4);
-        put("$t1", 2 * 4);
-        put("$t2", 3 * 4);
-        put("$t3", 4 * 4);
-        put("$t4", 5 * 4);
-        put("$t5", 6 * 4);
-        put("$t6", 7 * 4);
-        put("$t7", 8 * 4);
-        put("$t8", 9 * 4);
-        put("$t9", 10 * 4);
-        put("$s0", 11 * 4);
-        put("$s1", 12 * 4);
-        put("$s2", 13 * 4);
-        put("$s3", 14 * 4);
-        put("$s4", 15 * 4);
-        put("$s5", 16 * 4);
-        put("$s6", 17 * 4);
-        put("$s7", 18 * 4);
-        put("$fp", 19 * 4);
-        put("$a1", 20 * 4);
-        put("$a2", 21 * 4);
-        put("$a3", 22 * 4);
-    }};
-
     public RegAlloc(MipsCodes mipsCodes, MidCodeList midCodeList) {
         this.midCodeList = midCodeList;
         this.mipsCodes = mipsCodes;
@@ -165,7 +139,6 @@ public class RegAlloc {
     public HashMap<Integer, Symbol> getAllocatedRegs() {
         return allocatedRegs;
     }
-
 
     // 清空分配状态
     public void clear(boolean needToStore, MidCode midCode, ArrayList<Symbol> excepts) {

@@ -1,8 +1,101 @@
-int main() {
-    int a[2] = {0,1};
-    a[a[0] + 1] = 2;
-    if (a[1] == 2) {
-        printf("a[1] == 2\n");
+const int _1 = 4, _3 = _1 * _1 * _1, _____ = 376789 % 326 + 23167 - +3427 * 276 / 13;
+const int _2 = _1 + 10 * (_1 / 2);
+const int _10 = -10 + 123 * (3 / 2 + (666 + _1) % 233) / (21 + 3) + (+(-(+(-(+((0)))))));
+const int aaa[4 / 2] = {10086,
+                        _1 * _1};
+const int A[4][3] = {{0 * (233 + 3) + 212132, _1 + 2 * _1 + _3,     1234 / _1},
+                     {-3 + 2 + 657 / 24,      _2 + 57024,           _10 * _2 / 2 * 4 * _3},
+                     {8792,                   -289 * 2378 - 89,     908},
+                     {_10,                    2 * (2768 % 13 + 56), (0) + (10086) + -2 + +20}};
+int _3cg = _10 * 2364 + 324567 / (-34) * -213 % 10009921, hdc33ec_dyu = -278 * 2318 / 10009921 + +234 - 831;
+int cdh3yi_23, duhih2_23c = 1983, _23879[4] = {2323, +9382 * 23 / 23 - 128, (-0), 390042 - 204 * 8137};
+int dijhw[3][2], cdwuh[2], wuei, _3u22[2][2] = {{287, _____ * 2},
+                                                {287, 2786 - -8719}};
+int jdfo_;
+
+
+
+
+int __my_Ha_s__h(int _[], int len) {
+    int __, I;
+    __ = len;
+    I = 0;
+    while (I < len) {
+        __ = __ + 98326464;
+        __ = __ * 20373381;
+        __ = __ + 23667832;
+        __ = __ / 133;
+        __ = __ + 1347887899;
+        __ = __ % 99998099;
+        __ = (__ * 123671861 - 236234) * ((__ + 135632)) / 7;
+        I = I + (-0 + 2 - (1234 / 888));
     }
+    return __;
+}
+
+void ___() {
+    printf("   !!! ()*+,-./:;<>=@?^_`{}|~[]  called func: ___\n");
+}
+
+void ____(int _arg) {
+    printf("//called func: ____, _arg = %d\n", _arg * 2 * 3 / 6);
+}
+
+void __(int _arr_Ay[], int useless) {
+    printf("called func: __, array[0] = %d\n\n\n", _arr_Ay[0]);
+    return;
+}
+
+
+
+void _Main(int _arr_Ay[][2]) {
+    printf("called func: Main, array[0][0] = %d, array[0][1] = %d\n\n", _arr_Ay[0][0], _arr_Ay[0][1]);
+}
+int _add_fake(int a, int b) {
+    if (a + b >= 100 + 10086) {
+        return a + (203 * b) / 201;
+    } else if (a + b - 10086 < 12345678) {
+        return (1003 * a / 1009) + 2022 * b / 2019;
+    } else {
+        return a + b - 233;
+    }
+    return -10086;
+}
+
+int _add(int a, int b, int c) {
+    return a + b + c;
+}
+
+int _get_id() {
+    int _2_wj5qhidw_;
+    _2_wj5qhidw_ = 76;
+    {
+        ;
+        123;
+        printf("%d\n", _2_wj5qhidw_);
+        _2_wj5qhidw_ = 10086;
+        printf("%d\n", _2_wj5qhidw_);
+        int _2_wj5qhidw_ = +-+10;
+        printf("%d\n", _2_wj5qhidw_);
+    }
+    return 20373381;
+}
+
+
+
+int _M__a_G_I___c(int num) {
+    return ((((num + -763835168) % 1996325548) * 1881457024) / 11) * 540488577;
+}
+
+int main() {
+    int a = 17;
+    a = -3 % 5;
+    printf("temp: %d\n", temp);
+    printf("my_hash = %d\n" , __my_Ha_s__h(cdwuh, 2));
+    printf("magic = %d\n", _M__a_G_I___c(245512106));
+    printf("magic_first = %d\n",(245512106 + -763835168));
+    printf("magic_second = %d\n",(-518323062) % 1996325548));
+    //1478002486
+    //-428321733
     return 0;
 }
