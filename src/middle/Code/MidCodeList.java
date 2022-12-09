@@ -19,19 +19,9 @@ public class MidCodeList {
     public ArrayList<String> strCons;
     public HashMap<String, String> strConMap = new HashMap<>();
 
-    //block location description (necessary ?)
-    private int depth;
-    private int index;
-    private ArrayList<Integer> depths = new ArrayList<>();
-    public HashMap<String, FuncTable> curFuncTables;
 
-
-    public MidCodeList(ArrayList<Integer> depths, HashMap<String, FuncTable> funcTables) {
-        this.depths = depths;
-        this.depth = 0;
-        this.index = 0;
+    public MidCodeList() {
         this.tmpIndex = 0;
-        this.curFuncTables = funcTables;
         this.midCodes = new ArrayList<>();
         this.strCons = new ArrayList<>();
     }
@@ -62,15 +52,23 @@ public class MidCodeList {
         return sb.toString();
     }
 
-    public ArrayList<String> getStrCons() {
-        return strCons;
-    }
-
     public ArrayList<MidCode> getMidCodes() {
         return midCodes;
     }
 
-    public HashMap<String, String> getStrConMap() {
-        return strConMap;
+    public ArrayList<MidCode> getGlobalVarDefines() {
+        ArrayList<MidCode> globalVarDefines = new ArrayList<>();
+        for (MidCode midCode : midCodes) {
+            if (!midCode.getOperator().equals(MidCode.Op.FUNC)) {
+                globalVarDefines.add(midCode);
+                continue;
+            }
+            break;
+        }
+        return globalVarDefines;
+    }
+
+    public void setMidCodes(ArrayList<MidCode> midCodes) {
+        this.midCodes = midCodes;
     }
 }

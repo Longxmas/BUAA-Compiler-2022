@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class visitor {
+public class Visitor {
     private SymbolTable globalSymbolTable = new SymbolTable();
     private SymbolTable currentTable = globalSymbolTable;
     private int currentDepth = 0;
@@ -40,8 +40,11 @@ public class visitor {
     private int inWhile = 0;
     private boolean isGlobal = false;
 
-    private MidCodeList midCodeList = new MidCodeList(depths, funcMap);
+    private MidCodeList midCodeList = new MidCodeList();
     public int funcCnt = 0;
+
+    public Visitor() {}
+
 
     public void analyseBlock(Block block) {
         currentDepth++;
@@ -373,7 +376,7 @@ public class visitor {
             }
             ret = eq;
         }
-        System.out.println(exp + "needToJump = " + needToJump + "\n");
+        //System.out.println(exp + "needToJump = " + needToJump + "\n");
         if (needToJump)
             midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "and_label_" + midCodeList.andLabelCnt++ + ":", null, null));
         //如果不止一个，就返回最后一个
@@ -902,7 +905,7 @@ public class visitor {
                 analyseFuncFParam(funcFParam, funcTable);
             }
             analyseFuncBody(funcDef.getBlock(), funcTable);
-            midCodeList.add(new MidCode(MidCode.Op.RETURN));
+            if (returnType.equals(FuncTable.ReturnType.voidFunc)) midCodeList.add(new MidCode(MidCode.Op.RETURN));
             midCodeList.add(new MidCode(MidCode.Op.END_FUNC, name, null, null));
 
             depths.set(currentDepth, depths.get(currentDepth) + 1);
@@ -992,7 +995,6 @@ public class visitor {
         return midCodeList;
     }
 
-
     public SymbolTable getGlobalTable() {
         return this.globalSymbolTable;
     }
@@ -1008,5 +1010,17 @@ public class visitor {
 
     public HashMap<String, SymbolTable> getDepth2Table() {
         return this.depth2Table;
+    }
+
+    public Symbol findSymbol(String symbol) {
+            if (Immediate.checkImmediate(symbol) || symbol.equals("%RTX")) {
+                return null;
+            }
+        //如果是数组变量或者低维数组，将获取母数组
+        String name = MidCode.getOperandName(symbol);
+        String loc = MidCode.getOperandLoc(symbol);
+        SymbolTable symbolTable = depth2Table.get(loc);
+        return symbolTable.getSymbolMap().get(name);
+
     }
 }

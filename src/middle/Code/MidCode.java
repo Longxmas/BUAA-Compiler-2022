@@ -10,9 +10,9 @@ public class MidCode {
 
     public enum Op {
         ASSIGN, GETINT, PRI,
-        ADD, SUB, MUL, DIV, MOD, NOT, AND, OR, XOR, SLL, SRL,
-        FUNC, END_FUNC, PRE_CALL, FUNC_CALL, PUSH_PARA, PUSH_PARA_ARR, FORM_VAR_DEF,
-        RETURN, VAR_DEF, CONST_DEF, ARR_SAVE, ARR_LOAD,
+        ADD, SUB, MUL, DIV, MOD,
+        FUNC, END_FUNC, PRE_CALL, FUNC_CALL, PUSH_PARA, PUSH_PARA_ARR,
+        RETURN, VAR_DEF, CONST_DEF,FORM_VAR_DEF, ARR_SAVE, ARR_LOAD,
         GEN_LABEL, JUMP, JUMP_IF, SET,
         NEW_BLOCK, END_BLOCK
     }
@@ -23,10 +23,15 @@ public class MidCode {
         put(Op.MUL, "MUL");
         put(Op.DIV, "DIV");
         put(Op.MOD, "MOD");
-        put(Op.NOT, "NOT");
-        put(Op.AND, "AND");
-        put(Op.OR, "OR");
-        put(Op.XOR, "XOR");
+    }};
+
+    public static HashMap<Op, String> defineOp = new HashMap<Op, String>() {{
+        putAll(arithOp);
+        put(Op.ASSIGN, "ASSIGN");
+        put(Op.GETINT, "GETINT");
+        put(Op.VAR_DEF, "VAR_DEF");
+        put(Op.FORM_VAR_DEF, "FORM_VAR_DEF");
+        put(Op.SET, "SET");
     }};
 
     private final HashMap<Op, String> toString = new HashMap<Op, String>() {{
@@ -36,10 +41,6 @@ public class MidCode {
         put(Op.DIV, "DIV");
         put(Op.MOD, "MOD");
         put(Op.PRI, "PRI");
-        put(Op.NOT, "NOT");
-        put(Op.AND, "AND");
-        put(Op.OR, "OR");
-        put(Op.XOR, "XOR");
         put(Op.FUNC, "FUNC");
         put(Op.END_FUNC, "END_FUNC");
         put(Op.PRE_CALL, "PRE_CALL");
@@ -86,6 +87,14 @@ public class MidCode {
         this.operand1 = (operand1 != null) ? operand1.toString() : null;
         this.operand2 = (operand2 != null) ? operand2.toString() : null;
         this.result = (result != null) ? result.toString() : null;
+        this.compare = compare;
+    }
+
+    public MidCode(Op operator, String operand1, String operand2, String result, String compare) {
+        this.operator = operator;
+        this.operand1 = operand1;
+        this.operand2 = operand2;
+        this.result = result;
         this.compare = compare;
     }
 

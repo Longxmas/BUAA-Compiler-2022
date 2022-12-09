@@ -4,11 +4,16 @@ import frontend.Lexer.Token;
 import frontend.Parser.CompUnit;
 import frontend.Parser.CompUnitParser;
 import frontend.error.errorTable;
-import frontend.visitor.visitor;
+import frontend.visitor.Visitor;
+import middle.Code.MidCode;
+import optimizer.BlockAnalyser;
+import optimizer.DataFlowAnalyser;
+import optimizer.PeepholeOptimizer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Compiler {
@@ -32,18 +37,34 @@ public class Compiler {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String source = read("testfile.txt");
         LexicalAnalyzer lexer = new LexicalAnalyzer(source);
         ArrayList<Token> tokens = lexer.getAns();
         //System.out.println(tokens);
         CompUnit compUnit = new CompUnitParser(tokens).parseCompUnit();
         //System.out.println(compUnit);
-        visitor buildVisitor = new visitor();
+        Visitor buildVisitor = new Visitor();
         buildVisitor.analyseCompUnit(compUnit);
         write(compUnit.toString(), "output.txt");
         write(errorTable.getInstance().toString(), "error.txt");
         write(buildVisitor.getMidCodeList().toString(), "20376208_龙泠锟_优化前中间代码.txt");
+
+        ArrayList<MidCode> globalMidCodes = buildVisitor.getMidCodeList().getGlobalVarDefines();
+        //优化中间代码
+        PeepholeOptimizer peepholeOptimizer = new PeepholeOptimizer();
+        DataFlowAnalyser dataFlowAnalyser = new DataFlowAnalyser();
+        int i = 0;
+        while(i++ < 10) {
+            peepholeOptimizer.combineArithAssign(buildVisitor);
+            peepholeOptimizer.deleteUselessCode(buildVisitor);
+            dataFlowAnalyser.propagation(buildVisitor);
+            dataFlowAnalyser.constFold(buildVisitor);
+            dataFlowAnalyser.deadCodeElimination(buildVisitor);
+        }
+        globalMidCodes.addAll(buildVisitor.getMidCodeList().getMidCodes());
+        buildVisitor.getMidCodeList().setMidCodes(globalMidCodes);
+        write(buildVisitor.getMidCodeList().toString(), "20376208_龙泠锟_优化后中间代码.txt");
 
         MipsGenerator mipsGenerator = new MipsGenerator(buildVisitor);
         mipsGenerator.calculateAddress();

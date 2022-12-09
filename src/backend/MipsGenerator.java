@@ -1,7 +1,7 @@
 package backend;
 
 import backend.Mips.*;
-import frontend.visitor.visitor;
+import frontend.visitor.Visitor;
 import middle.Code.MidCode;
 import middle.Code.MidCodeList;
 import middle.Symbol.FuncTable;
@@ -12,7 +12,6 @@ import optimizer.MulDivOptimizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Objects;
 
 
@@ -36,7 +35,7 @@ public class MipsGenerator {
     public static HashMap<MidCode, ArrayList<Symbol>> code2Symbols = new HashMap<>();
     private boolean multDivOptimize = true;
 
-    public MipsGenerator(visitor visitor) {
+    public MipsGenerator(Visitor visitor) {
         this.midCodeList = visitor.getMidCodeList();
         this.midCodes = midCodeList.getMidCodes();
         this.globalTable = visitor.getGlobalTable();
@@ -84,6 +83,7 @@ public class MipsGenerator {
                 if (op.contains("@<")) {
                     symbols.add(findSymbol(op));
                 }
+                //如果是数组
                 if (op.contains("[") && op.contains("]")) {
                     String arrayOffset = midCode.getLSArrayIndex(op);
                     if (findSymbol(arrayOffset) != null) symbols.add(findSymbol(arrayOffset));
@@ -196,16 +196,16 @@ public class MipsGenerator {
             //进入函数体
             generateBlock();
             //返回
-            if (!funcTable.isMain()) generateReturn(midCodes.get(midcodeIndex));
+            if (!funcTable.isMain() && funcTable.getReturnType().equals(FuncTable.ReturnType.voidFunc)){
+                generateReturn(midCodes.get(midcodeIndex));
+                midcodeIndex++;
+            }
             midcodeIndex++; //end_func
-            midcodeIndex++;
         }
     }
 
 
     public void generateBlock() {
-        //每次进入一个块，需要解除映射并且写回，否则if-else和while等控制语句会出现问题，离开时也需要？
-        //regAlloc.clear(false);
         MidCode midCode = midCodes.get(midcodeIndex);
         //new block
         String blockLoc = midCode.getOperand1(); //block的位置
@@ -298,6 +298,7 @@ public class MipsGenerator {
         } else {
             System.out.println("error: getint for array");
         }
+        if (symbol.isGlobal()) regAlloc.cancelAlloc(regAlloc.getRegOfSymbol(symbol, false, midCode), midCode);
     }
 
     private void generateReturn(MidCode midCode) {
@@ -410,6 +411,7 @@ public class MipsGenerator {
             mipsCodes.addCode(new MipsCode("li $v0, 4"));
         } else {
             Symbol symbol = findSymbol(printValue);
+            System.out.println(midCode);
             int reg = regAlloc.getRegOfSymbol(symbol, true, midCode);
             mipsCodes.addCode(new MipsCode("move $a0, " + regAlloc.getRegString(reg)));
             mipsCodes.addCode(new MipsCode("li $v0, 1"));
@@ -490,7 +492,7 @@ public class MipsGenerator {
                         mipsCodes.addCode(new MipsCode(new MulDivInstr(MulDivInstr.MDI.div, regOp1, "$v1")));
                     } else {
                         MulDivOptimizer mulDivOptimizer = new MulDivOptimizer(this);
-                        ArrayList<MipsCode> optimizeCodes = mulDivOptimizer.generateCodeFromDiv(midCode);
+                        ArrayList<MipsCode> optimizeCodes = mulDivOptimizer.generateCodeFromDiv(midCode, null);
                         mipsCodes.getMipsCodes().addAll(optimizeCodes);
                         flag = false;
                     }
@@ -532,7 +534,7 @@ public class MipsGenerator {
             default:
                 break;
         }
-
+        if (result.isGlobal()) regAlloc.cancelAlloc(regAlloc.getRegOfSymbol(result, false, midCode), midCode);
     }
 
     private boolean generateMulCode(String op1, String regOp2, String regResult) {
@@ -583,6 +585,7 @@ public class MipsGenerator {
                 mipsCodes.addCode(new MipsCode(new RRInstr(RRInstr.RRI.addu, "$v1", regOp2, arrayOffset))); // 位置
                 mipsCodes.addCode(new MipsCode(new LoadInstr(LoadInstr.LI.lw, regOp1, "$v1", "0")));
             }
+            if (op1.isGlobal()) regAlloc.cancelAlloc(regAlloc.getRegOfSymbol(op1, false, midCode), midCode);
         }
         if (midCode.getOperator().equals(MidCode.Op.ARR_SAVE)) {
             Symbol op1 = findSymbol(midCode.getOperand1()); //局部数组需要分配寄存器

@@ -157,17 +157,30 @@ public class MulDivOptimizer {
         Symbol op1 = mipsGenerator.findSymbol(midCode.getOperand1());
         int op1_reg = regAlloc.getRegOfSymbol(op1, true, midCode);
         int d = Integer.parseInt(midCode.getOperand2());
-        ArrayList<MipsCode> divCodes = generateCodeFromDiv(midCode);
+
+        ArrayList<MipsCode> divCodes = generateCodeFromDiv(midCode, 3); //$3 = $v1
         ArrayList<MipsCode> mipsCodes = new ArrayList<>(divCodes);
-        mipsCodes.add(new MipsCode("li $v0, " + d));
-        mipsCodes.add(new MipsCode(new MulDivInstr(MulDivInstr.MDI.mult, regAlloc.getRegString(result_reg), "$v0")));
-        mipsCodes.add(new MipsCode(new MoveInstr(MoveInstr.MI.mflo, "$v0")));
-        mipsCodes.add(new MipsCode(new RRInstr(RRInstr.RRI.subu, regAlloc.getRegString(result_reg), regAlloc.getRegString(op1_reg), "$v0")));
+
+        if (isPowerOfTwo(d)) {
+            if (d == 1) {
+                mipsCodes.add(new MipsCode(new MoveInstr(MoveInstr.MI.move, "$v1", "$zero")));
+            } else {
+                mipsCodes.add(new MipsCode(new RIInstr(RIInstr.RII.sll, "$v1",
+                        "$v1", getPowerOfTwo(d))));
+                mipsCodes.add(new MipsCode(new RRInstr(RRInstr.RRI.sub, regAlloc.getRegString(result_reg),
+                        regAlloc.getRegString(op1_reg), "$v1")));
+            }
+        } else {
+            mipsCodes.add(new MipsCode("li $v0, " + d));
+            mipsCodes.add(new MipsCode(new MulDivInstr(MulDivInstr.MDI.mult, "$v1", "$v0")));
+            mipsCodes.add(new MipsCode(new MoveInstr(MoveInstr.MI.mflo, "$v0")));
+            mipsCodes.add(new MipsCode(new RRInstr(RRInstr.RRI.subu, regAlloc.getRegString(result_reg), regAlloc.getRegString(op1_reg), "$v0")));
+        }
         return mipsCodes;
     }
 
 
-    public ArrayList<MipsCode> generateCodeFromDiv(MidCode midCode) {
+    public ArrayList<MipsCode> generateCodeFromDiv(MidCode midCode, Integer resultReg) {
         //#<---- #T5@<1,0> = #T4@<1,0> DIV 7 ---->
         //addiu $v1, $zero, 7
         //div $a2, $v1
@@ -175,7 +188,7 @@ public class MulDivOptimizer {
         ArrayList<MipsCode> mipsCodes = new ArrayList<>();
         RegAlloc regAlloc = mipsGenerator.regAlloc;
         Symbol result = mipsGenerator.findSymbol(midCode.getResult());
-        int result_reg =  regAlloc.getRegOfSymbol(result, true, midCode);
+        int result_reg = resultReg == null ?  regAlloc.getRegOfSymbol(result, true, midCode) : resultReg;
         Symbol op1 = mipsGenerator.findSymbol(midCode.getOperand1());
         int op1_reg =  regAlloc.getRegOfSymbol(op1, true, midCode);
 

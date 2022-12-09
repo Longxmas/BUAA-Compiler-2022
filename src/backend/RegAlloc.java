@@ -25,6 +25,7 @@ public class RegAlloc {
     }
 
     public static HashMap<Integer, String> intReg2SymReg = new HashMap<Integer, String>() {{
+        put(3, "$v1");
         put(5, "$a1");
         put(6, "$a2");
         put(7, "$a3");
@@ -147,7 +148,7 @@ public class RegAlloc {
             for (int reg : regSet) {
                 Symbol symbol = allocatedRegs.get(reg);
                 if (excepts.contains(symbol)) {
-                    System.out.println("except " + symbol);
+                    //System.out.println("except " + symbol);
                     continue;
                 }
                 cancelAlloc(reg,midCode);
@@ -159,13 +160,6 @@ public class RegAlloc {
             freeRegs.addAll(allocatableRegs);
             regCache.clear();
         }
-        /*
-        allocatedRegs.clear();
-        symbolToReg.clear();
-        regCache.clear();
-
-        freeRegs.clear();
-        freeRegs.addAll(allocatableRegs);*/
     }
 
     public void refresh(Symbol symbol) {
