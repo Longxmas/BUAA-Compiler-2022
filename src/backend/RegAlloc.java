@@ -136,10 +136,16 @@ public class RegAlloc {
             HashSet<Integer> regSet = new HashSet<>(allocatedRegs.keySet());
             for (int reg : regSet) {
                 Symbol symbol = allocatedRegs.get(reg);
-                if (excepts.contains(symbol)) {
+                if (excepts.contains(symbol) && !needToStore(midCode, symbol)) {
                     continue;
+                } else if (excepts.contains(symbol) && needToStore(midCode, symbol)) {
+                    mipsCodes.addCode(new MipsCode("#<---- Cancel " + intReg2SymReg.get(reg) +
+                            " which index is " + allocatableRegs.indexOf(reg) + " for " + symbol.getName() + " ---->"));
+                    mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
+                            intReg2SymReg.get(reg), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress()))));
+                } else {
+                    cancelAlloc(reg, midCode);
                 }
-                cancelAlloc(reg, midCode);
                 pointer = 0;
             }
         } else {
@@ -152,9 +158,11 @@ public class RegAlloc {
     }
 
     private boolean needToStore(MidCode midCode, Symbol symbol) {
-        System.out.println("midcode = " + midCode + " symbol = " + symbol);
-        System.out.println(this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode));
+        ///System.out.println("midcode = " + midCode + " symbol = " + symbol);
+        //System.out.println(this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode));
         //if (symbol.isTemp()) return tempVarChecker.needToStore(midCodeList.getMidCodes(), symbol, midCode);
+        if (!this.dataFlowAnalyser.getMidCodeActiveOut().containsKey(midCode)
+                || this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode).isEmpty()) return true;
         return this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode).contains(symbol);
     }
 

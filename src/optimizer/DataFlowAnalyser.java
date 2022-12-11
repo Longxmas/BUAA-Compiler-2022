@@ -512,8 +512,8 @@ public class DataFlowAnalyser {
                             !midCode.getOperator().equals(MidCode.Op.FORM_VAR_DEF)) {
                         Symbol symbolDefine = midCodeDefines.get(midCode);
                         if (!activeOut.contains(symbolDefine)) {
-                            System.out.println(activeOut);
-                            System.out.println("delete code : " + midCode);
+                            //System.out.println(activeOut);
+                            //System.out.println("delete code : " + midCode);
                             continue;
                         } else {
                             activeOut.remove(symbolDefine);

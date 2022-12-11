@@ -1,51 +1,265 @@
 .data
+str0: .asciiz "(20373335)\n"
+str1: .asciiz "C level,test a code has decl,no func\n"
+str2: .asciiz "con1 is "
+str3: .asciiz "\n"
+str4: .asciiz "con2 is "
+str5: .asciiz ",con3 is "
+str6: .asciiz "\n"
+str7: .asciiz "the left val is "
+str8: .asciiz "\n"
+str9: .asciiz "var1 greater than 1\n"
+str10: .asciiz "var5 equal to con1\n"
 .text
-addiu $sp, $sp, -28
+addi $gp, $gp, 24
+#<------- var global_var1@<0,0> = 9 ------->
+li $t0, 9
+sw $t0, -24($gp)
+#<------- var global_var2@<0,0> = 0 ------->
+#<------- var global_var3@<0,0> = 10 ------->
+li $t0, 10
+sw $t0, -16($gp)
+#<------- var con1@<0,0> = 44 ------->
+li $t0, 44
+sw $t0, -12($gp)
+#<------- var con2@<0,0> = 678 ------->
+li $t0, 678
+sw $t0, -8($gp)
+#<------- var con4@<0,0> = 888 ------->
+li $t0, 888
+sw $t0, -4($gp)
+addiu $sp, $sp, -108
 j func_label_main
 #<--------------- FUNC main--------------->
 func_label_main:
-#<---- var a@<1,0> = 1 ---->
-#<---- Alloc $a2 which index is 0 for a ---->
-addiu $a2, $zero, 1
-#<---- a@<1,0> = input() ---->
-li $v0, 5
+#<---- var con3@<1,0> = 61 ---->
+#<---- Alloc $a2 which index is 0 for con3 ---->
+addiu $a2, $zero, 61
+#<---- print #str0 ---->
+la $a0, str0
+li $v0, 4
 syscall
-move $a2, $v0
-#<---- SET #T0@<1,0> := a@<1,0> == 2 ---->
-#<---- Alloc $a3 which index is 1 for #T0 ---->
-seq $a3, $a2, 2
-#<---- b@<2,0> = a@<1,0> ADD 2 ---->
-#<---- Alloc $t0 which index is 2 for b ---->
-addiu $t0, $a2, 2
-#<---- c@<1,0> = b@<2,0> ADD a@<1,0> ---->
-#<---- Alloc $t1 which index is 3 for c ---->
-addu $t1, $t0, $a2
-#<---- GEN_LABEL while_judge_label_0: ---->
-#<---- Cancel $a2 which index is 0 for a ---->
-#<---- Cancel $a3 which index is 1 for #T0 ---->
-sw $a3, 12($sp)
-#<---- Cancel $t0 which index is 2 for b ---->
-#<---- Cancel $t1 which index is 3 for c ---->
-sw $t1, 8($sp)
-while_judge_label_0:
-#<---- JUMP_IF #T0@<1,0> == 0 while_end_label_0 ---->
-#<---- Alloc $a2 which index is 0 for #T0 ---->
-lw $a2, 12($sp)
-beq $a2, 0, while_end_label_0
-#<---- NEW_BLOCK <2,0> ---->
-#<---- END_BLOCK <2,0> ---->
-#<---- JUMP while_judge_label_0 ---->
-#<---- Cancel $a2 which index is 0 for #T0 ---->
-sw $a2, 12($sp)
-j while_judge_label_0
-#<---- GEN_LABEL while_end_label_0: ---->
-while_end_label_0:
-#<---- print c@<1,0> ---->
-#<---- Alloc $a2 which index is 0 for c ---->
-lw $a2, 8($sp)
-move $a0, $a2
+#<---- print #str1 ---->
+la $a0, str1
+li $v0, 4
+syscall
+#<---- print #str2 ---->
+la $a0, str2
+li $v0, 4
+syscall
+#<---- print 44 ---->
+li $a0, 44
 li $v0, 1
 syscall
+#<---- print #str3 ---->
+la $a0, str3
+li $v0, 4
+syscall
+#<---- print #str4 ---->
+la $a0, str4
+li $v0, 4
+syscall
+#<---- print 678 ---->
+li $a0, 678
+li $v0, 1
+syscall
+#<---- print #str5 ---->
+la $a0, str5
+li $v0, 4
+syscall
+#<---- print 61 ---->
+li $a0, 61
+li $v0, 1
+syscall
+#<---- print #str6 ---->
+la $a0, str6
+li $v0, 4
+syscall
+#<---- var var3@<1,0> ---->
+#<---- Alloc $a3 which index is 1 for var3 ---->
+#<---- var3@<1,0> = input() ---->
+li $v0, 5
+syscall
+move $a3, $v0
+#<---- NEW_BLOCK <2,0> ---->
+#<---- END_BLOCK <2,0> ---->
+#<---- NEW_BLOCK <2,1> ---->
+#<---- NEW_BLOCK <3,0> ---->
+#<---- END_BLOCK <3,0> ---->
+#<---- END_BLOCK <2,1> ---->
+#<---- #T0@<1,0> = var3@<1,0> MUL 61 ---->
+#<---- Alloc $t0 which index is 2 for #T0 ---->
+li $v1, 61
+mult $a3, $v1
+mflo $t0
+#<---- #T1@<1,0> = 61 SUB #T0@<1,0> ---->
+#<---- Alloc $t1 which index is 3 for #T1 ---->
+li $v1, 61
+subu $t1, $v1, $t0
+#<---- #T2@<1,0> = 678 MUL var3@<1,0> ---->
+#<---- Alloc $t2 which index is 4 for #T2 ---->
+li $v1, 678
+mult $a3, $v1
+mflo $t2
+#<---- #T3@<1,0> = #T2@<1,0> MOD 105 ---->
+#<---- Alloc $t3 which index is 5 for #T3 ---->
+li $v1, -1677082467
+mult $t2, $v1
+mfhi $v1
+addu $v1, $v1, $t2
+sra $v1, $v1, 6
+sra $v0, $t2, 31
+subu $v1, $v1, $v0
+li $v0, 105
+mult $v1, $v0
+mflo $v0
+subu $t3, $t2, $v0
+#<---- var1@<1,0> = #T1@<1,0> ADD #T3@<1,0> ---->
+#<---- Alloc $t4 which index is 6 for var1 ---->
+addu $t4, $t1, $t3
+#<---- print #str7 ---->
+la $a0, str7
+li $v0, 4
+syscall
+#<---- print var1@<1,0> ---->
+move $a0, $t4
+li $v0, 1
+syscall
+#<---- print #str8 ---->
+la $a0, str8
+li $v0, 4
+syscall
+#<---- GEN_LABEL ifElse_begin_label_0: ---->
+ifElse_begin_label_0:
+#<---- SET #T10@<1,0> := 1 < var1@<1,0> ---->
+#<---- Alloc $t5 which index is 7 for #T10 ---->
+sgt $t5, $t4, 1
+#<---- JUMP_IF #T10@<1,0> == 0 ifElse_end_label_0 ---->
+#<---- Cancel $a2 which index is 0 for con3 ---->
+#<---- Cancel $a3 which index is 1 for var3 ---->
+#<---- Cancel $t0 which index is 2 for #T0 ---->
+#<---- Cancel $t1 which index is 3 for #T1 ---->
+#<---- Cancel $t2 which index is 4 for #T2 ---->
+#<---- Cancel $t3 which index is 5 for #T3 ---->
+#<---- Cancel $t4 which index is 6 for var1 ---->
+sw $t4, 8($sp)
+beq $t5, 0, ifElse_end_label_0
+#<---- NEW_BLOCK <2,2> ---->
+#<---- print #str9 ---->
+la $a0, str9
+li $v0, 4
+syscall
+#<---- END_BLOCK <2,2> ---->
+#<---- GEN_LABEL ifElse_end_label_0: ---->
+#<---- Cancel $t5 which index is 7 for #T10 ---->
+sw $t5, 64($sp)
+ifElse_end_label_0:
+#<---- GEN_LABEL ifElse_begin_label_1: ---->
+ifElse_begin_label_1:
+#<---- NEW_BLOCK <2,3> ---->
+#<---- END_BLOCK <2,3> ---->
+#<---- JUMP ifElse_end_label_1 ---->
+j ifElse_end_label_1
+#<---- GEN_LABEL Else_start_label_0: ---->
+Else_start_label_0:
+#<---- NEW_BLOCK <2,4> ---->
+#<---- GEN_LABEL ifElse_begin_label_2: ---->
+ifElse_begin_label_2:
+#<---- ASSIGN #T14@<2,4> = 1 ---->
+#<---- Alloc $a2 which index is 0 for #T14 ---->
+addiu $a2, $zero, 1
+#<---- JUMP_IF #T14@<2,4> == 0 ifElse_end_label_2 ---->
+#<---- Cancel $a2 which index is 0 for #T14 ---->
+sw $a2, 84($sp)
+beq $a2, 0, ifElse_end_label_2
+#<---- NEW_BLOCK <3,1> ---->
+#<---- var2@<1,0> = input() ---->
+#<---- Alloc $a3 which index is 1 for var2 ---->
+lw $a3, 12($sp)
+li $v0, 5
+syscall
+move $a3, $v0
+#<---- END_BLOCK <3,1> ---->
+#<---- GEN_LABEL ifElse_end_label_2: ---->
+#<---- Cancel $a2 which index is 0 for #T14 ---->
+sw $a2, 84($sp)
+#<---- Cancel $a3 which index is 1 for var2 ---->
+sw $a3, 12($sp)
+ifElse_end_label_2:
+#<---- END_BLOCK <2,4> ---->
+#<---- GEN_LABEL ifElse_end_label_1: ---->
+ifElse_end_label_1:
+#<---- GEN_LABEL ifElse_begin_label_3: ---->
+ifElse_begin_label_3:
+#<---- ASSIGN #T15@<1,0> = 1 ---->
+#<---- Alloc $a2 which index is 0 for #T15 ---->
+addiu $a2, $zero, 1
+#<---- JUMP_IF #T15@<1,0> == 0 while_start_label_0 ---->
+#<---- Cancel $a2 which index is 0 for #T15 ---->
+sw $a2, 68($sp)
+beq $a2, 0, while_start_label_0
+#<---- NEW_BLOCK <2,5> ---->
+#<---- GEN_LABEL ifElse_begin_label_4: ---->
+ifElse_begin_label_4:
+#<---- ASSIGN #T16@<2,5> = 0 ---->
+#<---- Alloc $a3 which index is 1 for #T16 ---->
+move $a3, $zero
+#<---- JUMP_IF #T16@<2,5> == 0 ifElse_end_label_4 ---->
+#<---- Cancel $a2 which index is 0 for #T15 ---->
+sw $a2, 68($sp)
+#<---- Cancel $a3 which index is 1 for #T16 ---->
+sw $a3, 88($sp)
+beq $a3, 0, ifElse_end_label_4
+#<---- NEW_BLOCK <3,2> ---->
+#<---- print #str10 ---->
+la $a0, str10
+li $v0, 4
+syscall
+#<---- END_BLOCK <3,2> ---->
+#<---- GEN_LABEL ifElse_end_label_4: ---->
+#<---- Cancel $a3 which index is 1 for #T16 ---->
+sw $a3, 88($sp)
+ifElse_end_label_4:
+#<---- GEN_LABEL ifElse_begin_label_5: ---->
+ifElse_begin_label_5:
+#<---- NEW_BLOCK <3,3> ---->
+#<---- END_BLOCK <3,3> ---->
+#<---- GEN_LABEL ifElse_end_label_5: ---->
+ifElse_end_label_5:
+#<---- END_BLOCK <2,5> ---->
+#<---- GEN_LABEL while_start_label_0: ---->
+while_start_label_0:
+#<---- NEW_BLOCK <2,6> ---->
+#<---- GEN_LABEL ifElse_begin_label_6: ---->
+ifElse_begin_label_6:
+#<---- ASSIGN #T17@<2,6> = 1 ---->
+#<---- Alloc $a2 which index is 0 for #T17 ---->
+addiu $a2, $zero, 1
+#<---- JUMP_IF #T17@<2,6> == 0 Else_start_label_1 ---->
+#<---- Cancel $a2 which index is 0 for #T17 ---->
+sw $a2, 100($sp)
+beq $a2, 0, Else_start_label_1
+#<---- NEW_BLOCK <3,4> ---->
+#<---- JUMP while_end_label_0 ---->
+#<---- Cancel $a2 which index is 0 for #T17 ---->
+sw $a2, 100($sp)
+j while_end_label_0
+#<---- END_BLOCK <3,4> ---->
+#<---- JUMP ifElse_end_label_6 ---->
+j ifElse_end_label_6
+#<---- GEN_LABEL Else_start_label_1: ---->
+Else_start_label_1:
+#<---- NEW_BLOCK <3,5> ---->
+#<---- JUMP while_start_label_0 ---->
+j while_start_label_0
+#<---- END_BLOCK <3,5> ---->
+#<---- GEN_LABEL ifElse_end_label_6: ---->
+ifElse_end_label_6:
+#<---- END_BLOCK <2,6> ---->
+#<---- JUMP while_start_label_0 ---->
+j while_start_label_0
+#<---- GEN_LABEL while_end_label_0: ---->
+while_end_label_0:
 #<---- return 0 ---->
 li $v0, 0
 li $v0, 10

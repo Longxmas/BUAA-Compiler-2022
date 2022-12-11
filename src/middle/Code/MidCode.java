@@ -183,4 +183,24 @@ public class MidCode {
     public String getCompare() {
         return compare;
     }
+
+    public void setOperand1(String operand1) {
+        this.operand1 = operand1;
+    }
+
+    public void setOperand2(String operand2) {
+        this.operand2 = operand2;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public void setCompare(String compare) {
+        this.compare = compare;
+    }
+
+    public void setOperator(Op operator) {
+        this.operator = operator;
+    }
 }

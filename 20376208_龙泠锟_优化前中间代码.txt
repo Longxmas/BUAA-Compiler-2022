@@ -1,20 +1,122 @@
+#str0: "(20373335)\n"
+#str1: "C level,test a code has decl,no func\n"
+#str2: "con1 is "
+#str3: "\n"
+#str4: "con2 is "
+#str5: ",con3 is "
+#str6: "\n"
+#str7: "the left val is "
+#str8: "\n"
+#str9: "var1 greater than 1\n"
+#str10: "var5 equal to con1\n"
+var global_var1@<0,0> = 9
+var global_var2@<0,0> = 0
+var global_var3@<0,0> = 10
+var con1@<0,0> = 44
+var con2@<0,0> = 678
+var con4@<0,0> = 888
 <--------------- FUNC main--------------->
 NEW_BLOCK <1,0>
-var a@<1,0> = 1
-a@<1,0> = input()
-var c@<1,0> = 1
-GEN_LABEL while_judge_label_0:
-SET #T0@<1,0> := a@<1,0> == 2
-JUMP_IF #T0@<1,0> == 0 while_end_label_0
+var con3@<1,0> = 61
+print #str0
+print #str1
+print #str2
+print 44
+print #str3
+print #str4
+print 678
+print #str5
+print 61
+print #str6
+var var1@<1,0>
+var var2@<1,0> = 61
+var var3@<1,0>
+var3@<1,0> = input()
 NEW_BLOCK <2,0>
-#T1@<2,0> = a@<1,0> ADD 2
-var b@<2,0> = #T1@<2,0>
-#T2@<2,0> = b@<2,0> ADD a@<1,0>
-ASSIGN c@<1,0> = #T2@<2,0>
 END_BLOCK <2,0>
+NEW_BLOCK <2,1>
+NEW_BLOCK <3,0>
+END_BLOCK <3,0>
+END_BLOCK <2,1>
+#T0@<1,0> = var3@<1,0> MUL var2@<1,0>
+#T1@<1,0> = var2@<1,0> SUB #T0@<1,0>
+#T2@<1,0> = 678 MUL var3@<1,0>
+#T3@<1,0> = #T2@<1,0> MOD 105
+#T4@<1,0> = #T1@<1,0> ADD #T3@<1,0>
+ASSIGN var1@<1,0> = #T4@<1,0>
+print #str7
+print var1@<1,0>
+print #str8
+#T5@<1,0> = var3@<1,0> MUL var2@<1,0>
+#T6@<1,0> = var2@<1,0> SUB #T5@<1,0>
+#T7@<1,0> = 678 MUL var3@<1,0>
+#T8@<1,0> = #T7@<1,0> MOD 105
+#T9@<1,0> = #T6@<1,0> ADD #T8@<1,0>
+var var5@<1,0> = -44
+GEN_LABEL ifElse_begin_label_0:
+SET #T10@<1,0> := 1 < var1@<1,0>
+JUMP_IF #T10@<1,0> == 0 ifElse_end_label_0
+NEW_BLOCK <2,2>
+print #str9
+END_BLOCK <2,2>
+GEN_LABEL ifElse_end_label_0:
+GEN_LABEL ifElse_begin_label_1:
+NEW_BLOCK <2,3>
+#T11@<2,3> = var1@<1,0> DIV 44
+#T12@<2,3> = var2@<1,0> MUL 1225
+#T13@<2,3> = #T11@<2,3> ADD #T12@<2,3>
+ASSIGN var3@<1,0> = #T13@<2,3>
+END_BLOCK <2,3>
+JUMP ifElse_end_label_1
+GEN_LABEL Else_start_label_0:
+NEW_BLOCK <2,4>
+GEN_LABEL ifElse_begin_label_2:
+SET #T14@<2,4> := var2@<1,0> < 888
+JUMP_IF #T14@<2,4> == 0 ifElse_end_label_2
+NEW_BLOCK <3,1>
+var2@<1,0> = input()
+END_BLOCK <3,1>
+GEN_LABEL ifElse_end_label_2:
+END_BLOCK <2,4>
+GEN_LABEL ifElse_end_label_1:
+GEN_LABEL ifElse_begin_label_3:
+SET #T15@<1,0> := var5@<1,0> <= 888
+JUMP_IF #T15@<1,0> == 0 ifElse_end_label_3
+NEW_BLOCK <2,5>
+GEN_LABEL ifElse_begin_label_4:
+SET #T16@<2,5> := var5@<1,0> == 44
+JUMP_IF #T16@<2,5> == 0 ifElse_end_label_4
+NEW_BLOCK <3,2>
+print #str10
+END_BLOCK <3,2>
+GEN_LABEL ifElse_end_label_4:
+GEN_LABEL ifElse_begin_label_5:
+NEW_BLOCK <3,3>
+END_BLOCK <3,3>
+GEN_LABEL ifElse_end_label_5:
+END_BLOCK <2,5>
+GEN_LABEL ifElse_end_label_3:
+GEN_LABEL while_judge_label_0:
+GEN_LABEL while_start_label_0:
+NEW_BLOCK <2,6>
+var i@<2,6> = 56
+var j@<2,6> = 0
+GEN_LABEL ifElse_begin_label_6:
+SET #T17@<2,6> := j@<2,6> <= i@<2,6>
+JUMP_IF #T17@<2,6> == 0 Else_start_label_1
+NEW_BLOCK <3,4>
+JUMP while_end_label_0
+END_BLOCK <3,4>
+JUMP ifElse_end_label_6
+GEN_LABEL Else_start_label_1:
+NEW_BLOCK <3,5>
+var k@<3,5>
 JUMP while_judge_label_0
+END_BLOCK <3,5>
+GEN_LABEL ifElse_end_label_6:
+END_BLOCK <2,6>
+JUMP while_start_label_0
 GEN_LABEL while_end_label_0:
-print c@<1,0>
 return 0
 END_BLOCK <1,0>
 <--------------- END_FUNC main--------------->

@@ -843,7 +843,7 @@ public class MipsGenerator {
         } else {
             if (Immediate.checkImmediate(midCode.getOperand1())) {
                 int i = Integer.parseInt(midCode.getOperand1());
-                if (i == 1 && midCode.getOperand2().equals("== 1")) {
+                if (i != 0 && midCode.getOperand2().equals("!= 0")) {
                     mipsCodes.addCode(new MipsCode(new JumpInstr(JumpInstr.JI.j, midCode.getResult())));
                 } else if (i == 0 && midCode.getOperand2().equals("== 0")) {
                     mipsCodes.addCode(new MipsCode(new JumpInstr(JumpInstr.JI.j, midCode.getResult())));
@@ -853,8 +853,8 @@ public class MipsGenerator {
                 String reg = regAlloc.getRegString(regAlloc.getRegOfSymbol(sym, true, midCode));
                 if (midCode.getOperand2().equals("== 0")) {
                     mipsCodes.addCode(new MipsCode(new BranchInstr(BranchInstr.BI.beq, "0", reg, midCode.getResult())));
-                } else if (midCode.getOperand2().equals("== 1")) {
-                    mipsCodes.addCode(new MipsCode(new BranchInstr(BranchInstr.BI.beq, "1", reg, midCode.getResult())));
+                } else if (midCode.getOperand2().equals("!= 0")) {
+                    mipsCodes.addCode(new MipsCode(new BranchInstr(BranchInstr.BI.bne, "0", reg, midCode.getResult())));
                 }
             }
         }

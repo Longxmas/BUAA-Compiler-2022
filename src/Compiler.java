@@ -55,9 +55,10 @@ public class Compiler {
         PeepholeOptimizer peepholeOptimizer = new PeepholeOptimizer();
         DataFlowAnalyser dataFlowAnalyser = new DataFlowAnalyser();
         int i = 0;
-        while(i++ < 10) {
+        while(i++ < 1) {
             peepholeOptimizer.combineArithAssign(buildVisitor);
             peepholeOptimizer.deleteUselessCode(buildVisitor);
+            peepholeOptimizer.deleteUselessLabel(buildVisitor);
             dataFlowAnalyser.propagation(buildVisitor);
             dataFlowAnalyser.constFold(buildVisitor);
             dataFlowAnalyser.deadCodeElimination(buildVisitor);

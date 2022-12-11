@@ -248,7 +248,7 @@ public class Visitor {
             midCodeList.elseStartLabelCnt++;
         }
         midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "ifElse_begin_label_" + endLabel + ":", null, null));
-        analyseCond(ifElseStmt.getCond(), hasElse ? "Else_start_label_" + startLabel : "ifElse_end_label_" + endLabel);
+        analyseCond(ifElseStmt.getCond(), hasElse ? "Else_start_label_" + startLabel : "ifElse_end_label_" + endLabel, false);
         analyseStmt(ifElseStmt.getIfStmt());
         if (hasElse) {
             midCodeList.add(new MidCode(MidCode.Op.JUMP,
@@ -267,9 +267,11 @@ public class Visitor {
         inWhile++;
         int whileCnt = stmt.getLabel();
         midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "while_judge_label_" + whileCnt + ":", null, null));
-        analyseCond(stmt.getCond(), "while_end_label_" + whileCnt);
+        analyseCond(stmt.getCond(), "while_end_label_" + whileCnt, false);
+        midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "while_start_label_" + whileCnt + ":", null, null));
         analyseStmt(stmt.getStmt());
-        midCodeList.add(new MidCode(MidCode.Op.JUMP, "while_judge_label_" + whileCnt, null, null));
+        //midCodeList.add(new MidCode(MidCode.Op.JUMP, "while_judge_label_" + whileCnt, null, null));
+        analyseCond(stmt.getCond(), "while_start_label_" + whileCnt, true);
         midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "while_end_label_" + whileCnt + ":", null, null));
         inWhile--;
     }
@@ -294,14 +296,17 @@ public class Visitor {
         return ((WhileStmt) parent).getLabel();
     }
 
-    public Operand analyseCond(Cond cond, String label) {
-        return analyseLOrExp(cond.getFirstSon(), label);
+    public Operand analyseCond(Cond cond, String label, Boolean opposite) {
+        return analyseLOrExp(cond.getFirstSon(), label, opposite);
     }
 
-    public Operand analyseLOrExp(LOrExp exp, String label) {
+    public Operand analyseLOrExp(LOrExp exp, String label, Boolean opposite) {
         try {
             Immediate temp = new Immediate(new CalExp(currentTable).calculateLOrExp(exp));
-            if (temp.getValue() == 0) {
+            if (temp.getValue() == 0 && !opposite) {
+                midCodeList.add(new MidCode(MidCode.Op.JUMP,
+                        label, null, null));
+            } else if (temp.getValue() != 0 && opposite) {
                 midCodeList.add(new MidCode(MidCode.Op.JUMP,
                         label, null, null));
             }
@@ -316,32 +321,32 @@ public class Visitor {
             exp.getSons().get(i).setIndex(i + 1);
         }
 
-        Operand operand = analyseLAndExp(exp.getFirstSon(), label);
+        Operand operand = analyseLAndExp(exp.getFirstSon(), label, opposite);
         if (exp.getSons().size() == 0) {
-            //midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 0", label));
-            //midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "or_label_" + midCodeList.orLabelCnt++ + ":", null, null));
             return operand;
         }
-        //midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
+
         Operand ans = null;
         for (int i = 0; i < exp.getSons().size(); i++) {
             Operand land;
-            land = analyseLAndExp(exp.getSons().get(i), label);
+            land = analyseLAndExp(exp.getSons().get(i), label, opposite);
             ans = land;
         }
-        //midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, ans.toString(), "== 0", label));
-        midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "or_label_" + midCodeList.orLabelCnt++ + ":", null, null));
+        if (!opposite)
+            midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "or_label_" + midCodeList.orLabelCnt++ + ":", null, null));
         return ans;
     }
 
-    public Operand analyseLAndExp(LAndExp exp, String label) {
+    public Operand analyseLAndExp(LAndExp exp, String label, Boolean opposite) {
         LOrExp parent = exp.getParent();
-        boolean needToJump = exp.getIndex() < parent.getSons().size() && parent.getSons().size() > 0;
+        boolean needToJump = exp.getIndex() < parent.getSons().size();
         try {
             Immediate temp = new Immediate(new CalExp(currentTable).calculateLAndExp(exp));
-            if (temp.getValue() == 1 && needToJump) {
+            if (temp.getValue() != 0 && needToJump && !opposite) {
                 midCodeList.add(new MidCode(MidCode.Op.JUMP, "or_label_" + midCodeList.orLabelCnt, null, null));
-            } else if (temp.getValue() == 0 && !needToJump) {
+            } else if (temp.getValue() == 0 && !needToJump && !opposite) {
+                midCodeList.add(new MidCode(MidCode.Op.JUMP, label, null, null));
+            } else if (temp.getValue() != 0 && opposite) {
                 midCodeList.add(new MidCode(MidCode.Op.JUMP, label, null, null));
             }
             return temp;
@@ -356,34 +361,39 @@ public class Visitor {
         }
 
         //如果landExp是最后一个
-        String landLabel = exp.getIndex() == parent.getSons().size() ? label : "and_label_" + midCodeList.andLabelCnt;
+        String landLabel = (!opposite && exp.getIndex() == parent.getSons().size()) ? label : "and_label_" + midCodeList.andLabelCnt;
         Operand operand = analyseEqExp(exp.getFirstSon(), label);
         if (exp.getSons().size() == 0) {
-            if (needToJump) {
-                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
-            } else {
+            if (needToJump && !opposite) {
+                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "!= 0", "or_label_" + midCodeList.orLabelCnt));
+            } else if (!needToJump && !opposite) {
                 midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 0", label));
+            } else {
+                midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "!= 0", label));
             }
             return operand;
         }
 
         midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, operand.toString(), "== 0", landLabel));
+
         Operand ret = null;
         for (int i = 0; i < exp.getSons().size(); i++) {
             Operand eq = analyseEqExp(exp.getSons().get(i), label);
             if (i != exp.getSons().size() - 1) {
                 midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "== 0", landLabel));
             } else {
-                if (needToJump) {
-                    midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "== 1", "or_label_" + midCodeList.orLabelCnt));
-                } else {
+                if (needToJump && !opposite) {
+                    midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "!= 0", "or_label_" + midCodeList.orLabelCnt));
+                } else if (!needToJump && !opposite) {
                     midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "== 0", label));
+                } else {
+                    midCodeList.add(new MidCode(MidCode.Op.JUMP_IF, eq.toString(), "!= 0", label));
                 }
             }
             ret = eq;
         }
         //System.out.println(exp + "needToJump = " + needToJump + "\n");
-        if (needToJump)
+        if (needToJump || opposite)
             midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "and_label_" + midCodeList.andLabelCnt++ + ":", null, null));
         //如果不止一个，就返回最后一个
         return ret;
