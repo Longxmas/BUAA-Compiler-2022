@@ -25,7 +25,8 @@ public class PeepholeOptimizer {
             MidCode midCode = midCodes.get(i);
             if (i + 1 < midCodes.size() && MidCode.arithOp.containsKey(midCode.getOperator())
                     && isTempOrImmediate(midCode.getResult())
-                    && midCodes.get(i + 1).getOperator().equals(MidCode.Op.ASSIGN)) {
+                    && (midCodes.get(i + 1).getOperator().equals(MidCode.Op.ASSIGN)
+                        || midCodes.get(i + 1).getOperator().equals(MidCode.Op.VAR_DEF))) {
                 MidCode nextMidCode = midCodes.get(i + 1);
                 if (midCode.getResult().equals(nextMidCode.getOperand2())) {
                     MidCode newMidCode = new MidCode(midCode.getOperator(), midCode.getOperand1(), midCode.getOperand2(), nextMidCode.getOperand1());

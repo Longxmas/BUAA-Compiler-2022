@@ -61,12 +61,13 @@ public class Compiler {
             dataFlowAnalyser.propagation(buildVisitor);
             dataFlowAnalyser.constFold(buildVisitor);
             dataFlowAnalyser.deadCodeElimination(buildVisitor);
+            //dataFlowAnalyser.loopInvariant(buildVisitor);
         }
         globalMidCodes.addAll(buildVisitor.getMidCodeList().getMidCodes());
         buildVisitor.getMidCodeList().setMidCodes(globalMidCodes);
         write(buildVisitor.getMidCodeList().toString(), "20376208_龙泠锟_优化后中间代码.txt");
 
-        MipsGenerator mipsGenerator = new MipsGenerator(buildVisitor);
+        MipsGenerator mipsGenerator = new MipsGenerator(buildVisitor, dataFlowAnalyser);
         mipsGenerator.calculateAddress();
         mipsGenerator.generateCode();
         write(mipsGenerator.getMipsCodes().toString(), "mips.txt");

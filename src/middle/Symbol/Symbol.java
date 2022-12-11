@@ -4,6 +4,7 @@ import middle.Code.MidCodeList;
 import middle.operand.Operand;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Symbol implements Operand {
     public enum BasicType {

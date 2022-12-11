@@ -1,5 +1,6 @@
 package optimizer;
 
+import backend.ClockRegAlloc;
 import backend.Mips.*;
 import backend.MipsGenerator;
 import backend.RegAlloc;
@@ -163,7 +164,7 @@ public class MulDivOptimizer {
 
         if (isPowerOfTwo(d)) {
             if (d == 1) {
-                mipsCodes.add(new MipsCode(new MoveInstr(MoveInstr.MI.move, "$v1", "$zero")));
+                mipsCodes.add(new MipsCode(new MoveInstr(MoveInstr.MI.move, regAlloc.getRegString(result_reg), "$zero")));
             } else {
                 mipsCodes.add(new MipsCode(new RIInstr(RIInstr.RII.sll, "$v1",
                         "$v1", getPowerOfTwo(d))));

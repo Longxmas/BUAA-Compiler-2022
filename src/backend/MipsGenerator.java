@@ -8,8 +8,10 @@ import middle.Symbol.FuncTable;
 import middle.Symbol.Symbol;
 import middle.Symbol.SymbolTable;
 import middle.operand.Immediate;
+import optimizer.DataFlowAnalyser;
 import optimizer.MulDivOptimizer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -35,7 +37,7 @@ public class MipsGenerator {
     public static HashMap<MidCode, ArrayList<Symbol>> code2Symbols = new HashMap<>();
     private boolean multDivOptimize = true;
 
-    public MipsGenerator(Visitor visitor) {
+    public MipsGenerator(Visitor visitor, DataFlowAnalyser dataFlowAnalyser) throws IOException {
         this.midCodeList = visitor.getMidCodeList();
         this.midCodes = midCodeList.getMidCodes();
         this.globalTable = visitor.getGlobalTable();
@@ -43,7 +45,7 @@ public class MipsGenerator {
         this.funcMap = visitor.getFuncMap();
         this.funcTables = visitor.getFuncTables();
         this.depth2SymbolTable = visitor.getDepth2Table();
-        this.regAlloc = new RegAlloc(mipsCodes, midCodeList);
+        this.regAlloc = new RegAlloc(mipsCodes,  dataFlowAnalyser);
     }
 
     public void calculateAddress() {
@@ -272,8 +274,12 @@ public class MipsGenerator {
             }
 
             if (midCode.getOperator().equals(MidCode.Op.GEN_LABEL)) {
-                regAlloc.clear(true, midCode, new ArrayList<>());
-                mipsCodes.addCode(new MipsCode(midCode.getOperand1()));
+                if (midCode.getOperand1().contains("ifElse_begin_label")) {
+                    mipsCodes.addCode(new MipsCode(midCode.getOperand1()));
+                } else {
+                    regAlloc.clear(true, midCode, new ArrayList<>());
+                    mipsCodes.addCode(new MipsCode(midCode.getOperand1()));
+                }
             }
             midcodeIndex -= parseBlock;
             midCode = midCodes.get(++midcodeIndex);
@@ -328,6 +334,7 @@ public class MipsGenerator {
     public void generateVarDefOrAssign(MidCode midCode) {
         Symbol symbol = findSymbol(midCode.getOperand1());
         //如果是普通变量的赋值
+        if (symbol == null) return;
         if (symbol.getSymbolType().equals(Symbol.SymbolType.Var)) {
             //目标寄存器不需要load
             String assignValue = midCode.getOperand2();
@@ -411,7 +418,6 @@ public class MipsGenerator {
             mipsCodes.addCode(new MipsCode("li $v0, 4"));
         } else {
             Symbol symbol = findSymbol(printValue);
-            System.out.println(midCode);
             int reg = regAlloc.getRegOfSymbol(symbol, true, midCode);
             mipsCodes.addCode(new MipsCode("move $a0, " + regAlloc.getRegString(reg)));
             mipsCodes.addCode(new MipsCode("li $v0, 1"));

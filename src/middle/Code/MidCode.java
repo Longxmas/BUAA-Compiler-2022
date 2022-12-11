@@ -31,6 +31,7 @@ public class MidCode {
         put(Op.GETINT, "GETINT");
         put(Op.VAR_DEF, "VAR_DEF");
         put(Op.FORM_VAR_DEF, "FORM_VAR_DEF");
+        put(Op.ARR_LOAD, "ARR_LOAD");
         put(Op.SET, "SET");
     }};
 

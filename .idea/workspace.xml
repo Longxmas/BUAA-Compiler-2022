@@ -9,24 +9,68 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="完成乘除优化">
-      <change afterPath="$PROJECT_DIR$/src/optimizer/BasicBlock.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/optimizer/BlockAnalyser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/optimizer/DataFlowAnalyser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/optimizer/FuncBlock.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/optimizer/PeepholeOptimizer.java" afterDir="false" />
+    <list default="true" id="d20866ba-b391-4cf0-b07f-dfb2da54f8cd" name="变更" comment="完成复写传播和死代码删除">
+      <change afterPath="$PROJECT_DIR$/src/backend/ClockRegAlloc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/backend/CorrectRegAlloc.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" beforeDir="false" afterPath="$PROJECT_DIR$/20376208_龙泠锟_优化前中间代码.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/error.txt" beforeDir="false" afterPath="$PROJECT_DIR$/error.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input10.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input10.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input13.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input13.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input16.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input16.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input26.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input26.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/input7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/input7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/output13.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/output13.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/output18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/output18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/output26.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/output26.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/output3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/output3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile11.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile11.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile13.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile13.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile19.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile19.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile23.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile23.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile26.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile26.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/A/testfile8.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/A/testfile8.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/input1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/input1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/input10.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/input10.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/input11.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/input11.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/input13.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/input13.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/input17.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/input17.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/input18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/input18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/input3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/input3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/output1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/output1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/output10.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/output10.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/output18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/output18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/testfile1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/testfile1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/testfile10.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/testfile10.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/testfile18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/testfile18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/B/testfile9.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/B/testfile9.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/input16.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/input16.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/input18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/input18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/input21.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/input21.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/input3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/input3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/input7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/input7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/output7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/output7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/testfile19.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/testfile19.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/21级/full/C/testfile7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/21级/full/C/testfile7.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mips.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mips.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Compiler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/backend/MipsGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/MipsGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/backend/RegAlloc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/backend/RegAlloc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/visitor/visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/visitor/Visitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/visitor/Visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/visitor/Visitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/middle/Code/MidCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Code/MidCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/middle/Code/MidCodeList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Code/MidCodeList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middle/Symbol/Symbol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/middle/Symbol/Symbol.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/optimizer/DataFlowAnalyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/optimizer/DataFlowAnalyser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/optimizer/MulDivOptimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/optimizer/MulDivOptimizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/optimizer/PeepholeOptimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/optimizer/PeepholeOptimizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/optimizer/tempVarChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/optimizer/tempVarChecker.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/standard.txt" beforeDir="false" afterPath="$PROJECT_DIR$/standard.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_mips/mips1.asm" beforeDir="false" afterPath="$PROJECT_DIR$/test_mips/mips1.asm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/testfile.txt" afterDir="false" />
@@ -67,24 +111,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/JuniorYear/Compiler/notes/SysCompiler&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;项目&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;http.proxy&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "extract.method.default.visibility": "private",
+    "last_opened_file_path": "D:/JuniorYear/Compiler/Experiement/clock10",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "项目",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "http.proxy"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Compiler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Compiler" />
@@ -164,7 +208,9 @@
       <workItem from="1670043456911" duration="15512000" />
       <workItem from="1670078330915" duration="6017000" />
       <workItem from="1670556247583" duration="3690000" />
-      <workItem from="1670579545467" duration="10141000" />
+      <workItem from="1670579545467" duration="19636000" />
+      <workItem from="1670638623284" duration="23806000" />
+      <workItem from="1670671883473" duration="21448000" />
     </task>
     <task id="LOCAL-00001" summary="error a,i,j,k">
       <created>1666708675705</created>
@@ -194,7 +240,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669893614975</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="完成复写传播和死代码删除">
+      <created>1670593796992</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1670593796992</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -216,7 +269,8 @@
     <MESSAGE value="FINISH SECOND HOMEWORK" />
     <MESSAGE value="初步完成 临时变量的取消回写" />
     <MESSAGE value="完成乘除优化" />
-    <option name="LAST_COMMIT_MESSAGE" value="完成乘除优化" />
+    <MESSAGE value="完成复写传播和死代码删除" />
+    <option name="LAST_COMMIT_MESSAGE" value="完成复写传播和死代码删除" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

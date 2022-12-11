@@ -214,9 +214,14 @@ public class Visitor {
         String s = format.getSign().substring(1, format.getSign().length() - 1);
         int number = 0;
         int left = 0;
+        ArrayList<Operand> temp = new ArrayList<>();
+        for (int i = printStmt.getExps().size() - 1; i >= 0; i--) {
+            temp.add(analyseExp(printStmt.getExps().get(i)));
+        }
+        //将 temp 中的元素倒序存入outputs中
         ArrayList<Operand> outputs = new ArrayList<>();
-        for (int i = 0; i < printStmt.getExps().size(); i++) {
-            outputs.add(analyseExp(printStmt.getExps().get(i)));
+        for (int i = temp.size() - 1; i >= 0; i--) {
+            outputs.add(temp.get(i));
         }
         for (int i = 0; i < s.length() - 1; i++) {
             if (s.charAt(i) == '%' && s.charAt(i + 1) == 'd') {
@@ -242,6 +247,7 @@ public class Visitor {
             ifElseStmt.getElseStmt().setParent(ifElseStmt);
             midCodeList.elseStartLabelCnt++;
         }
+        midCodeList.add(new MidCode(MidCode.Op.GEN_LABEL, "ifElse_begin_label_" + endLabel + ":", null, null));
         analyseCond(ifElseStmt.getCond(), hasElse ? "Else_start_label_" + startLabel : "ifElse_end_label_" + endLabel);
         analyseStmt(ifElseStmt.getIfStmt());
         if (hasElse) {

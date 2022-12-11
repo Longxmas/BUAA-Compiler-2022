@@ -1,27 +1,39 @@
 package backend;
 
+
 import backend.Mips.LoadInstr;
 import backend.Mips.MipsCode;
 import backend.Mips.MipsCodes;
 import backend.Mips.StoreInstr;
 import middle.Code.MidCode;
-import middle.Code.MidCodeList;
 import middle.Symbol.Symbol;
 import optimizer.DataFlowAnalyser;
-import optimizer.tempVarChecker;
 
 import java.util.*;
-
-public class RegAlloc {
+/**
+ * 描述当前的寄存器分配状况的表, 将寄存器当成 Cache
+ * 功能：查询是否有可用的寄存器, 将寄存器分配给符号, 查看符号是否有对应寄存器, 置换出寄存器用于分配
+ */
+public class CorrectRegAlloc {
     private MipsCodes mipsCodes;
     private DataFlowAnalyser dataFlowAnalyser;
-    private int pointer = 0;
     // 可用来自由分配的寄存器：从 t0($8) 到 t9($25); v0($2)为函数返回值, v1($3)存储立即数, a0($4)作为系统调用参数, a1($5)用来计算地址
     // gp($28)为全局指针, sp($29)为栈指针, fp($30)为帧指针, ra($31)为返回地址
     public static final ArrayList<Integer> allocatableRegs =
-            new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,26,27, 30));
+            new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 30));
 
-    public RegAlloc(MipsCodes mipsCodes, DataFlowAnalyser dataFlowAnalyser) {
+    // 当前未使用(可自由分配)的寄存器
+    private final Set<Integer> freeRegs = new HashSet<>(allocatableRegs);
+
+    // 已经分配出去的寄存器对应的符号
+    private final Map<Integer, Symbol> allocatedRegs = new HashMap<>();
+    // 符号对应到寄存器
+    private final Map<Symbol, Integer> symbolToRegs = new HashMap<>();
+
+    // 模拟 LRU 实现 Cache 置换
+    private final LinkedHashSet<Integer> regCache = new LinkedHashSet<>();
+
+    public CorrectRegAlloc(MipsCodes mipsCodes, DataFlowAnalyser dataFlowAnalyser) {
         this.mipsCodes = mipsCodes;
         this.dataFlowAnalyser = dataFlowAnalyser;
     }
@@ -54,42 +66,16 @@ public class RegAlloc {
         put(30, "$fp");
     }};
 
-    // 当前可自由分配的寄存器
-    private final HashSet<Integer> freeRegs = new HashSet<>(allocatableRegs);
-
-    // 已分配的寄存器对应的符号
-    private final HashMap<Integer, Symbol> allocatedRegs = new HashMap<>();
-
-    // 符号对应到寄存器
-    private final HashMap<Symbol, Integer> symbolToReg = new HashMap<>();
-
-    // 获取符号当前所在的寄存器，如果尚未被分配，则分配一个寄存器并返回
-    public int getRegOfSymbol(Symbol symbol, boolean needToLoad, MidCode midCode) {
-        if (!symbolToReg.containsKey(symbol)) {
-            return allocRegister(symbol, needToLoad, midCode);
-        }
-        return symbolToReg.get(symbol);
-    }
-
-    public String getRegString(int reg) {
-        return intReg2SymReg.get(reg);
-    }
-
-
-    // 为变量符号分配寄存器, 返回分配的寄存器号
-    // 如果没有空余的寄存器，则需要将一个已分配的寄存器的值存入内存，然后再分配
+    // 为变量符号分配寄存器（必须有自由寄存器）, 返回分配的寄存器号
     public int allocRegister(Symbol symbol, boolean needToLoad, MidCode midCode) {
-        //如果已经分配了寄存器，则直接返回
-        if (symbolToReg.containsKey(symbol)) {
-            return symbolToReg.get(symbol);
+        // 一个变量只能占用一个寄存器
+        if (symbolToRegs.containsKey(symbol)) {
+            refresh(symbol);
+            return symbolToRegs.get(symbol);
         }
-
-        // 如果没有空余的寄存器
+        // 如果没有富余寄存器则报错
         if (freeRegs.isEmpty()) {
-            //System.out.println("pointer: " + pointer);
-            //取消该寄存器的分配
-            pointer++;
-            int reg = allocatableRegs.get(pointer % allocatableRegs.size());
+            int reg = regToReplace();
             cancelAlloc(reg, midCode);
         }
         // 获取一个空闲寄存器
@@ -98,9 +84,9 @@ public class RegAlloc {
         // 将寄存器分配给符号
         allocatedRegs.put(register, symbol);
         // 记录符号对应的寄存器
-        symbolToReg.put(symbol, register);
-        //System.out.println("set true allocated : " + allocatableRegs.indexOf(symbolToReg.get(symbol))
-        // + " symbol : " + symbol + " pointer : " + pointer);
+        symbolToRegs.put(symbol, register);
+        // 将寄存器置入 Cache
+        regCache.add(register);
         // 如果需要加载，则加载
         mipsCodes.addCode(new MipsCode("#<---- Alloc " + intReg2SymReg.get(register) +
                 " which index is " + allocatableRegs.indexOf(register) + " for " + symbol.getName() + " ---->"));
@@ -112,13 +98,32 @@ public class RegAlloc {
         return register;
     }
 
-    // 取消某个寄存器的分配
-    public void cancelAlloc(int register, MidCode midCode) {
-        if (!allocatedRegs.containsKey(register)) {
-            return;
+    // 获取符号当前所在的寄存器
+    public int getRegOfSymbol(Symbol symbol, boolean needToLoad, MidCode midCode) {
+        if (!symbolToRegs.containsKey(symbol)) {
+            return allocRegister(symbol, needToLoad, midCode);
         }
-        Symbol symbol = allocatedRegs.get(register);
+        return symbolToRegs.get(symbol);
+    }
+
+
+    // 获取可被换出的寄存器编号
+    public int regToReplace() {
+        assert !regCache.isEmpty();
+        return regCache.iterator().next();
+    }
+
+    public String getRegString(int reg) {
+        return intReg2SymReg.get(reg);
+    }
+
+    // 取消某个寄存器的分配
+    public Symbol cancelAlloc(int register, MidCode midCode) {
+        if (!allocatedRegs.containsKey(register)) {
+            return null;
+        }
         freeRegs.add(register);
+        Symbol symbol = allocatedRegs.remove(register);
         mipsCodes.addCode(new MipsCode("#<---- Cancel " + intReg2SymReg.get(register) +
                 " which index is " + allocatableRegs.indexOf(register) + " for " + symbol.getName() + " ---->"));
         //将符号写回内存
@@ -126,8 +131,9 @@ public class RegAlloc {
             mipsCodes.addCode(new MipsCode(new StoreInstr(StoreInstr.SI.sw,
                     intReg2SymReg.get(register), symbol.isGlobal() ? "$gp" : "$sp", String.valueOf(symbol.getAddress()))));
         }
-        allocatedRegs.remove(register);
-        symbolToReg.remove(symbol);
+        symbolToRegs.remove(symbol);
+        regCache.remove(register);
+        return symbol;
     }
 
     // 清空分配状态
@@ -140,23 +146,30 @@ public class RegAlloc {
                     continue;
                 }
                 cancelAlloc(reg, midCode);
-                pointer = 0;
             }
         } else {
             allocatedRegs.clear();
-            symbolToReg.clear();
+            symbolToRegs.clear();
+            regCache.clear();
             freeRegs.clear();
             freeRegs.addAll(allocatableRegs);
-            pointer = 0;
         }
     }
 
+    // 更新 LRU
+    public void refresh(Symbol symbol) {
+        int register = symbolToRegs.get(symbol);
+        assert regCache.contains(register);
+        regCache.remove(register);
+        regCache.add(register);
+    }
+
     private boolean needToStore(MidCode midCode, Symbol symbol) {
-        System.out.println("midcode = " + midCode + " symbol = " + symbol);
-        System.out.println(this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode));
-        //if (symbol.isTemp()) return tempVarChecker.needToStore(midCodeList.getMidCodes(), symbol, midCode);
+        //System.out.println("midcode = " + midCode + " symbol = " + symbol);
+        //System.out.println(this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode));
+        if (!this.dataFlowAnalyser.getMidCodeActiveOut().containsKey(midCode)
+                || this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode).isEmpty()) return true;
         return this.dataFlowAnalyser.getMidCodeActiveOut().get(midCode).contains(symbol);
     }
 
 }
-
